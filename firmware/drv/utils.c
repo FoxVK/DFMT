@@ -25,3 +25,9 @@ void uint2hex(unsigned number, char* buf, size_t length)
         buf--;
     }
 }
+
+
+unsigned virt2phy(void* virt_addr)
+{
+    return ((unsigned)virt_addr) & 0x1FFFFFFF;
+}
