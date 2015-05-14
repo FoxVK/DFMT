@@ -1,9 +1,17 @@
 #include "app_config.h"
 #include "app.h"
+#include <xc.h>
 
 void main(void)
 {
     app_config();
+
+    //start delay
+    int i,j;
+    for(i=0; i<300000;i++)
+        for(j=0; j<80;j++)
+            _nop();
+
     app_init();
 
     while (1)
