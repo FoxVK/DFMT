@@ -16,7 +16,7 @@ void main(void)
 
     while (1)
     {
-        debug_uart_task();
+        app_task();
     }
 }
 
