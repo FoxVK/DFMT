@@ -8,6 +8,9 @@
         <itemPath>drv/debug_uart.h</itemPath>
         <itemPath>drv/config.h</itemPath>
         <itemPath>drv/utils.h</itemPath>
+        <itemPath>drv/usb.h</itemPath>
+        <itemPath>drv/usb_types.h</itemPath>
+        <itemPath>drv/usb_constants.h</itemPath>
       </logicalFolder>
       <itemPath>app_config.h</itemPath>
       <itemPath>app.h</itemPath>
@@ -22,6 +25,7 @@
       <logicalFolder name="f1" displayName="drv" projectFiles="true">
         <itemPath>drv/debug_uart.c</itemPath>
         <itemPath>drv/utils.c</itemPath>
+        <itemPath>drv/usb.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>app_config.c</itemPath>
