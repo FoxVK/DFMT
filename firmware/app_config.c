@@ -73,32 +73,4 @@ void app_config()
     RPB4Rbits.RPB4R = 0b0001;    //uart tx on RB4;
 
     SYSKEY = 0x33333333; //write invalid key to force lock
-
-
-    /*TRISAbits.TRISA0 = 0;
-
-    SYSKEY = 0x33333333; //write invalid key to force lock
-    SYSKEY = 0xAA996655; //write key1 to SYSKEY
-    SYSKEY = 0x556699AA; //write key2 to SYSKEY
-    CFGCONbits.IOLOCK = 0;
-
-    RPA0R = 1; //uart tx on RA0;
-    U1MODEbits.ON = 1;
-    U1BRG = 21; //115 200
-    U1MODEbits.RTSMD = 1;
-
-    U1STAbits.UTXEN = 1;
-
-    //U1STAbits.UTXBF //je volno
-    U1TXREG = '\r';
-    U1TXREG = '\n';
-    U1TXREG = '!';*/
-
-    //SYS_DEBUG_Message("\r\n");
-    /*int i,j;
-    for(i=0; i<300000;i++)
-        for(j=0; j<80;j++)
-            Nop();*/
-    //SYS_DEBUG_Message("!");
-
 }
