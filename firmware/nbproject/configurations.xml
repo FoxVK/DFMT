@@ -9,6 +9,7 @@
         <itemPath>drv/config.h</itemPath>
       </logicalFolder>
       <itemPath>app_config.h</itemPath>
+      <itemPath>app.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -22,6 +23,7 @@
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>app_config.c</itemPath>
+      <itemPath>app.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -193,6 +195,7 @@
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

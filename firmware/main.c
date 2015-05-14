@@ -1,17 +1,10 @@
-#include "drv/debug_uart.h"
 #include "app_config.h"
+#include "app.h"
 
 void main(void)
 {
     app_config();
-    debug_uart_init();
-
-    static char* test = "Running\r\n";
-
-    debug_uart_write(test);
-    debug_uart_write(test);
-    debug_uart_write(test);
-    debug_uart_write(test);
+    app_init();
 
     while (1)
     {
