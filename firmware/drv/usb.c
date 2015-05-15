@@ -1,5 +1,7 @@
 #include "usb.h"
 
+//#define USB_EP0_SIZE 64
+
 typedef struct {
     unsigned int nothing:2;
     unsigned int BSTALL:1;
@@ -51,10 +53,12 @@ typedef struct{
 
 typedef enum {EP00, EP01, EP02, EP03, EP04, EP05, EP06, EP07, EP08, EP09, EP10,
                 EP11, EP12, EP13, EP14, EP15, EP_COUNT  }EP_number;
-typedef enum {EP_RX, EP_TX, EP_direction_count          }EP_direction;
-typedef enum {EP_EVEN, EP_ODD, EP_pingpong_count        }EP_pingpong;
+typedef enum {EP_RX, EP_TX, EP_DIRECTION_COUNT          }EP_direction;
+typedef enum {EP_EVEN, EP_ODD, EP_PINGPONG_COUNT        }EP_pingpong;
 
-__align(512) static BDT bdt[EP_COUNT][EP_direction_count][EP_pingpong_count];
+static BDT __attribute__((aligned(512))) bdt[EP_COUNT][EP_DIRECTION_COUNT][EP_PINGPONG_COUNT];
+
+static uint8_t EP0_receive_buf[EP_PINGPONG_COUNT];
 
 void usb_init(Usb_config* config)
 {
