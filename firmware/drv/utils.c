@@ -31,3 +31,17 @@ unsigned virt2phy(void* virt_addr)
 {
     return ((unsigned)virt_addr) & 0x1FFFFFFF;
 }
+
+void* phy2virt(unsigned phy_addr)
+{
+    phy_addr |= 0xA0000000;
+
+    union{
+        unsigned phy;
+        void * virt;
+    }addr;
+
+    addr.phy = phy_addr;
+
+    return addr.virt;
+}

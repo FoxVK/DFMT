@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c drv/debug_uart.c app_config.c app.c drv/utils.c drv/usb.c
+SOURCEFILES_QUOTED_IF_SPACED=drv/debug_uart.c drv/utils.c drv/usb.c main.c app_config.c app.c usb_descriptors.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/drv/debug_uart.o ${OBJECTDIR}/app_config.o ${OBJECTDIR}/app.o ${OBJECTDIR}/drv/utils.o ${OBJECTDIR}/drv/usb.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/drv/debug_uart.o.d ${OBJECTDIR}/app_config.o.d ${OBJECTDIR}/app.o.d ${OBJECTDIR}/drv/utils.o.d ${OBJECTDIR}/drv/usb.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/drv/debug_uart.o ${OBJECTDIR}/drv/utils.o ${OBJECTDIR}/drv/usb.o ${OBJECTDIR}/main.o ${OBJECTDIR}/app_config.o ${OBJECTDIR}/app.o ${OBJECTDIR}/usb_descriptors.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/drv/debug_uart.o.d ${OBJECTDIR}/drv/utils.o.d ${OBJECTDIR}/drv/usb.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/app_config.o.d ${OBJECTDIR}/app.o.d ${OBJECTDIR}/usb_descriptors.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/drv/debug_uart.o ${OBJECTDIR}/app_config.o ${OBJECTDIR}/app.o ${OBJECTDIR}/drv/utils.o ${OBJECTDIR}/drv/usb.o
+OBJECTFILES=${OBJECTDIR}/drv/debug_uart.o ${OBJECTDIR}/drv/utils.o ${OBJECTDIR}/drv/usb.o ${OBJECTDIR}/main.o ${OBJECTDIR}/app_config.o ${OBJECTDIR}/app.o ${OBJECTDIR}/usb_descriptors.o
 
 # Source Files
-SOURCEFILES=main.c drv/debug_uart.c app_config.c app.c drv/utils.c drv/usb.c
+SOURCEFILES=drv/debug_uart.c drv/utils.c drv/usb.c main.c app_config.c app.c usb_descriptors.c
 
 
 CFLAGS=
@@ -94,29 +94,11 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/main.o.d 
-	@${RM} ${OBJECTDIR}/main.o 
-	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
-	
 ${OBJECTDIR}/drv/debug_uart.o: drv/debug_uart.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/drv" 
 	@${RM} ${OBJECTDIR}/drv/debug_uart.o.d 
 	@${RM} ${OBJECTDIR}/drv/debug_uart.o 
 	@${FIXDEPS} "${OBJECTDIR}/drv/debug_uart.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/drv/debug_uart.o.d" -o ${OBJECTDIR}/drv/debug_uart.o drv/debug_uart.c   
-	
-${OBJECTDIR}/app_config.o: app_config.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/app_config.o.d 
-	@${RM} ${OBJECTDIR}/app_config.o 
-	@${FIXDEPS} "${OBJECTDIR}/app_config.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/app_config.o.d" -o ${OBJECTDIR}/app_config.o app_config.c   
-	
-${OBJECTDIR}/app.o: app.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/app.o.d 
-	@${RM} ${OBJECTDIR}/app.o 
-	@${FIXDEPS} "${OBJECTDIR}/app.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/app.o.d" -o ${OBJECTDIR}/app.o app.c   
 	
 ${OBJECTDIR}/drv/utils.o: drv/utils.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/drv" 
@@ -130,18 +112,54 @@ ${OBJECTDIR}/drv/usb.o: drv/usb.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/drv/usb.o 
 	@${FIXDEPS} "${OBJECTDIR}/drv/usb.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/drv/usb.o.d" -o ${OBJECTDIR}/drv/usb.o drv/usb.c   
 	
-else
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
-	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
+	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
 	
+${OBJECTDIR}/app_config.o: app_config.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/app_config.o.d 
+	@${RM} ${OBJECTDIR}/app_config.o 
+	@${FIXDEPS} "${OBJECTDIR}/app_config.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/app_config.o.d" -o ${OBJECTDIR}/app_config.o app_config.c   
+	
+${OBJECTDIR}/app.o: app.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/app.o.d 
+	@${RM} ${OBJECTDIR}/app.o 
+	@${FIXDEPS} "${OBJECTDIR}/app.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/app.o.d" -o ${OBJECTDIR}/app.o app.c   
+	
+${OBJECTDIR}/usb_descriptors.o: usb_descriptors.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/usb_descriptors.o.d 
+	@${RM} ${OBJECTDIR}/usb_descriptors.o 
+	@${FIXDEPS} "${OBJECTDIR}/usb_descriptors.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/usb_descriptors.o.d" -o ${OBJECTDIR}/usb_descriptors.o usb_descriptors.c   
+	
+else
 ${OBJECTDIR}/drv/debug_uart.o: drv/debug_uart.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/drv" 
 	@${RM} ${OBJECTDIR}/drv/debug_uart.o.d 
 	@${RM} ${OBJECTDIR}/drv/debug_uart.o 
 	@${FIXDEPS} "${OBJECTDIR}/drv/debug_uart.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/drv/debug_uart.o.d" -o ${OBJECTDIR}/drv/debug_uart.o drv/debug_uart.c   
+	
+${OBJECTDIR}/drv/utils.o: drv/utils.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/drv" 
+	@${RM} ${OBJECTDIR}/drv/utils.o.d 
+	@${RM} ${OBJECTDIR}/drv/utils.o 
+	@${FIXDEPS} "${OBJECTDIR}/drv/utils.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/drv/utils.o.d" -o ${OBJECTDIR}/drv/utils.o drv/utils.c   
+	
+${OBJECTDIR}/drv/usb.o: drv/usb.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/drv" 
+	@${RM} ${OBJECTDIR}/drv/usb.o.d 
+	@${RM} ${OBJECTDIR}/drv/usb.o 
+	@${FIXDEPS} "${OBJECTDIR}/drv/usb.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/drv/usb.o.d" -o ${OBJECTDIR}/drv/usb.o drv/usb.c   
+	
+${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/main.o.d 
+	@${RM} ${OBJECTDIR}/main.o 
+	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
 	
 ${OBJECTDIR}/app_config.o: app_config.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -155,17 +173,11 @@ ${OBJECTDIR}/app.o: app.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/app.o 
 	@${FIXDEPS} "${OBJECTDIR}/app.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/app.o.d" -o ${OBJECTDIR}/app.o app.c   
 	
-${OBJECTDIR}/drv/utils.o: drv/utils.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/drv" 
-	@${RM} ${OBJECTDIR}/drv/utils.o.d 
-	@${RM} ${OBJECTDIR}/drv/utils.o 
-	@${FIXDEPS} "${OBJECTDIR}/drv/utils.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/drv/utils.o.d" -o ${OBJECTDIR}/drv/utils.o drv/utils.c   
-	
-${OBJECTDIR}/drv/usb.o: drv/usb.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}/drv" 
-	@${RM} ${OBJECTDIR}/drv/usb.o.d 
-	@${RM} ${OBJECTDIR}/drv/usb.o 
-	@${FIXDEPS} "${OBJECTDIR}/drv/usb.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/drv/usb.o.d" -o ${OBJECTDIR}/drv/usb.o drv/usb.c   
+${OBJECTDIR}/usb_descriptors.o: usb_descriptors.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/usb_descriptors.o.d 
+	@${RM} ${OBJECTDIR}/usb_descriptors.o 
+	@${FIXDEPS} "${OBJECTDIR}/usb_descriptors.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/usb_descriptors.o.d" -o ${OBJECTDIR}/usb_descriptors.o usb_descriptors.c   
 	
 endif
 

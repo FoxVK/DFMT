@@ -14,6 +14,8 @@
       </logicalFolder>
       <itemPath>app_config.h</itemPath>
       <itemPath>app.h</itemPath>
+      <itemPath>shared.h</itemPath>
+      <itemPath>usb_descriptors.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -30,6 +32,7 @@
       <itemPath>main.c</itemPath>
       <itemPath>app_config.c</itemPath>
       <itemPath>app.c</itemPath>
+      <itemPath>usb_descriptors.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

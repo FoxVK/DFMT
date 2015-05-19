@@ -4,6 +4,12 @@
 #include <xc.h>
 #include <inttypes.h>
 
+#include "config.h"
+
+typedef enum
+{
+    USB_EV_POWERED, USB_EV_UNPOWERED, USB_EV_CONFIGURED, USB_EV_DECONFIGURED, USB_EV_RESET, USB_EV_SUSPENDED, USB_EV_RESUMED
+}Usb_event;
 
 typedef struct{
     uint8_t     bLength;            //Size of this descriptor in bytes
@@ -23,14 +29,25 @@ typedef struct{
 
 }Usb_descriptor_device;  //usb spec p262
 
-typedef uint8_t* Usb_descriptor_configuraton; //TODO check it !!
-typedef uint8_t* Usb_descriptor_string;       //TODO check it !!
 
 typedef struct{
-    Usb_descriptor_device* device_desc;
-    Usb_descriptor_configuraton* configuration_desc;
-    Usb_descriptor_string* string_descs;
+    const Usb_descriptor_device* device_desc;
+    const void* configuration_desc[USB_CONFIGURATION_COUNT];
+    const void* string_descs[USB_STRING_COUNT];
+          void (*event_callback)(Usb_event);
 }Usb_config;
+
+typedef enum {  USB_EP00, USB_EP01, USB_EP02, USB_EP03, USB_EP04, USB_EP05,
+                USB_EP06, USB_EP07, USB_EP08, USB_EP09, USB_EP10,
+                USB_EP11, USB_EP12, USB_EP13, USB_EP14, USB_EP15,
+                USB_EP_COUNT  }Usb_ep_number;
+                
+typedef enum { USB_EP_OUT, USB_EP_IN, USB_EP_DIRECTION_COUNT  }Usb_ep_direction;
+
+typedef enum { USB_RW_REQ_OK, USB_RW_REQ_QFULL } Usb_rw_request;
+
+typedef enum { USB_CT_WRITE, USB_CT_READ } Usb_ct_direction;
+typedef  void(*Usb_ct_callback)();
 
 #endif	/* USB_TYPES_H */
 

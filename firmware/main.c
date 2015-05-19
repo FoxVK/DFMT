@@ -1,6 +1,8 @@
+#include <xc.h>
 #include "app_config.h"
 #include "app.h"
-#include <xc.h>
+
+
 
 void main(void)
 {
