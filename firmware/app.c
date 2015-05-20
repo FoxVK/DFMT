@@ -45,6 +45,7 @@ inline void app_init()
     debug_uart_write(run);
 
     config.event_callback = usb_event;
+    config.ct_request_callback = NULL;
     usb_init(&config);
 }
 

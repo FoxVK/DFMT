@@ -5,6 +5,7 @@
 #include <inttypes.h>
 
 #include "config.h"
+#include "utils.h"
 
 typedef enum
 {
@@ -29,12 +30,39 @@ typedef struct{
 
 }Usb_descriptor_device;  //usb spec p262
 
+typedef struct{
+    union{
+        struct {
+            union {
+                uint8_t     bmRequestType;
+                struct {
+                    char recipient:5;
+                    char type:2;
+                    char data_stg_dir:1;
+                }ReqType_bits;
+            };
+            uint8_t     bRequest;
+        };
+        uint16_t    request;
+     };
+     union {
+         struct {
+             uint8_t desc_index;
+             uint8_t desc_type;
+         };
+         uint16_t    wValue;
+     };
+
+    uint16_t    wIndex;
+    uint16_t    wLength;
+}Usb_ct_request;
 
 typedef struct{
     const Usb_descriptor_device* device_desc;
     const void* configuration_desc[USB_CONFIGURATION_COUNT];
     const void* string_descs[USB_STRING_COUNT];
           void (*event_callback)(Usb_event);
+          bool (*ct_request_callback)(Usb_ct_request*);
 }Usb_config;
 
 typedef enum {  USB_EP00, USB_EP01, USB_EP02, USB_EP03, USB_EP04, USB_EP05,

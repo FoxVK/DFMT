@@ -11,6 +11,8 @@ void usb_task();
 int usb_current_config();
 bool usb_is_suspended();
 
+void usb_set_transfer_callback(Usb_ep_number ep, Usb_ep_direction dir, void(*callback)(void*, size_t));
+
 void usb_enable_ep(Usb_ep_number ep, Usb_ep_direction dir,  bool state, bool isochornous);
 void usb_stall_ep(Usb_ep_number ep, bool state);
 Usb_rw_request usb_arm_ep(Usb_ep_number ep, Usb_ep_direction dir, void *buf, size_t size, unsigned data01);

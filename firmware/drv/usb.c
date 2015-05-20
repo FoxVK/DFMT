@@ -1,5 +1,6 @@
 #include "usb.h"
 #include "debug_uart.h"
+#include "utils.h"
 
 #define USB_EP0_SIZE 64
 
@@ -31,33 +32,6 @@ typedef union {
 }BDT;
 
 
-typedef struct{
-    union{
-        struct {
-            union {
-                uint8_t     bmRequestType;
-                struct {
-                    char recipient:5;
-                    char type:2;
-                    char data_stg_dir:1;
-                }ReqType_bits;
-            };
-            uint8_t     bRequest;
-        };
-        uint16_t    request;
-     };
-     union {
-         struct {
-             uint8_t desc_index;
-             uint8_t desc_type;
-         };
-         uint16_t    wValue;
-     };
-
-    uint16_t    wIndex;
-    uint16_t    wLength;
-}Request;
-
 static volatile __U1EP0bits_t* ep_reg[] =
 {(__U1EP0bits_t*)&U1EP0,  (__U1EP0bits_t*)&U1EP1,  (__U1EP0bits_t*)&U1EP2,
  (__U1EP0bits_t*)&U1EP3,  (__U1EP0bits_t*)&U1EP4,  (__U1EP0bits_t*)&U1EP5,
@@ -80,7 +54,7 @@ static EP_pingpong pp_to_use[USB_EP_COUNT][USB_EP_DIRECTION_COUNT];
 static volatile BDT __attribute__((aligned(512))) bdt[USB_EP_COUNT][USB_EP_DIRECTION_COUNT][EP_PINGPONG_COUNT];
 
 static uint8_t EP0_rx_buf[EP_PINGPONG_COUNT][USB_EP0_SIZE];
-
+static void (*trasfer_callback[USB_EP_COUNT][USB_EP_DIRECTION_COUNT])(void*, size_t);
 
 
 static Usb_config* settings; //USB settings
@@ -155,6 +129,7 @@ void usb_init(Usb_config* config)
         for (dir = 0; dir<USB_EP_DIRECTION_COUNT; dir++)
         {
             pp_to_use[ep][dir] = EP_EVEN;
+            trasfer_callback[ep][dir] = NULL;
             for (pp=0; pp<EP_PINGPONG_COUNT; pp++)
                 bdt[ep][dir][pp].all=0l;
         }
@@ -262,14 +237,15 @@ static void control_transfer(void * buf, size_t size)
     static char dbg_type[] = "0000\r\n";
     debug_uart_write(dbg);
 
-    Request * req = (Request*)buf;
+    Usb_ct_request * req = (Usb_ct_request*)buf;
 
     uint2hex(req->request, dbg_type, 4);
     debug_uart_write(dbg_type);
+    bool stall_it = true;
 
     if(req->ReqType_bits.type == 0)
     {
-        bool stall_it = true;
+        
 
         switch(req->bRequest)
         {
@@ -331,21 +307,20 @@ static void control_transfer(void * buf, size_t size)
             default:
                 break;
         }
-
-        if(stall_it)
-        {
-            usb_stall_ep(USB_EP00, true);
-            //static char *dbg = "STALL\r\n";
-            //debug_uart_write(dbg);
-            usb_arm_ep(USB_EP00, USB_EP_OUT,EP0_rx_buf[0],USB_EP0_SIZE,0);
-        }
-
     }
     else
     {
-        //TODO call callback
+        if(settings->ct_request_callback)
+            stall_it = !settings->ct_request_callback(req);
     }
-    
+
+    if(stall_it)
+    {
+        usb_stall_ep(USB_EP00, true);
+        //static char *dbg = "STALL\r\n";
+        //debug_uart_write(dbg);
+        usb_arm_ep(USB_EP00, USB_EP_OUT,EP0_rx_buf[0],USB_EP0_SIZE,0);
+    }
 }
 
 
@@ -371,6 +346,15 @@ static void token(__U1STATbits_t stat)
                 debug_uart_write(out);*/
             
             ct_task(stat.DIR);
+        }
+    }
+    else
+    {
+        unsigned e=stat.ENDPT, d=stat.DIR;
+        if(trasfer_callback[e][d])
+        {
+            BDT *b = (BDT*)&bdt[e][d][stat.PPBI];
+            trasfer_callback[e][d](phy2virt(b->r.buf_ptr), b->r.bytecount);
         }
     }
         
@@ -427,6 +411,11 @@ void usb_task()
         U1IRbits.TRNIF = 1;
         token(stat);
     }
+}
+
+void usb_set_transfer_callback(Usb_ep_number ep, Usb_ep_direction dir, void(*callback)(void*, size_t))
+{
+    trasfer_callback[ep][dir] = callback;
 }
 
 int usb_current_config()
