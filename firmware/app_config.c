@@ -1,5 +1,10 @@
 #include <xc.h>
 
+//for bacward comaptibility with XC<1.33
+#ifndef WINSZ_25
+#define WINSZ_25 WISZ_25
+#endif
+
 /*** DEVCFG0 ***/
 
 #pragma config DEBUG =      ON
