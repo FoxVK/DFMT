@@ -429,13 +429,13 @@ void usb_task()
     }
 }
 
-void usb_attach(bool state)
-{
-    
-}
-
 int usb_current_config()
 {
     // -1 means we are not configured
     return cur_cnf;
+}
+
+bool usb_is_suspended()
+{
+    return suspended;
 }
