@@ -428,3 +428,8 @@ bool usb_is_suspended()
 {
     return suspended;
 }
+
+unsigned usb_queued_bufs(Usb_ep_number ep, Usb_ep_direction dir)
+{
+    return bdt[ep][dir][EP_EVEN].r.UOWN + bdt[ep][dir][EP_ODD].r.UOWN;
+}

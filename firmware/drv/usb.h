@@ -10,6 +10,7 @@ void usb_task();
 
 int usb_current_config();
 bool usb_is_suspended();
+unsigned usb_queued_bufs(Usb_ep_number ep, Usb_ep_direction dir);
 
 void usb_set_transfer_callback(Usb_ep_number ep, Usb_ep_direction dir, void(*callback)(void*, size_t));
 
