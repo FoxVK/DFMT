@@ -1,6 +1,10 @@
 #include <xc.h>
 
+<<<<<<< HEAD
 //For backward compatibility with XC<1.33
+=======
+//for bacward comaptibility with XC<1.33
+>>>>>>> 47d248c126818cf4e8e4e3bb4266559df68c08cd
 #ifndef WINSZ_25
 #define WINSZ_25 WISZ_25
 #endif
