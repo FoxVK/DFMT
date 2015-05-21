@@ -12,7 +12,7 @@ int usb_current_config();
 bool usb_is_suspended();
 unsigned usb_queued_bufs(Usb_ep_number ep, Usb_ep_direction dir);
 
-void usb_set_transfer_callback(Usb_ep_number ep, Usb_ep_direction dir, void(*callback)(void*, size_t));
+void usb_set_transfer_callback(Usb_ep_number ep, Usb_ep_direction dir, void(*callback)(void*, size_t, void*), void* usr_data);
 
 void usb_enable_ep(Usb_ep_number ep, Usb_ep_direction dir,  bool state, bool isochornous);
 void usb_stall_ep(Usb_ep_number ep, bool state);

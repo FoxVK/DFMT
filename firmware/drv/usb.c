@@ -54,7 +54,8 @@ static EP_pingpong pp_to_use[USB_EP_COUNT][USB_EP_DIRECTION_COUNT];
 static volatile BDT __attribute__((aligned(512))) bdt[USB_EP_COUNT][USB_EP_DIRECTION_COUNT][EP_PINGPONG_COUNT];
 
 static uint8_t EP0_rx_buf[EP_PINGPONG_COUNT][USB_EP0_SIZE];
-static void (*trasfer_callback[USB_EP_COUNT][USB_EP_DIRECTION_COUNT])(void*, size_t);
+static void (*trasfer_callback[USB_EP_COUNT][USB_EP_DIRECTION_COUNT])(void*, size_t, void*);
+static void* trasfer_callback_usrptr[USB_EP_COUNT][USB_EP_DIRECTION_COUNT];
 
 
 static Usb_config* settings; //USB settings
@@ -354,7 +355,7 @@ static void token(__U1STATbits_t stat)
         if(trasfer_callback[e][d])
         {
             BDT *b = (BDT*)&bdt[e][d][stat.PPBI];
-            trasfer_callback[e][d](phy2virt(b->r.buf_ptr), b->r.bytecount);
+            trasfer_callback[e][d](phy2virt(b->r.buf_ptr), b->r.bytecount, trasfer_callback_usrptr[e][d]);
         }
     }
         
@@ -413,8 +414,9 @@ void usb_task()
     }
 }
 
-void usb_set_transfer_callback(Usb_ep_number ep, Usb_ep_direction dir, void(*callback)(void*, size_t))
+void usb_set_transfer_callback(Usb_ep_number ep, Usb_ep_direction dir, void(*callback)(void*, size_t, void*), void* usr_data)
 {
+    trasfer_callback_usrptr[ep][dir] = usr_data;
     trasfer_callback[ep][dir] = callback;
 }
 
