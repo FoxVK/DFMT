@@ -17,7 +17,7 @@ void usb_event(Usb_event ev)
             break;
         case USB_EV_RESET:
         {
-            static char* line = "reset\r\n";
+            static char* line = "usb reset\r\n";
             debug_uart_write(line);
         }
             break;
