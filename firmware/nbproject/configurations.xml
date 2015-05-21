@@ -11,6 +11,7 @@
         <itemPath>drv/usb.h</itemPath>
         <itemPath>drv/usb_types.h</itemPath>
         <itemPath>drv/usb_constants.h</itemPath>
+        <itemPath>drv/usb_audio.h</itemPath>
       </logicalFolder>
       <itemPath>app_config.h</itemPath>
       <itemPath>app.h</itemPath>
@@ -28,6 +29,7 @@
         <itemPath>drv/debug_uart.c</itemPath>
         <itemPath>drv/utils.c</itemPath>
         <itemPath>drv/usb.c</itemPath>
+        <itemPath>drv/usb_audio.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>app_config.c</itemPath>

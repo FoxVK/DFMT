@@ -244,8 +244,8 @@ static void control_transfer(void * buf, size_t size)
     debug_uart_write(dbg_type);
     bool stall_it = true;
 
-    if(req->ReqType_bits.type == 0)
-    {
+    if(req->ReqType_bits.recipient == 0 && req->ReqType_bits.type == 0)
+    {   //handle all standard device requests
         
 
         switch(req->bRequest)
