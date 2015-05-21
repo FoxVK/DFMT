@@ -251,6 +251,11 @@ static void control_transfer(void * buf, size_t size)
         switch(req->bRequest)
         {
             case 0x00: //GET_STATUS
+            {
+                static uint16_t status = USB_SELF_POWERED << 0;
+                usb_ct_reply(USB_CT_READ, status, sizeof(status), NULL);
+                stall_it = false;
+            }
                 break;
             case 0x01: //CLEAR_FEATURE
                 break;
