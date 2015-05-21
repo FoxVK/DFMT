@@ -65,10 +65,63 @@ typedef struct{
           bool (*ct_request_callback)(Usb_ct_request*);
 }Usb_config;
 
-typedef enum {  USB_EP00, USB_EP01, USB_EP02, USB_EP03, USB_EP04, USB_EP05,
-                USB_EP06, USB_EP07, USB_EP08, USB_EP09, USB_EP10,
-                USB_EP11, USB_EP12, USB_EP13, USB_EP14, USB_EP15,
-                USB_EP_COUNT  }Usb_ep_number;
+typedef enum {
+//<editor-fold defaultstate="collapsed" desc="USB_EPXX enum">
+
+#if USB_USED_ENDPOINS<1
+  #error "USB_USEUSB_USED_ENDPOINS must be at least 1 (EP00 is mandatory)."
+#elif USB_USED_ENDPOINS>16
+  #error "USB_USEUSB_USED_ENDPOINS > 16. You cannot have more than 16 endpoints."
+#endif
+
+  USB_EP00,
+#if USB_USED_ENDPOINS>1
+  USB_EP01,
+#endif
+#if USB_USED_ENDPOINS>2
+  USB_EP02,
+#endif
+#if USB_USED_ENDPOINS>3
+  USB_EP03,
+#endif
+#if USB_USED_ENDPOINS>4
+  USB_EP04,
+#endif
+#if USB_USED_ENDPOINS>5
+  USB_EP05,
+#endif
+#if USB_USED_ENDPOINS>6
+  USB_EP06,
+#endif
+#if USB_USED_ENDPOINS>7
+  USB_EP07,
+#endif
+#if USB_USED_ENDPOINS>8
+  USB_EP08,
+#endif
+#if USB_USED_ENDPOINS>9
+  USB_EP09,
+#endif
+#if USB_USED_ENDPOINS>10
+  USB_EP10,
+#endif
+#if USB_USED_ENDPOINS>11
+  USB_EP11,
+#endif
+#if USB_USED_ENDPOINS>12
+  USB_EP12,
+#endif
+#if USB_USED_ENDPOINS>13
+  USB_EP13,
+#endif
+#if USB_USED_ENDPOINS>14
+  USB_EP14,
+#endif
+#if USB_USED_ENDPOINS>15
+  USB_EP15,
+#endif
+// </editor-fold>
+  USB_EP_COUNT}Usb_ep_number;
                 
 typedef enum { USB_EP_OUT, USB_EP_IN, USB_EP_DIRECTION_COUNT  }Usb_ep_direction;
 
