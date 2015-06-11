@@ -1,3 +1,11 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP GND-cs
+K PWR POWER
+$ENDCMP
+#
+$CMP GND_cs_2
+K POWER, PWR
+$ENDCMP
+#
 #End Doc Library
