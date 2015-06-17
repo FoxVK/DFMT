@@ -17,7 +17,6 @@
  */
 // </editor-fold>
 
-
 #ifndef TUNER_COM_H
 #define	TUNER_COM_H
 
