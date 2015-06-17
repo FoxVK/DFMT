@@ -17,6 +17,9 @@
       <itemPath>app.h</itemPath>
       <itemPath>shared.h</itemPath>
       <itemPath>usb_descriptors.h</itemPath>
+      <itemPath>tuner_com.h</itemPath>
+      <itemPath>tuner_control.h</itemPath>
+      <itemPath>tuner_audio.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -35,6 +38,9 @@
       <itemPath>app_config.c</itemPath>
       <itemPath>app.c</itemPath>
       <itemPath>usb_descriptors.c</itemPath>
+      <itemPath>tuner_control.c</itemPath>
+      <itemPath>tuner_com.c</itemPath>
+      <itemPath>tuner_audio.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
