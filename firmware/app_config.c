@@ -46,8 +46,6 @@
 
 void app_config()
 {
-
-
     RCON = 0; //FIXME will we need it ?
 
     //We do not need any analog pin
@@ -61,9 +59,10 @@ void app_config()
     TRISBbits.TRISB3 = 0;   //SS 1
     TRISBbits.TRISB14 = 0;  //SCK1
 
+    //Seceond i2s will be driven by first one (must be interconected on board)
     TRISAbits.TRISA4 = 1;   //SDI2
-    TRISBbits.TRISB0 = 0;   //SS 2
-    TRISBbits.TRISB15 = 0;  //SCK2
+    TRISBbits.TRISB0 = 1;   //SS 2
+    TRISBbits.TRISB15 = 1;  //SCK2
 
     SYSKEY = 0x33333333; //write invalid key to force lock
     SYSKEY = 0xAA996655; //write key1 to SYSKEY
@@ -73,7 +72,7 @@ void app_config()
     RPB3Rbits.RPB3R = 0b0011;    //SS 1 on RB3
 
     SDI2Rbits.SDI2R = 0b0010;    //SDI2 on RA4
-    RPB0Rbits.RPB0R = 0b0100;    //SS 2 on RB0
+    SS2Rbits.SS2R   = 0b0010;    //SS 2 on RB0
 
     RPB4Rbits.RPB4R = 0b0001;    //uart tx on RB4;
 
