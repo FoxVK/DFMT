@@ -1,4 +1,4 @@
-update=Tue 09 Jun 2015 20:38:46 CEST
+update=Thu 11 Jun 2015 12:28:34 CEST
 version=1
 last_client=kicad
 [cvpcb]
@@ -6,8 +6,6 @@ version=1
 NetIExt=net
 [cvpcb/libraries]
 EquName1=devcms
-[general]
-version=1
 [eeschema]
 version=1
 LibDir=../kicad
@@ -73,3 +71,5 @@ SolderMaskMinWidth=0
 DrawSegmentWidth=0.2
 BoardOutlineThickness=0.09999999999999999
 ModuleOutlineThickness=0.15
+[general]
+version=1
