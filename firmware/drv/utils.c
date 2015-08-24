@@ -64,3 +64,56 @@ void* phy2virt(unsigned phy_addr)
 
     return addr.virt;
 }
+
+
+
+
+void queue_init(Queue *queue, void **array, size_t size)
+{
+    //size is count of void* in array. For example: if *void[10] then size=10. Not size=sizeof(array);
+    queue->array = array;
+    queue->size  = size;
+
+    queue->head  = 0;
+    queue->tail  = 0;
+    queue->count = 0;
+}
+
+bool queue_full(Queue *queue)
+{
+    return (queue->count >= queue->size) ? true : false;
+}
+
+bool queue_empty(Queue *queue)
+{
+    return (queue->count <= 0) ? true : false;
+}
+
+bool queue_push(Queue* queue, void* data_ptr)
+{
+    if(queue_full(queue))
+        return false;
+
+    queue->count++;
+
+    queue->tail++;
+    if(queue->tail >= queue->size)
+        queue->tail = 0;
+    queue->array[queue->tail] = data_ptr;
+
+    return true;
+}
+
+void* queue_pop(Queue* queue)
+{
+    if(queue_empty(queue))
+        return NULL;
+
+    queue->count--;
+
+    queue->head++;
+    if(queue->head >= queue->size)
+        queue->head = 0;
+
+    return queue->array[queue->head];
+}
