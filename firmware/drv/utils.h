@@ -31,6 +31,22 @@ void uint2hex(unsigned number, char* buf, size_t length);
 unsigned virt2phy(void* virt_addr);
 void* phy2virt(unsigned phy_addr);
 
+
+typedef struct
+{
+    void **array;
+    size_t size;
+    int head, tail, count;
+}Queue;
+
+void  queue_init (Queue *queue, void **array, size_t size);
+bool  queue_full (Queue *queue);
+bool  queue_empty(Queue *queue);
+int   queue_count(Queue *queue);
+bool  queue_push (Queue *queue, void* data_ptr);
+void* queue_pop  (Queue *queue);
+
+
 #define debughalt() __asm__ volatile (" sdbbp 0")
 
 #endif	/* UTILS_H */
