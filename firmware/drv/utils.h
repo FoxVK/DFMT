@@ -39,6 +39,7 @@ typedef struct
     int head, tail, count;
 }Queue;
 
+
 void  queue_init (Queue *queue, void **array, size_t size);
 bool  queue_full (Queue *queue);
 bool  queue_empty(Queue *queue);
