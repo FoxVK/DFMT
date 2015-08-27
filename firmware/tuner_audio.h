@@ -20,5 +20,27 @@
 #ifndef TUNER_AUDIO_H
 #define	TUNER_AUDIO_H
 
+#define AUDIO_SAMPLE_CHAN_BYTES 2
+#define AUDIO_PACKET_BUFS 4
+
+#include <inttypes.h>
+
+typedef struct {
+    union {
+        struct {
+            int16_t left;
+            int16_t right;
+        };
+        uint32_t both;
+    }sample[48];
+}AudioFrame;
+
+void tuner_audio_init(); 
+
+void* tuner_audio_get_buf(int tuner); 
+bool  tuner_audio_put_buf(int tuner, void* buf); 
+
+void tuner_audio_task();
+
 #endif	/* TUNER_AUDIO_H */
 

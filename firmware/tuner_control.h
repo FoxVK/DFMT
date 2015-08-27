@@ -26,7 +26,7 @@
 void tuner_control_init();
 void tuner_control_task();
 
-void tuner_control_pwr(bool state);
+void tuner_control_pwr(bool state); //Turns on or off both tuners
 bool tuner_control_tun_ready();
 
 

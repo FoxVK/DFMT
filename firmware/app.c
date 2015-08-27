@@ -22,6 +22,8 @@
 #include "drv/utils.h"
 #include "drv/usb.h"
 #include "drv/usb_audio.h"
+#include "tuner_audio.h"
+#include "tuner_control.h"
 
 extern Usb_config config;
 
@@ -29,7 +31,7 @@ static Usb_audio_iface *audio_if;
 
 static int16_t test_audio_buf[48][2];
 
-void init_test_audio()
+void init_test_audio() //TODO vyhodit
 {
     int t;
     for(t=0; t<48; t++)
@@ -79,6 +81,14 @@ bool app_usb_ct_handler(Usb_ct_request *rq)
     return usb_audio_ct_handler(audio_if, rq);
 }
 
+void app_usb_audio_td0_handler(void * data, size_t len, void * usr_ptr)
+{
+    (void) len;
+    (void) usr_ptr;
+    
+    tuner_audio_put_buf(0, data);
+}
+
 inline void app_init()
 {
     debug_uart_init();
@@ -92,7 +102,7 @@ inline void app_init()
     static Usb_audio_iface uai;
     audio_if = &uai;
     usb_audio_init(audio_if, 1, NULL);
-    Usb_audio_add_ep(audio_if, USB_EP01, USB_EP_IN, NULL);
+    Usb_audio_add_ep(audio_if, USB_EP01, USB_EP_IN, app_usb_audio_td0_handler);
 
     init_test_audio();
 }
@@ -101,7 +111,21 @@ inline void app_task()
 {
     debug_uart_task();
     usb_task();
+    tuner_audio_task();
+    tuner_control_task();
+    
     
     if(usb_audio_can_play(audio_if))
-        Usb_audio_send(audio_if, USB_EP01, test_audio_buf, sizeof(test_audio_buf));
+    {
+        static void *to_send = NULL;
+        
+        if(to_send == NULL)
+            to_send = tuner_audio_get_buf(0);
+    
+        if(to_send)
+        {            
+            if(Usb_audio_send(audio_if, USB_EP01, to_send, sizeof(AudioFrame))==USB_RW_REQ_OK)
+                to_send = NULL;
+        }
+    }
 }

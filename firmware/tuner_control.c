@@ -30,7 +30,7 @@ void tuner_control_init()
     
 }
 
-void tuner_control_pwr(bool state)
+void tuner_control_pwr(bool state) 
 {
     tuner_on = state;
 }
@@ -143,7 +143,7 @@ void tuner_control_task()
                 if(!tuner_on)
                 {
                     tuner_hold_in_rst(1);
-                    tuner_audio_run(tid, 0);
+                    //tuner_audio_run(tid, 0);
                     state[tid] = ST_DOWN;
                 }
                 break;
@@ -151,7 +151,7 @@ void tuner_control_task()
             case ST_DOWN:
                 if(tuner_on)
                 {
-                    tuner_audio_run(tid, 1);
+                    //tuner_audio_run(tid, 1);
                     tuner_hold_in_rst(0);
                     state[tid]++;
                 }

@@ -18,55 +18,100 @@
 // </editor-fold>
 
 #include <xc.h>
+#include "drv/utils.h"
+#include "tuner_audio.h"
 
-static void i2s_a_init()
+
+static struct{
+    Queue free, filled;
+    void *qbuf_free[AUDIO_PACKET_BUFS], *qbuf_filled[AUDIO_PACKET_BUFS];
+    AudioFrame  frame_buf[AUDIO_PACKET_BUFS];
+}aud_data[2];
+
+static void arm_dma(int dma)
 {
-    SPI1CONbits.ON = 0;
-    Nop();
-    SPI1CONbits.DISSDO = 1;     //disable output bit
-    //SPI1CONbits.ENHBUF = 1;     //enchanced buffer enable
-    SPI1CONbits.MSTEN = 1;      //enable master - we will generate clock
-    SPI1CON2bits.AUDEN = 1;     //enable audio
-    //SPI1CONbits.SRXISEL = 2;    //interrupt is generated when buffer is half full
-    SPI1CONbits.CKP = 1;        //clock idle in low
-
-    while(!SPI1STATbits.SPIRBE)
-    {
-        int flush = SPI1BUF;
-    }
-    SPI1STATbits.SPIROV = 0;    //no overflow
+    static volatile unsigned int *DCHxDSA[] = {&DCH0DSA, &DCH1DSA, &DCH2DSA, &DCH3DSA};
+    static volatile unsigned int *DCHxDSIZ[] = {&DCH0DSIZ, &DCH1DSIZ, &DCH2DSIZ, &DCH3DSIZ};
     
-    SPI1BRG = 12;       //clock,  32bit frame X 48khz sampling = 1536kHz - now we have 1?538?461,538461538
-
-    IPC7bits.SPI1IP = 5; //prioriy 1-7 0=disabled
-    IPC7bits.SPI1IS = 0; //subprio 0-3
+    int tuner = (dma>1) ? 1 : 0 ;
+    //todo je treab resit jeslti je kam armovart ?
+    void *buf = queue_pop(&aud_data[tuner].free);
+    if(!buf)
+        buf = queue_pop(&aud_data[tuner].filled);
     
-    //IEC1bits.SPI1RXIE = 1; //enable Rx interrupt
-
-    //DMA
-    /*DCH0CONbits.CHAEN = 1;      //auto enable
-    DCH0ECONbits.CHSIRQ = 37;   //cell start interrupt number 
-    DCH0ECONbits.SIRQEN = 1;    //start cell transfer when chsirq match
-
-    DCH0DSA =  VirtToPhy(i2s_buf[0]);
-    DCH0DSIZ = I2S_FRAMES * I2S_CHANNELS * I2S_FRAME_SIZE * I2S_SAMPLE_SIZE;
-
-    DCH0SSA = VirtToPhy((void*)&SPI1BUF);
-    DCH0SSIZ = I2S_SAMPLE_SIZE;
-    DCH0CSIZ = I2S_SAMPLE_SIZE; //bytes per event
-
-    DCH0CONbits.CHEN = 1;       //channel is enabled
-     * */
+    if(!buf) debughalt(); //TODO: toto by se nemelo nikdy stat
+    
+    *DCHxDSA[dma]  = virt2phy(buf);
+    *DCHxDSIZ[dma] = sizeof(AudioFrame);
 }
 
-static void i2s_b_init()
+static void dma_init()
+{
+    DCH0SSA = DCH1SSA = virt2phy((void*)&SPI1BUF);
+    DCH2SSA = DCH3SSA = virt2phy((void*)&SPI2BUF);
+    
+    DCH0SSIZ = DCH1SSIZ = DCH2SSIZ = DCH3SSIZ = AUDIO_SAMPLE_CHAN_BYTES;
+    DCH0CSIZ = DCH1CSIZ = DCH2CSIZ = DCH3CSIZ = AUDIO_SAMPLE_CHAN_BYTES; //bytes per event
+    
+    DCH0DSIZ = DCH1DSIZ = DCH2DSIZ = DCH3DSIZ = sizeof(AudioFrame);
+    
+    DCH0CONbits.CHCHN = DCH1CONbits.CHCHN = 1;
+    DCH2CONbits.CHCHN = DCH3CONbits.CHCHN = 1;
+    //CHCHNS=1 Chain to channel lower in natural priority (CH1 will be enabled by CH2 transfer complete)
+    DCH0CONbits.CHCHNS = DCH2CONbits.CHCHNS = 1;
+    
+    DCH0ECONbits.CHSIRQ = DCH1ECONbits.CHSIRQ = 37;   //cell start interrupt number 
+    DCH0ECONbits.SIRQEN = DCH1ECONbits.SIRQEN = 1;    //start cell transfer when chsirq match
+    
+    DCH2ECONbits.CHSIRQ = DCH3ECONbits.CHSIRQ = 51;   //cell start interrupt number 
+    DCH2ECONbits.SIRQEN = DCH3ECONbits.SIRQEN = 1;    //start cell transfer when chsirq match
+    
+    
+    DCH0INT = DCH1INT = DCH2INT = DCH3INT = 0;
+    //allow interupts on transfer done;
+    //DCH0INTbits.CHDDIE = DCH1INTbits.CHDDIE = 1;
+    //DCH2INTbits.CHDDIE = DCH3INTbits.CHDDIE = 1;
+    
+    arm_dma(0);
+    arm_dma(2);
+    
+    DCH0CONbits.CHEN = 1;
+    DCH2CONbits.CHEN = 1;
+}
+
+static void i2s_init()
+{
+    SPI1CONbits.ON = SPI2CONbits.ON = 0;
+    Nop();
+    SPI1CONbits.DISSDO = SPI2CONbits.DISSDO = 1;     //disable output bit
+    //SPI1CONbits.ENHBUF = 1;     //enchanced buffer enable
+    SPI1CONbits.MSTEN = 1;      //enable master - we will generate clock on I2S1 not on I2S2!
+    SPI1CON2bits.AUDEN = SPI2CON2bits.AUDEN = 1;     //enable audio
+
+    SPI1CONbits.CKP = SPI2CONbits.CKP = 1;        //clock idle in low
+
+    SPI1STATbits.SPIROV = SPI2STATbits.SPIROV = 0;    //no overflow
+    
+    SPI1BRG = 12;       //clock,  32bit frame X 48khz sampling = 1536kHz - now we have 1?538?461,538461538
+    
+    IFS1bits.SPI1RXIF = 0;
+    IFS1bits.SPI2RXIF = 0;
+
+    //TODO vyhodit
+    //IPC7bits.SPI1IP = 5; //prioriy 1-7 0=disabled
+    //IPC7bits.SPI1IS = 0; //subprio 0-3
+    
+    //IEC1bits.SPI1RXIE = 1; //enable Rx interrupt
+}
+
+static void i2s_b_init() //TODO vyhodit
 {
     //TODO make it slave
-#warning "make a slave from I2S2"
+//#warning "make a slave from I2S2"
     SPI2CONbits.ON = 0;
     _nop();
     SPI2CONbits.DISSDO = 1;     //disable output bit
-    SPI2CONbits.ENHBUF = 1;     //enchanced buffer enable
+    //SPI2CONbits.ENHBUF = 1;     //enchanced buffer enable
     SPI2CONbits.MSTEN = 1;      //enable master - we will generate clock
     SPI2CON2bits.AUDEN = 1;     //enable audio
     SPI2CONbits.SRXISEL = 2;    //interrupt is generated whe buffer is half full
@@ -86,43 +131,59 @@ static void i2s_b_init()
     IEC1bits.SPI2RXIE = 1; //enable Rx interrupt
 }
 
-//Start or stop capturing I2S audio
-void tuner_audio_run(int tuner_id, int state)
+void* tuner_audio_get_buf(int tuner)
 {
+    if (queue_count(&aud_data[tuner].filled) <= 1)
+        return NULL;
+    else
+        return queue_pop(&aud_data[tuner].filled);
+}
 
-
-    if(tuner_id == 0)
-    {
-        IFS1CLR = 0b111 << 4;
-        SPI1CONbits.ON = 1; //state;
-    }
+bool  tuner_audio_put_buf(int tuner, void* buf)
+{
+    if (queue_full(&aud_data[tuner].free))
+        return false;
     else
     {
-        IFS1CLR = 0b111 << 18;
-        SPI2CONbits.ON = 1;
-    }        
+        queue_push(&aud_data[tuner].free, buf);
+        return true;
+    }
 }
 
-
-
-int16_t* tuner_audio_get(const int tuner_id)
-{
-    const unsigned frame_bytes = I2S_CHANNELS*I2S_FRAME_SIZE*I2S_SAMPLE_SIZE;
-    unsigned int dmaptr = (tuner_id == 0) ? DCH0DPTR : DCH1DPTR;
-    int buf_part=-1; 
-    for(;dmaptr > frame_bytes; dmaptr -= frame_bytes)
-        buf_part++;
-    
-    if(buf_part<0)
-        buf_part = I2S_FRAMES - 1;
-
-    return (int16_t*) i2s_buf[tuner_id][buf_part];
-}
 
 
 void tuner_audio_init()
 {
+    int i,j;
+    
+    for(i=0; i<2; i++)
+    {
+        queue_init(&aud_data[i].filled, aud_data[i].qbuf_filled, 4);
+        queue_init(&aud_data[i].free,   aud_data[i].qbuf_free,   4);
+        
+        for (j=0; j<AUDIO_PACKET_BUFS; j++)
+            queue_push(&aud_data[i].free, &aud_data[i].frame_buf[j]);
+    }
+    
+    dma_init();
+    i2s_init();
     DMACONbits.ON = 1;
-    i2s_a_init();
-    i2s_b_init();
+    //TODO i2s_b_init(); nevolat !!
+}
+
+void tuner_audio_task()
+{
+    static volatile __DCH0INTbits_t *DCHxINTbits[] = {&DCH0INTbits, 
+                                    (__DCH0INTbits_t*)&DCH1INTbits, 
+                                    (__DCH0INTbits_t*)&DCH2INTbits, 
+                                    (__DCH0INTbits_t*)&DCH3INTbits};
+    int i = 0;
+    for (;i<4;i++)
+    {
+        if(DCHxINTbits[i]->CHDDIF)
+        {
+            DCHxINTbits[i]->CHDDIF = 0;
+            arm_dma(i);
+        }
+    }
 }
