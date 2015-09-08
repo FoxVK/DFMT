@@ -20,6 +20,7 @@
 #include <xc.h>
 #include "drv/utils.h"
 #include "tuner_audio.h"
+#include "drv/debug_uart.h"
 
 
 static struct{
@@ -28,18 +29,40 @@ static struct{
     AudioFrame  frame_buf[AUDIO_PACKET_BUFS];
 }aud_data[2];
 
+static volatile unsigned int *DCHxDSA[] = {&DCH0DSA, &DCH1DSA, &DCH2DSA, &DCH3DSA};
+static volatile unsigned int *DCHxDSIZ[] = {&DCH0DSIZ, &DCH1DSIZ, &DCH2DSIZ, &DCH3DSIZ};    
+static volatile __DCH0CONbits_t *DCHxCONbits[] = {&DCH0CONbits, 
+                                    (__DCH0CONbits_t*)&DCH1CONbits, 
+                                    (__DCH0CONbits_t*)&DCH2CONbits, 
+                                    (__DCH0CONbits_t*)&DCH3CONbits};
+static volatile __DCH0INTbits_t *DCHxINTbits[] = {&DCH0INTbits, 
+                                    (__DCH0INTbits_t*)&DCH1INTbits, 
+                                    (__DCH0INTbits_t*)&DCH2INTbits, 
+                                    (__DCH0INTbits_t*)&DCH3INTbits};
+
 static void arm_dma(int dma)
 {
-    static volatile unsigned int *DCHxDSA[] = {&DCH0DSA, &DCH1DSA, &DCH2DSA, &DCH3DSA};
-    static volatile unsigned int *DCHxDSIZ[] = {&DCH0DSIZ, &DCH1DSIZ, &DCH2DSIZ, &DCH3DSIZ};
+    static char *title[] = {"AD0\r\n","AD1\r\n","AD2\r\n","AD3\r\n"};
+    static char *num[] = {"0 ","1 ","2 ","3 ","4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10 "};
+    
+    //if(DCHxCONbits[dma]->CHBUSY)
+        //debughalt();
     
     int tuner = (dma>1) ? 1 : 0 ;
-    //todo je treab resit jeslti je kam armovart ?
+    //todo je treab resit jeslti je kam armovart ? NE
+    //debug_uart_write(num[queue_count(&aud_data[tuner].free)]);
+    //debug_uart_write(num[queue_count(&aud_data[tuner].filled)]);
+    //debug_uart_write(title[dma]);
+    
     void *buf = queue_pop(&aud_data[tuner].free);
     if(!buf)
+    {
+        //static char *ov = "!\r\n";
+        //debug_uart_write(ov);
         buf = queue_pop(&aud_data[tuner].filled);
+    }
     
-    if(!buf) debughalt(); //TODO: toto by se nemelo nikdy stat
+    //if(!buf) debughalt(); //TODO: toto by se nemelo nikdy stat
     
     *DCHxDSA[dma]  = virt2phy(buf);
     *DCHxDSIZ[dma] = sizeof(AudioFrame);
@@ -72,9 +95,16 @@ static void dma_init()
     //DCH0INTbits.CHDDIE = DCH1INTbits.CHDDIE = 1;
     //DCH2INTbits.CHDDIE = DCH3INTbits.CHDDIE = 1;
     
-    arm_dma(0);
-    arm_dma(2);
     
+    int i;
+    for(i=0; i<4; i++)
+        arm_dma(i);
+    //arm_dma(0);
+    //arm_dma(2);
+    
+    
+    DCH0INTbits.CHDDIF = DCH1INTbits.CHDDIF = 0;
+    DCH2INTbits.CHDDIF = DCH3INTbits.CHDDIF = 0;
     DCH0CONbits.CHEN = 1;
     DCH2CONbits.CHEN = 1;
 }
@@ -134,7 +164,11 @@ static void i2s_b_init() //TODO vyhodit
 void* tuner_audio_get_buf(int tuner)
 {
     if (queue_count(&aud_data[tuner].filled) <= 1)
+    {
+        //static char *und = "Underrun!\r\n";
+        //debug_uart_write(und);
         return NULL;
+    }
     else
         return queue_pop(&aud_data[tuner].filled);
 }
@@ -155,7 +189,6 @@ bool  tuner_audio_put_buf(int tuner, void* buf)
 void tuner_audio_init()
 {
     int i,j;
-    
     for(i=0; i<2; i++)
     {
         queue_init(&aud_data[i].filled, aud_data[i].qbuf_filled, 4);
@@ -168,21 +201,21 @@ void tuner_audio_init()
     dma_init();
     i2s_init();
     DMACONbits.ON = 1;
+    SPI2CONbits.ON = 1;
+    SPI1CONbits.ON = 1;
     //TODO i2s_b_init(); nevolat !!
 }
 
 void tuner_audio_task()
 {
-    static volatile __DCH0INTbits_t *DCHxINTbits[] = {&DCH0INTbits, 
-                                    (__DCH0INTbits_t*)&DCH1INTbits, 
-                                    (__DCH0INTbits_t*)&DCH2INTbits, 
-                                    (__DCH0INTbits_t*)&DCH3INTbits};
     int i = 0;
     for (;i<4;i++)
     {
         if(DCHxINTbits[i]->CHDDIF)
         {
             DCHxINTbits[i]->CHDDIF = 0;
+            if(!queue_push(&aud_data[(i>1)?1:0].filled, phy2virt(*DCHxDSA[i])))
+                debughalt(); //TODO vyhodit
             arm_dma(i);
         }
     }

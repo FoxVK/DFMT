@@ -387,15 +387,15 @@ static void token(__U1STATbits_t stat)
 
 void usb_task()
 {
-    /*
-    int eps = bdt[USB_EP00][USB_EP_OUT][EP_EVEN].r.UOWN + bdt[USB_EP00][USB_EP_OUT][EP_ODD].r.UOWN;
+    
+    /*int eps = bdt[USB_EP00][USB_EP_OUT][EP_EVEN].r.UOWN + bdt[USB_EP00][USB_EP_OUT][EP_ODD].r.UOWN;
     static int leps = 0;
     if(leps != eps)
     {
         leps = eps;
         static char* str[] = {"0/2\r\n","1/2\r\n","2/2\r\n"};
         debug_uart_write(str[eps]);
-    }*/
+    }*/ //TODO: vyhodit
 
     
     if(U1IRbits.RESUMEIF)

@@ -95,21 +95,6 @@ void tuner_control_task()
 
         Tuner_com_state tun_s = tuner_com_state();
 
-        static bool bus = false;
-        if(tun_s == TUNER_COM_BUSY)
-        {
-            if(!bus)
-                U1TXREG = 'B';
-            bus = true;
-        }
-        else
-        {
-            if(bus)
-                U1TXREG = 'b';
-            bus = false;
-        }
-
-
         if( tun_s == TUNER_COM_BUSY)
             return;
 

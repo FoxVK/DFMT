@@ -24,6 +24,7 @@
 #include "drv/usb_audio.h"
 #include "tuner_audio.h"
 #include "tuner_control.h"
+#include "tuner_com.h"
 
 extern Usb_config config;
 
@@ -103,12 +104,23 @@ inline void app_init()
     audio_if = &uai;
     usb_audio_init(audio_if, 1, NULL);
     Usb_audio_add_ep(audio_if, USB_EP01, USB_EP_IN, app_usb_audio_td0_handler);
+    
+    tuner_init();
+    tuner_audio_init();
+    tuner_control_pwr(true);
+    //Tuner contorl je prazdny
+#warning "Check inits and make it nicer"
 
-    init_test_audio();
+    //init_test_audio();
+    static char *initd = "init done\n\r";  
+    debug_uart_write(initd);
 }
 
 inline void app_task()
 {
+    unsigned i = 0;
+    //while (i<100)Nop();
+    
     debug_uart_task();
     usb_task();
     tuner_audio_task();
@@ -123,9 +135,17 @@ inline void app_task()
             to_send = tuner_audio_get_buf(0);
     
         if(to_send)
-        {            
+        { 
+            static char * s = ">pkt ";
+            debug_uart_write(s);
             if(Usb_audio_send(audio_if, USB_EP01, to_send, sizeof(AudioFrame))==USB_RW_REQ_OK)
+            {
                 to_send = NULL;
+                static char * s = "YES\r\n";
+                debug_uart_write(s);
+            }
+            static char * n = "NO\r\n";
+            debug_uart_write(n);
         }
     }
 }
