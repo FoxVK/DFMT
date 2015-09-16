@@ -21,7 +21,7 @@
 #define	TUNER_AUDIO_H
 
 #define AUDIO_SAMPLE_CHAN_BYTES 2
-#define AUDIO_PACKET_BUFS 5
+#define AUDIO_PACKET_BUFS 6
 
 #include <inttypes.h>
 

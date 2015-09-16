@@ -88,6 +88,12 @@ void app_usb_audio_td0_handler(void * data, size_t len, void * usr_ptr)
     (void) usr_ptr;
     
     tuner_audio_put_buf(0, data);
+    
+    if(len != sizeof(AudioFrame))
+    {
+        static char *s = "Wrong len\r\n";
+        debug_uart_write(s);
+    }
 }
 
 inline void app_init()
@@ -109,7 +115,7 @@ inline void app_init()
     tuner_audio_init();
     tuner_control_pwr(true);
     //Tuner contorl je prazdny
-#warning "Check inits and make it nicer"
+//TODO:#warning "Check inits and make it nicer"
 
     //init_test_audio();
     static char *initd = "init done\n\r";  
@@ -136,16 +142,11 @@ inline void app_task()
     
         if(to_send)
         { 
-            static char * s = ">pkt ";
-            debug_uart_write(s);
+            static char * n = "USB overload\r\n";
             if(Usb_audio_send(audio_if, USB_EP01, to_send, sizeof(AudioFrame))==USB_RW_REQ_OK)
-            {
                 to_send = NULL;
-                static char * s = "YES\r\n";
-                debug_uart_write(s);
-            }
-            static char * n = "NO\r\n";
-            debug_uart_write(n);
+            else
+                debug_uart_write(n);
         }
     }
 }
