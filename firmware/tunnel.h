@@ -17,26 +17,11 @@
  */
 // </editor-fold>
 
-#ifndef TUNER_COM_H
-#define	TUNER_COM_H
+#ifndef TUNNEL_H
+#define	TUNNEL_H
 
-#include <inttypes.h>
-#include <stddef.h>
-#include "shared.h"
+void tunnel_init();
+void tunnel_task();
 
-typedef enum {
-        TUNER_COM_IDLE, TUNER_COM_BUSY, TUNER_COM_WRONG_ADDR, TUNER_COM_WRITE_NAK, TUNER_COM_DEV_BUSY
-    }Tuner_com_state; //TODO toto asi k tuneru
-
-void tuner_init();
-void tuner_write(int tuner_id, void* data, size_t len);
-void tuner_read(int tuner_id, void* data, size_t len);
-void tuner_hold_in_rst(int state);
-Tuner_com_state tuner_com_state();
-size_t tuner_rwed_bytes();
-
-void tuner_audio_run(int tuner_id, int state);
-int16_t * tuner_audio_get(const int tuner_id);
-
-#endif	/* TUNER_COM_H */
+#endif	/* TUNNEL_H */
 

@@ -26,32 +26,55 @@
 #define USB_PID 0xff01
 
 #define TUNNEL_INTERFACE_ID 2
-#define TUNNEL_EP_IN (0x02 | (1<<7))
-#define TUNNEL_EP_OUT 0x02
 
-#define TUNNEL_TUNER_SELECT_MASK 1
-#define TUNNEL_RW_SELECT_MASK 2
-#define TUNNEL_PING_MASK 4
-#define TUNNEL_ERROR_MASK 128
+#define TUNNEL_EP 0x02
+#define TUNNEL_EP_OUT TUNNEL_EP
+#define TUNNEL_EP_IN (TUNNEL_EP | (1<<7))
+
+typedef struct{
+
+    union{
+        uint8_t byte;
+        struct {
+            char STCINT:1;       //Tune complete has been triggered.
+            char reserved1_2:2;
+            char RSQINT:1;       //Received Signal Quality measurement has been triggered.
+            char reserved4_5:2;
+            char ERR:1;          //Error
+            char CTS:1;          //Clear to send next command.
+        }bits;
+    }STATUS;
+    uint8_t ARGS[15];
+}Tuner_read_reply;
+
+
 
 typedef enum {
-        TUNER_COM_IDLE, TUNER_COM_BUSY, TUNER_COM_WRONG_ADDR, TUNER_COM_WRITE_NAK, TUNER_COM_DEV_BUSY
-    }Tuner_com_state;
+    TUNNEL_REQ_WRITE=0, TUNNEL_REQ_READ=1,TUNNEL_REQ_PING=2
+}Tunnel_req_type;
 
-    typedef struct{
+typedef enum {
+    TUNNEL_ERROR_OK=0, TUNNEL_ERROR_I2CBUSY=1, TUNNEL_ERROR_I2C=2,  
+    TUNNEL_ERROR_TUNERNOTUP=3, TUNNEL_ERROR_REQINPORGRESS=4,
+    TUNNEL_ERROR_BADTYPE = 5,
+    TUNNEL_ERROR = 128
+}Tunnel_error;
 
-        union{
-            uint8_t byte;
-            struct {
-                char STCINT:1;       //Tune complete has been triggered.
-                char reserved1_2:2;
-                char RSQINT:1;       //Received Signal Quality measurement has been triggered.
-                char reserved4_5:2;
-                char ERR:1;          //Error
-                char CTS:1;          //Clear to send next command.
-            }bits;
-        }STATUS;
-        uint8_t ARGS[15];
-    }Tuner_read_reply;
+typedef struct
+{
+    char id;
+    union {
+        struct {
+            char error;
+            Tuner_read_reply reply;
+        }in; //reply
+        struct {
+            char tuner;
+            char type;
+            char rw_size;
+            uint8_t cmd[16];
+        }out;//request
+    };
+}Tunnel_msg;
 
 #endif	/* SHARED_H */

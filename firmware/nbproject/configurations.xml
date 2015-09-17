@@ -20,6 +20,7 @@
       <itemPath>tuner_com.h</itemPath>
       <itemPath>tuner_control.h</itemPath>
       <itemPath>tuner_audio.h</itemPath>
+      <itemPath>tunnel.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -41,6 +42,7 @@
       <itemPath>tuner_control.c</itemPath>
       <itemPath>tuner_com.c</itemPath>
       <itemPath>tuner_audio.c</itemPath>
+      <itemPath>tunnel.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

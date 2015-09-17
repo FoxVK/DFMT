@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=drv/debug_uart.c drv/utils.c drv/usb.c drv/usb_audio.c main.c app_config.c app.c usb_descriptors.c tuner_control.c tuner_com.c tuner_audio.c
+SOURCEFILES_QUOTED_IF_SPACED=drv/debug_uart.c drv/utils.c drv/usb.c drv/usb_audio.c main.c app_config.c app.c usb_descriptors.c tuner_control.c tuner_com.c tuner_audio.c tunnel.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/drv/debug_uart.o ${OBJECTDIR}/drv/utils.o ${OBJECTDIR}/drv/usb.o ${OBJECTDIR}/drv/usb_audio.o ${OBJECTDIR}/main.o ${OBJECTDIR}/app_config.o ${OBJECTDIR}/app.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/tuner_control.o ${OBJECTDIR}/tuner_com.o ${OBJECTDIR}/tuner_audio.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/drv/debug_uart.o.d ${OBJECTDIR}/drv/utils.o.d ${OBJECTDIR}/drv/usb.o.d ${OBJECTDIR}/drv/usb_audio.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/app_config.o.d ${OBJECTDIR}/app.o.d ${OBJECTDIR}/usb_descriptors.o.d ${OBJECTDIR}/tuner_control.o.d ${OBJECTDIR}/tuner_com.o.d ${OBJECTDIR}/tuner_audio.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/drv/debug_uart.o ${OBJECTDIR}/drv/utils.o ${OBJECTDIR}/drv/usb.o ${OBJECTDIR}/drv/usb_audio.o ${OBJECTDIR}/main.o ${OBJECTDIR}/app_config.o ${OBJECTDIR}/app.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/tuner_control.o ${OBJECTDIR}/tuner_com.o ${OBJECTDIR}/tuner_audio.o ${OBJECTDIR}/tunnel.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/drv/debug_uart.o.d ${OBJECTDIR}/drv/utils.o.d ${OBJECTDIR}/drv/usb.o.d ${OBJECTDIR}/drv/usb_audio.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/app_config.o.d ${OBJECTDIR}/app.o.d ${OBJECTDIR}/usb_descriptors.o.d ${OBJECTDIR}/tuner_control.o.d ${OBJECTDIR}/tuner_com.o.d ${OBJECTDIR}/tuner_audio.o.d ${OBJECTDIR}/tunnel.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/drv/debug_uart.o ${OBJECTDIR}/drv/utils.o ${OBJECTDIR}/drv/usb.o ${OBJECTDIR}/drv/usb_audio.o ${OBJECTDIR}/main.o ${OBJECTDIR}/app_config.o ${OBJECTDIR}/app.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/tuner_control.o ${OBJECTDIR}/tuner_com.o ${OBJECTDIR}/tuner_audio.o
+OBJECTFILES=${OBJECTDIR}/drv/debug_uart.o ${OBJECTDIR}/drv/utils.o ${OBJECTDIR}/drv/usb.o ${OBJECTDIR}/drv/usb_audio.o ${OBJECTDIR}/main.o ${OBJECTDIR}/app_config.o ${OBJECTDIR}/app.o ${OBJECTDIR}/usb_descriptors.o ${OBJECTDIR}/tuner_control.o ${OBJECTDIR}/tuner_com.o ${OBJECTDIR}/tuner_audio.o ${OBJECTDIR}/tunnel.o
 
 # Source Files
-SOURCEFILES=drv/debug_uart.c drv/utils.c drv/usb.c drv/usb_audio.c main.c app_config.c app.c usb_descriptors.c tuner_control.c tuner_com.c tuner_audio.c
+SOURCEFILES=drv/debug_uart.c drv/utils.c drv/usb.c drv/usb_audio.c main.c app_config.c app.c usb_descriptors.c tuner_control.c tuner_com.c tuner_audio.c tunnel.c
 
 
 CFLAGS=
@@ -160,6 +160,12 @@ ${OBJECTDIR}/tuner_audio.o: tuner_audio.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/tuner_audio.o 
 	@${FIXDEPS} "${OBJECTDIR}/tuner_audio.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/tuner_audio.o.d" -o ${OBJECTDIR}/tuner_audio.o tuner_audio.c   
 	
+${OBJECTDIR}/tunnel.o: tunnel.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/tunnel.o.d 
+	@${RM} ${OBJECTDIR}/tunnel.o 
+	@${FIXDEPS} "${OBJECTDIR}/tunnel.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/tunnel.o.d" -o ${OBJECTDIR}/tunnel.o tunnel.c   
+	
 else
 ${OBJECTDIR}/drv/debug_uart.o: drv/debug_uart.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/drv" 
@@ -226,6 +232,12 @@ ${OBJECTDIR}/tuner_audio.o: tuner_audio.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/tuner_audio.o.d 
 	@${RM} ${OBJECTDIR}/tuner_audio.o 
 	@${FIXDEPS} "${OBJECTDIR}/tuner_audio.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/tuner_audio.o.d" -o ${OBJECTDIR}/tuner_audio.o tuner_audio.c   
+	
+${OBJECTDIR}/tunnel.o: tunnel.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/tunnel.o.d 
+	@${RM} ${OBJECTDIR}/tunnel.o 
+	@${FIXDEPS} "${OBJECTDIR}/tunnel.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -mno-float -MMD -MF "${OBJECTDIR}/tunnel.o.d" -o ${OBJECTDIR}/tunnel.o tunnel.c   
 	
 endif
 

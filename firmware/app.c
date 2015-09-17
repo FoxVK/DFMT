@@ -25,6 +25,7 @@
 #include "tuner_audio.h"
 #include "tuner_control.h"
 #include "tuner_com.h"
+#include "tunnel.h"
 
 extern Usb_config config;
 
@@ -118,6 +119,9 @@ inline void app_init()
 //TODO:#warning "Check inits and make it nicer"
 
     //init_test_audio();
+    
+    tunnel_init();
+    
     static char *initd = "init done\n\r";  
     debug_uart_write(initd);
 }
@@ -131,6 +135,7 @@ inline void app_task()
     usb_task();
     tuner_audio_task();
     tuner_control_task();
+    tunnel_task();
     
     
     if(usb_audio_can_play(audio_if))
