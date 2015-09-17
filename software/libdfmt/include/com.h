@@ -11,15 +11,10 @@ typedef struct Libdfmt_device{
     struct Libdfmt_device *next;
 }Libdfmt_device;
 
-typedef enum {
-    TUNER_A=0, TUNER_B=1
-}Libdfmt_tuner;
-
-
 void com_init(int libusb_debug);
 void com_exit();
 
 int com_read (int tuner, void *data, size_t size, int timeout);
 int com_write(int tuner, void *data, size_t size, int timeout);
 
-#endif // COM_H
+#endif // COM_H_

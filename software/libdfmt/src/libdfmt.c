@@ -4,6 +4,7 @@
 void libdfmt_init(int libusb_debug)
 {
     com_init(libusb_debug);
+    com_test();
 }
 
 void libdfmt_exit()

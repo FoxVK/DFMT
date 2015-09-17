@@ -1,9 +1,11 @@
 #ifndef LIBDFMT_H
-#define COM_H
+#define LIBDFMT_H
 
 typedef struct Libdfmt_device Libdfmt_device;
 
-typedef enum Libdfmt_tuner Libdfmt_tuner; //TODO This is probably not so clever
+typedef enum {
+    TUNER_A=0, TUNER_B=1
+}Libdfmt_tuner;
 
 #ifdef __cplusplus
 extern "C" {
