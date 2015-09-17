@@ -4,7 +4,7 @@ SRCDIR=./src
 NAME=libdfmt
 
 CC=gcc
-CFLAGS=-I$(IDIR)
+CFLAGS=-Wall -Werror -I$(IDIR) -I/usr/include/libusb-1.0/
 
 LIBS=#-lusb-1.0
 
