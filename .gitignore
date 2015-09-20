@@ -33,3 +33,4 @@
 
 #eagle temporary
 hardware/*#*
+/firmware/dist/default/

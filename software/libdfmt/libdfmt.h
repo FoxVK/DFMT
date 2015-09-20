@@ -14,10 +14,25 @@ extern "C" {
 void libdfmt_init(int libusb_debug);
 void libdfmt_exit();
 
-int libdfmt_open(Libdfmt_device * device);
-void libdfmt_close(Libdfmt_device * device);
 void libdfmt_seek(Libdfmt_device * device, int up);
-void libdfmt_tune(Libdfmt_device * tuner, unsigned freq);
+void libdfmt_tune(Libdfmt_device * device, unsigned freq);
+
+
+
+typedef void(*Libdfmt_dev_callback)(Libdfmt_device*);
+
+void libdfmt_scan_devs();
+Libdfmt_device* libdfmt_get_all_devs();
+Libdfmt_device* libdfmt_next(Libdfmt_device* current_dev);
+
+int  libdfmt_dev_open(Libdfmt_device *dev);
+void libdfmt_dev_close(Libdfmt_device *dev);
+
+void libdfmt_new_dev_cb    (Libdfmt_dev_callback callback);
+void libdfmt_removed_dev_cb(Libdfmt_dev_callback callback);
+
+unsigned int libdfmt_get_dev_address(Libdfmt_device *dev);
+
 
 #ifdef __cplusplus
 }
