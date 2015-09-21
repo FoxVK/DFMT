@@ -5,6 +5,8 @@
 #include "drv/utils.h"
 #include "shared.h"
 
+#include "drv/debug_uart.h"
+
 #define MSG_COUNT 6
 
 enum {ST_READY, ST_REQUEST_COMES, ST_WAITNG_FOR_I2C}state;
@@ -25,12 +27,18 @@ static void callback_in(void *buf, size_t size, void * usrptr)
     (void) usrptr;
     (void) size;
     queue_push(&msg_queue, buf);
+    
+    static char *t = "buf_returned\r\n";
+    debug_uart_write(t);
 }
 
 static void callback_out(void *buf, size_t size, void * usrptr)
 {   //request comes
     (void) usrptr;
     (void) size;
+    
+    static char *t = "req comes\r\n";
+    debug_uart_write(t);
     
     if(state = ST_READY)
     {
@@ -57,7 +65,7 @@ void tunnel_init()
     request = NULL;
     
     usb_set_transfer_callback(TUNNEL_EP, USB_EP_IN, callback_in,  NULL);
-    usb_set_transfer_callback(TUNNEL_EP, USB_EP_IN, callback_out, NULL);
+    usb_set_transfer_callback(TUNNEL_EP, USB_EP_OUT, callback_out, NULL);
     usb_enable_ep(TUNNEL_EP, USB_EP_IN,  true, false);
     usb_enable_ep(TUNNEL_EP, USB_EP_OUT, true, false);
     
@@ -67,20 +75,32 @@ void tunnel_init()
 
 void tunnel_task()
 {
+    static char *req_w = "tunnel write\n\r";
+    static char *req_r = "tunnel read\n\r";
+    static char *req_rw_bus = "tunnel rw i2c bussy\n\r";
     
     switch(state)
     {
         case ST_READY:
+            if(request)
+            {
+                queue_push(&msg_queue, request);
+                request = NULL;
+            }
             break;
         case ST_REQUEST_COMES:
+            
             switch(request->out.type)
             {
                 case TUNNEL_REQ_PING:
+                    send(request, request_size);
+                    state = ST_READY;
                     break;
                 case TUNNEL_REQ_READ:
                 case TUNNEL_REQ_WRITE:
                     if(tuner_com_state()==TUNER_COM_BUSY)
                     {
+                        debug_uart_write(req_rw_bus);
                         request->in.error=TUNNEL_ERROR_I2CBUSY;
                         send(request, request_size);
                         state = ST_READY;
@@ -88,7 +108,8 @@ void tunnel_task()
                     else
                     {
                         if(request->out.type == TUNNEL_REQ_READ)
-                        {
+                        {   debug_uart_write(req_r);
+                        
                             int tuner = request->out.tuner;
                             size_t read_size = request->out.rw_size;
                             
@@ -106,6 +127,8 @@ void tunnel_task()
                         }
                         else
                         {
+                            debug_uart_write(req_w);
+                            
                             int tuner = request->out.tuner;
                             size_t write_size = request->out.rw_size;
                             
@@ -122,6 +145,10 @@ void tunnel_task()
                                 state = ST_READY;
 
                                 Tunnel_msg *ok_msg = (Tunnel_msg *)queue_pop(&msg_queue);
+                                if(!ok_msg)
+                                {
+                                    static char *s = "PRUSER!!!\n\r";
+                                }
                                 ok_msg->in.error=TUNNEL_ERROR_OK;
                                 ok_msg->id = request->id;
                                 send(ok_msg, request_size);
