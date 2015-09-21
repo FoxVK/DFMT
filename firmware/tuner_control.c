@@ -37,13 +37,22 @@ void tuner_control_pwr(bool state)
 
 bool tuner_control_tun_ready()
 {
-    return (tuners_are_on == 3) ? true : false ;
+    return true;//FIXME//(tuners_are_on == 3) ? true : false ;
 }
 
 void tuner_control_task()
 {
-    //TODO check it
+    static int i=0;
     
+    if(i<100)
+    {
+        i++;
+        tuner_hold_in_rst(1);
+    }
+    else
+        tuner_hold_in_rst(0); //FIXME
+    //TODO check it
+    /*
     static uint8_t cmd_power_up[]   = {0x01, 0x00, 0xB5};
     static uint8_t cmd_power_down[] = {0x11};
     static uint8_t cmd_tune[]       = {0x20,0x01,0x24,0x9A,0x00}; //0x01 = inaccurate but fast tunning alowed to 93.7
@@ -160,5 +169,5 @@ void tuner_control_task()
             tuners_are_on &= ~(1 << tid);
         else
             tuners_are_on |=  (1 << tid);
-    }
+    }*/
 }
