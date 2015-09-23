@@ -70,6 +70,9 @@ void app_config()
     //We do not need any analog pin
     ANSELA = 0;
     ANSELB = 0;
+    
+    TRISBbits.TRISB8 = 1;  //SCL1
+    TRISBbits.TRISB9 = 1;  //SDA1
 
     LATBbits.LATB2 = 0;
     TRISBbits.TRISB2 = 0;
