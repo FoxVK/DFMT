@@ -14,8 +14,8 @@ extern "C" {
 void libdfmt_init(int libusb_debug);
 void libdfmt_exit();
 
-void libdfmt_seek(Libdfmt_device * device, int up);
-void libdfmt_tune(Libdfmt_device * device, unsigned freq);
+int libdfmt_seek(Libdfmt_device * device, int up);
+int libdfmt_tune(Libdfmt_device * device, int tuner, unsigned freq);
 
 
 

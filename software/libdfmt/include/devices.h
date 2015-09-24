@@ -3,6 +3,18 @@
 
 #include "libusb.h"
 
+typedef enum {
+    LIBDFMT_OK                      = 0,
+    LIBDFMT_ERROR_TIMEOUT           =-1,
+    LIBDFMT_ERROR_DEV_BUSY          =-2,
+    LIBDFMT_ERROR_DEV_NOT_CONNECTED =-3,
+    LIBDFMT_ERROR_DEV_IN_USE        =-4,
+    LIBDFMT_ERROR_NO_PERMISSION     =-5,
+    LIBDFMT_ERROR_INVALID_TUNER     =-6,
+    LIBDFMT_ERROR_LUSB_GENERAL      =-7,
+    LIBDFMT_ERROR_INTERNAL          =-8
+}Libdfmt_error;
+
 typedef struct Libdfmt_device{
     libusb_device *lusb_dev;
     libusb_device_handle *lusb_handle;

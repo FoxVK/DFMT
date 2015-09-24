@@ -8,7 +8,7 @@ void cb(Libdfmt_device *dev)
 
 int main(void)
 {
-    printf("jedu\n");
+    printf("Test started\n");
     libdfmt_init(2);
 
     printf("CB reg\n");
@@ -20,10 +20,15 @@ int main(void)
 
     while(devs)
     {
-        printf("Found tuner 0x%04x\n", libdfmt_get_dev_address(devs));
+        //printf("Found tuner 0x%04x\n", libdfmt_get_dev_address(devs));
 
-        printf("Opening\n");
-        libdfmt_dev_open(devs);
+        printf("Opening %d \n", libdfmt_dev_open(devs));
+
+        printf("tunning A\n");
+        printf(" err=%d\n", libdfmt_tune(devs, 0, 9730));
+
+        //printf("tunning B\n");
+        //printf(" err=%d\n", libdfmt_tune(devs, 1, 9730));
 
         printf("Closing\n");
         libdfmt_dev_close(devs);
@@ -33,7 +38,7 @@ int main(void)
 
     libdfmt_exit();
 
-    printf("hotovo\n");
+    printf("Test done\n");
     return 0;
 
 }

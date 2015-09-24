@@ -2,13 +2,12 @@
 #include "mainwin.h"
 #include "ui_mainwin.h"
 
-#include "libdfmt.h"
-
-
 MainWin::MainWin(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWin)
 {
+    connect(&devices, SIGNAL(device_connected(Device*)), this, SLOT(dev_connected(Device*)));
+    connect(&devices, SIGNAL(device_disconnected(Device*)), this, SLOT(dev_removed(Device*)));
     ui->setupUi(this);
 }
 
@@ -35,4 +34,19 @@ void MainWin::test()
 
 
     qDebug() << Q_FUNC_INFO << "Done...";
+}
+
+
+void MainWin::dev_connected(Device *dev)
+{
+    qDebug("connected");
+    DeviceForm *form = new DeviceForm(dev, this);
+
+
+    form->show();
+}
+
+void MainWin::dev_removed(Device *dev)
+{
+
 }

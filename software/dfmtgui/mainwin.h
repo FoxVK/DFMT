@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "device.h"
+#include "devices.h"
+#include "deviceform.h"
 
 namespace Ui {
 class MainWin;
@@ -21,7 +23,11 @@ public slots:
 
 private:
     Ui::MainWin *ui;
-    QList<Device*> devices;
+    Devices devices;
+
+private slots:
+    void dev_connected(Device *dev);
+    void dev_removed(Device *dev);
 };
 
 #endif // MAINWIN_H

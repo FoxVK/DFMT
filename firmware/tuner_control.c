@@ -21,6 +21,7 @@
 #include "inttypes.h"
 
 #include "tuner_com.h"
+#include "drv/debug_uart.h"
 
 static bool tuner_on    = false;
 static int tuners_are_on = 0; 
@@ -37,12 +38,12 @@ void tuner_control_pwr(bool state)
 
 bool tuner_control_tun_ready()
 {
-    return true;//FIXME//(tuners_are_on == 3) ? true : false ;
+    return (tuners_are_on == 3) ? true : false ;
 }
 
 void tuner_control_task()
 {
-    static int i=0;
+    /*static int i=0;
     
     if(i<100)
     {
@@ -50,9 +51,9 @@ void tuner_control_task()
         tuner_hold_in_rst(1);
     }
     else
-        tuner_hold_in_rst(0); //FIXME
+        tuner_hold_in_rst(0); //FIXME*/
     //TODO check it
-    /*
+    
     static uint8_t cmd_power_up[]   = {0x01, 0x00, 0xB5};
     static uint8_t cmd_power_down[] = {0x11};
     static uint8_t cmd_tune[]       = {0x20,0x01,0x24,0x9A,0x00}; //0x01 = inaccurate but fast tunning alowed to 93.7
@@ -98,14 +99,38 @@ void tuner_control_task()
     static Tuner_read_reply reply[2];
     static int tid = 1;     //ID of currently porcessed tunner
 
-   
-           
+    static char *state_str[]={
+        "ST_DOWN\r\n",
+        "ST_PWRUP\r\n", 
+        "ST_RCLK_FREQ\r\n", "ST_RCLK_PRESC\r\n",
+        "ST_TUNE\r\n", "ST_TUNE_INT_UPDATE\r\n", "ST_TUNE_INT_CLR\r\n",
+        "ST_DOSR\r\n",
+        "ST_UP\r\n", 
+    };
+    
+    static int last_st[] = {ST_UP, ST_UP};
+    
+    if(last_st[tid]!=state[tid])    
+    {
+        last_st[tid]=state[tid];
+        static char *tun_str[] = {"TUN_A ", "TUN_B "};
+        debug_uart_write(tun_str[tid]);
+        debug_uart_write(state_str[state[tid]]);
+    }
+    
+    
     {
 
         Tuner_com_state tun_s = tuner_com_state();
 
         if( tun_s == TUNER_COM_BUSY)
             return;
+        
+        if( tun_s == TUNER_COM_WRONG_ADDR)
+        {
+            char *s = "wrong addr\r\n";
+            debug_uart_write(s);
+        }
 
         tid = (tid+1)&1;
 
@@ -169,5 +194,5 @@ void tuner_control_task()
             tuners_are_on &= ~(1 << tid);
         else
             tuners_are_on |=  (1 << tid);
-    }*/
+    }
 }

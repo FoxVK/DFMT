@@ -4,28 +4,30 @@
 #include <QList>
 #include <QObject>
 
+typedef struct Libdfmt_device Libdfmt_device;
+
+
+typedef enum {A=0, B=1} Tuner;
+
 
 class Device : public QObject
 {
     Q_OBJECT
 public:
+    explicit Device( Libdfmt_device * dev, QObject *parent = 0);
 
-    static QList<Device*> open_all();
-    static void close_all(QList<Device*>);
-
-    explicit Device(QObject *parent = 0);
-
-
-
-signals:
-    void closed(Device *dev);
-
-public slots:
-    void tune(unsigned freq);
+    void open();
     void close();
 
+signals:
+
+public slots:
+    void was_removed();
+    void tune(Tuner tuner, double freq_mhz);
+
 private:
-    static QList<Device*> opened_devs;
+    Libdfmt_device * dev;
+    bool connected;
 
 
 };

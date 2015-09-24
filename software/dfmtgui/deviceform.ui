@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DeviceForm</class>
+ <widget class="QWidget" name="DeviceForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>483</width>
+    <height>302</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QFrame" name="frqFrame">
+   <property name="geometry">
+    <rect>
+     <x>21</x>
+     <y>81</y>
+     <width>173</width>
+     <height>75</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QDoubleSpinBox" name="freqSpinBox">
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string>MHz</string>
+      </property>
+      <property name="minimum">
+       <double>76.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>108.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.050000000000000</double>
+      </property>
+      <property name="value">
+       <double>93.700000000000003</double>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSlider" name="freqSlider">
+      <property name="minimum">
+       <number>64</number>
+      </property>
+      <property name="maximum">
+       <number>108</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLabel" name="mainLabel">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>20</y>
+     <width>131</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>20</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>FM tuner</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QWidget" name="buttosWidget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>80</y>
+     <width>162</width>
+     <height>75</height>
+    </rect>
+   </property>
+   <widget class="QPushButton" name="playButton">
+    <property name="geometry">
+     <rect>
+      <x>59</x>
+      <y>18</y>
+      <width>44</width>
+      <height>38</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/buttons/icons/media-playback-start.svg</normaloff>:/buttons/icons/media-playback-start.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="seekBackButton">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>18</y>
+      <width>44</width>
+      <height>38</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/buttons/icons/media-seek-backward.svg</normaloff>:/buttons/icons/media-seek-backward.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="seekForwardButton">
+    <property name="geometry">
+     <rect>
+      <x>109</x>
+      <y>18</y>
+      <width>44</width>
+      <height>38</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/buttons/icons/media-seek-forward.svg</normaloff>:/buttons/icons/media-seek-forward.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>seekBackButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DeviceForm</receiver>
+   <slot>seek_back_A()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>295</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>seekForwardButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DeviceForm</receiver>
+   <slot>seek_forward_A()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>407</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>312</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>freqSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>DeviceForm</receiver>
+   <slot>tune_A(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>115</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>tune_A(double)</slot>
+  <slot>seek_forward_A()</slot>
+  <slot>seek_back_A()</slot>
+ </slots>
+</ui>

@@ -21,7 +21,7 @@
 #define	CONFIG_H
 
 //DEBUG_UART configuration
-#define DEBUG_UART_QUEUE_SIZE 40
+#define DEBUG_UART_QUEUE_SIZE 600
 
 
 //USB configuration

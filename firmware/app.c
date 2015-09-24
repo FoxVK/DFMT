@@ -89,12 +89,6 @@ void app_usb_audio_td0_handler(void * data, size_t len, void * usr_ptr)
     (void) usr_ptr;
     
     tuner_audio_put_buf(0, data);
-    
-    if(len != sizeof(AudioFrame))
-    {
-        static char *s = "Wrong len\r\n";
-        debug_uart_write(s);
-    }
 }
 
 inline void app_init()
@@ -102,6 +96,10 @@ inline void app_init()
     debug_uart_init();
     static char * run = "\n\rReseted\n\r";
     debug_uart_write(run);
+    
+    tuner_init();
+    tuner_audio_init();
+    tuner_control_pwr(true);
 
     config.event_callback = usb_event;
     config.ct_request_callback = &app_usb_ct_handler;
@@ -110,15 +108,7 @@ inline void app_init()
     static Usb_audio_iface uai;
     audio_if = &uai;
     usb_audio_init(audio_if, 1, NULL);
-    Usb_audio_add_ep(audio_if, USB_EP01, USB_EP_IN, app_usb_audio_td0_handler);
-    
-    tuner_init();
-    tuner_audio_init();
-    tuner_control_pwr(true);
-    //Tuner contorl je prazdny
-//TODO:#warning "Check inits and make it nicer"
-
-    //init_test_audio();
+    Usb_audio_add_ep(audio_if, USB_EP01, USB_EP_IN, app_usb_audio_td0_handler);   
     
     tunnel_init();
     
@@ -129,7 +119,7 @@ inline void app_init()
 inline void app_task()
 {
     unsigned i = 0;
-    //while (i<100)Nop();
+    for (;i<50;i++)Nop();
     
     debug_uart_task();
     usb_task();
@@ -153,5 +143,13 @@ inline void app_task()
             else
                 debug_uart_write(n);
         }
+    }
+    
+    static int t = 54;
+    if(tuner_control_tun_ready() != t)
+    {
+        char *T = "tuners ready\r\n", *F = "tuners NOT ready\r\n";
+        debug_uart_write(tuner_control_tun_ready() ? T : F );
+        t = tuner_control_tun_ready();
     }
 }

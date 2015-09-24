@@ -14,12 +14,17 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwin.cpp \
-    device.cpp
+    device.cpp \
+    devices.cpp \
+    deviceform.cpp
 
 HEADERS  += mainwin.h \
-    device.h
+    device.h \
+    devices.h \
+    deviceform.h
 
-FORMS    += mainwin.ui
+FORMS    += mainwin.ui \
+    deviceform.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libdfmt -ldfmt
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libdfmt -ldfmt
@@ -33,3 +38,6 @@ DEPENDPATH += $$PWD/../libdfmt
 #else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../libdfmt/dfmt.lib
 #else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../libdfmt/dfmt.lib
 #else:unix: PRE_TARGETDEPS += $$PWD/../../../libdfmt/libdfmt.a
+
+RESOURCES += \
+    icons.qrc
