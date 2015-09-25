@@ -191,8 +191,8 @@ void tuner_audio_init()
     int i,j;
     for(i=0; i<2; i++)
     {
-        queue_init(&aud_data[i].filled, aud_data[i].qbuf_filled, 4);
-        queue_init(&aud_data[i].free,   aud_data[i].qbuf_free,   4);
+        queue_init(&aud_data[i].filled, aud_data[i].qbuf_filled, AUDIO_PACKET_BUFS);
+        queue_init(&aud_data[i].free,   aud_data[i].qbuf_free,   AUDIO_PACKET_BUFS);
         
         for (j=0; j<AUDIO_PACKET_BUFS; j++)
             queue_push(&aud_data[i].free, &aud_data[i].frame_buf[j]);
