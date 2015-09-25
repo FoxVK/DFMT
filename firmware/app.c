@@ -53,6 +53,8 @@ void usb_event(Usb_event ev)
                 usb_audio_claim(audio_if);
             else
                 usb_audio_release(audio_if);
+            
+            tunnel_reset_data01();
         }
             break;
         case USB_EV_RESET:

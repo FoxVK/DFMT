@@ -22,6 +22,7 @@
 #include "shared.h"
 
 #include "drv/debug_uart.h"
+#include "tunnel.h"
 
 #define MSG_COUNT 6
 
@@ -35,9 +36,17 @@ static void *queue_array[MSG_COUNT];
 static Tunnel_msg *request;
 static size_t request_size;
 
+static int data01;
+
+void tunnel_reset_data01()
+{
+    data01 = 0;
+}
+
 static inline void send(Tunnel_msg *msg, size_t size)
 {
-    usb_arm_ep(TUNNEL_EP, USB_EP_IN, (void*)msg, size, 0);
+    usb_arm_ep(TUNNEL_EP, USB_EP_IN, (void*)msg, size, data01);
+    data01 ^= 1;
 }
 
 static void callback_in(void *buf, size_t size, void * usrptr)
@@ -82,6 +91,8 @@ void tunnel_init()
 {
     int i;
     state = ST_READY;
+    
+    tunnel_reset_data01();
     
     queue_init(&msg_queue, queue_array, MSG_COUNT);
     

@@ -23,5 +23,7 @@
 void tunnel_init();
 void tunnel_task();
 
+void tunnel_reset_data01();
+
 #endif	/* TUNNEL_H */
 
