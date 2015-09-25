@@ -120,8 +120,8 @@ inline void app_init()
 
 inline void app_task()
 {
-    unsigned i = 0;
-    for (;i<50;i++)Nop();
+    //unsigned i = 0;
+    //for (;i<50;i++)Nop();
     
     debug_uart_task();
     usb_task();
@@ -139,19 +139,8 @@ inline void app_task()
     
         if(to_send)
         { 
-            static char * n = "USB overload\r\n";
             if(Usb_audio_send(audio_if, USB_EP01, to_send, sizeof(AudioFrame))==USB_RW_REQ_OK)
                 to_send = NULL;
-            else
-                debug_uart_write(n);
         }
-    }
-    
-    static int t = 54;
-    if(tuner_control_tun_ready() != t)
-    {
-        char *T = "tuners ready\r\n", *F = "tuners NOT ready\r\n";
-        debug_uart_write(tuner_control_tun_ready() ? T : F );
-        t = tuner_control_tun_ready();
     }
 }

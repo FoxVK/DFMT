@@ -253,14 +253,14 @@ static void set_adress_callback()
 
 static void control_transfer(void * buf, size_t size)
 {
-    static char* dbg = "Setup ";
+    /*static char* dbg = "Setup ";
     static char dbg_type[] = "0000\r\n";
-    debug_uart_write(dbg);
+    debug_uart_write(dbg);*/
 
     Usb_ct_request * req = (Usb_ct_request*)buf;
 
-    uint2hex(req->request, dbg_type, 4);
-    debug_uart_write(dbg_type);
+    /*uint2hex(req->request, dbg_type, 4);
+    debug_uart_write(dbg_type);*/
     bool stall_it = true;
 
     if(req->ReqType_bits.recipient == 0 && req->ReqType_bits.type == 0)
