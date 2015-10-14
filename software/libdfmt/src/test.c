@@ -1,10 +1,11 @@
 #include <stdio.h>
-#include "../libdfmt.h"
+#include "libdfmt.h"
 
 void cb(Libdfmt_device *dev)
 {
     printf(" Callback: Found tuner 0x%04x\n", libdfmt_get_dev_address(dev));
 }
+
 
 int main(void)
 {
@@ -22,10 +23,13 @@ int main(void)
     {
         //printf("Found tuner 0x%04x\n", libdfmt_get_dev_address(devs));
 
+        Libdfmt_tuner *t_a, *t_b;
+        libdfmt_get_tuners(devs, &t_a, &t_b);
+
         printf("Opening %d \n", libdfmt_dev_open(devs));
 
         printf("tunning A\n");
-        printf(" err=%d\n", libdfmt_tune(devs, 0, 9730));
+        printf(" err=%d\n", libdfmt_tune(t_a, 97.3));
 
         //printf("tunning B\n");
         //printf(" err=%d\n", libdfmt_tune(devs, 1, 9730));

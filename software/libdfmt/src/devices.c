@@ -1,17 +1,56 @@
+//SMAZAT
+
 #include <stdlib.h>
-#include "devices.h"
+#include <libusb.h>
+
+#include "libdfmt.h"
 #include "shared.h"
+#include "libdfmt_device.h"
 
 #include "stdio.h"
 
 static Libdfmt_device *devices_connected, *devices_disconnected;
 static Libdfmt_dev_callback cb_new, cb_removed;
 
-void dev_init()
+void devs_init()
 {
     devices_connected = devices_disconnected = NULL;
 
     cb_new = cb_removed = NULL;
+}
+
+void devs_exit()
+{
+    while(devices_disconnected)
+    {
+        Libdfmt_device *next = devices_disconnected->next;
+        if(devices_disconnected->lusb_handle)
+            libdfmt_dev_close(devices_disconnected);
+        free(devices_disconnected);
+        devices_disconnected = next;
+    }
+
+    while(devices_connected)
+    {
+        Libdfmt_device *next = devices_connected->next;
+        if(devices_connected->lusb_handle)
+            libdfmt_dev_close(devices_connected);
+        free(devices_connected);
+        devices_connected = next;
+    }
+}
+
+static void fill_dev(libusb_device *lusb_dev, Libdfmt_device *dev, Libdfmt_device *next)
+{
+    dev->lusb_dev = lusb_dev;
+    dev->lusb_handle = NULL;
+    dev->next = next;
+    dev->present = 1;
+
+    dev->tunerA.dev = dev->tunerB.dev = dev;
+    dev->tunerA.is_busy = dev->tunerB.is_busy = 1;
+    dev->tunerA.tuner = 0;
+    dev->tunerB.tuner = 1;
 }
 
 static void add_dev(libusb_device *lusb_dev)
@@ -61,9 +100,7 @@ static void add_dev(libusb_device *lusb_dev)
     if(!d)
         d = malloc(sizeof(Libdfmt_device));
 
-    d->next = devices_connected;
-    d->lusb_dev = lusb_dev;
-    d->lusb_handle = NULL;
+    fill_dev(lusb_dev, d, devices_connected);
     devices_connected = d;
 
     if(cb_new)
@@ -129,66 +166,9 @@ static void remove_not_present()
     }
 }
 
-void dev_exit()
-{
-    while(devices_disconnected)
-    {
-        Libdfmt_device *next = devices_disconnected->next;
-        if(devices_disconnected->lusb_handle)
-            libdfmt_dev_close(devices_disconnected);
-        free(devices_disconnected);
-        devices_disconnected = next;
-    }
 
-    while(devices_connected)
-    {
-        Libdfmt_device *next = devices_connected->next;
-        if(devices_connected->lusb_handle)
-            libdfmt_dev_close(devices_connected);
-        free(devices_connected);
-        devices_connected = next;
-    }
-}
 
-static int parse_lusb_err(int err)
-{
-//    LIBUSB_SUCCESS              Success (no error)
-//    LIBUSB_ERROR_IO             Input/output error.
-//    LIBUSB_ERROR_INVALID_PARAM	Invalid parameter.
-//    LIBUSB_ERROR_ACCESS         Access denied (insufficient permissions)
-//    LIBUSB_ERROR_NO_DEVICE		No such device (it may have been disconnected)
-//    LIBUSB_ERROR_NOT_FOUND		Entity not found.
-//    LIBUSB_ERROR_BUSY           Resource busy.
-//    LIBUSB_ERROR_TIMEOUT		Operation timed out.
-//    LIBUSB_ERROR_OVERFLOW		Overflow.
-//    LIBUSB_ERROR_PIPE           Pipe error.
-//    LIBUSB_ERROR_INTERRUPTED	System call interrupted (perhaps due to signal)
-//    LIBUSB_ERROR_NO_MEM         Insufficient memory.
-//    LIBUSB_ERROR_NOT_SUPPORTED	Operation not supported or unimplemented on this platform.
-//    LIBUSB_ERROR_OTHER          Other error.
 
-    switch (err)
-    {
-    case LIBUSB_SUCCESS:
-        return LIBDFMT_OK;
-
-    case LIBUSB_ERROR_TIMEOUT:
-        return LIBDFMT_ERROR_TIMEOUT;
-
-    case LIBUSB_ERROR_ACCESS:
-        return LIBDFMT_ERROR_NO_PERMISSION;
-
-    case LIBUSB_ERROR_NO_DEVICE:
-    case LIBUSB_ERROR_NOT_FOUND:
-        libdfmt_scan_devs();
-        return LIBDFMT_ERROR_DEV_NOT_CONNECTED;
-
-    default:
-        return LIBDFMT_ERROR_LUSB_GENERAL;
-    }
-
-    return err;
-}
 
 void libdfmt_scan_devs()
 {
@@ -234,59 +214,9 @@ Libdfmt_device* libdfmt_next(Libdfmt_device* current_dev)
         return NULL;
 }
 
-int libdfmt_dev_open(Libdfmt_device *dev)
-{
-    int ret = libusb_open(dev->lusb_dev, &dev->lusb_handle);
-    if(!ret)
-        ret = libusb_claim_interface(dev->lusb_handle, TUNNEL_INTERFACE_ID);
-    if(ret)
-        printf("libdfmt_dev_open > %s\n",libusb_error_name(ret));
-    return parse_lusb_err(ret);
-}
 
-void libdfmt_dev_close(Libdfmt_device *dev)
-{
-    if(dev->lusb_handle)
-    {
-        libusb_release_interface(dev->lusb_handle, TUNNEL_INTERFACE_ID);
-        libusb_close(dev->lusb_handle);
-        dev->lusb_handle = NULL;
-    }
-}
 
-int dev_usb_send(Libdfmt_device *dev, void *buf, size_t buf_size, unsigned int timeout)
-{
-    int transferred;
-    int ret = libusb_bulk_transfer( dev->lusb_handle,
-                                    TUNNEL_EP_OUT,
-                                    (unsigned char*)buf,
-                                    (int)buf_size,
-                                    &transferred,
-                                    timeout
-                                  );
-    if(ret)
-        return parse_lusb_err(ret);
 
-    return transferred;
-}
-
-int dev_usb_receive(Libdfmt_device *dev, void *buf, size_t buf_size, unsigned int timeout)
-{
-    int transferred;
-    int ret = libusb_bulk_transfer( dev->lusb_handle,
-                                    TUNNEL_EP_IN,
-                                    (unsigned char*)buf,
-                                    (int)buf_size,
-                                    &transferred,
-                                    timeout
-                                  );
-    if(1)
-        printf("libusb_bulk_transfer > %s\n", libusb_error_name(ret));
-    if(ret)
-        return parse_lusb_err(ret);
-
-    return transferred;
-}
 
 void libdfmt_new_dev_cb    (Libdfmt_dev_callback callback)
 {
@@ -296,12 +226,4 @@ void libdfmt_new_dev_cb    (Libdfmt_dev_callback callback)
 void libdfmt_removed_dev_cb(Libdfmt_dev_callback callback)
 {
     cb_removed = callback;
-}
-
-unsigned int libdfmt_get_dev_address(Libdfmt_device *dev)
-{
-    const unsigned int bus  = libusb_get_bus_number(dev->lusb_dev);
-    const unsigned int addr = libusb_get_device_address(dev->lusb_dev);
-
-    return addr | (bus<<8);
 }

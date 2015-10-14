@@ -1,14 +1,15 @@
 IDIR =../include
 ODIR=../obj
+DOC=../doc
 
 NAME=libdfmt
 
 CC=gcc
-CFLAGS=-Wall -Werror -I$(IDIR) -I/usr/include/libusb-1.0/ -g
+CFLAGS=-Wall -std=c99 -I../ -I$(IDIR) -I/usr/include/libusb-1.0/ -g
 
 LIBS= -lusb-1.0
 
-DEPS = ../libdfmt.h $(wildcard $(IDIR)/*.h)
+DEPS = $(wildcard ../*.h) $(wildcard $(IDIR)/*.h)
 
 OBJ = $(patsubst %.c,%.o,$(wildcard *.c))
 
@@ -32,5 +33,13 @@ clean:
 .PHONY: test
 test: $(OBJ)
 	gcc $(CFLAGS) -o ../$(NAME).bin $(patsubst %, $(ODIR)/%, $(OBJ)) $(LIBS)  && chmod +x ../$(NAME).bin
+
+.PHONY: doc
+doc: $(DOC)/html/index.html
+
+
+$(DOC)/html/index.html: $(wildcard ../*.h) $(DOC)/Doxyfile
+	cd $(DOC) && doxygen
+
 
 debug: CFLAGS +=
