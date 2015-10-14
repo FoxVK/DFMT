@@ -1,4 +1,4 @@
-update=Thu 11 Jun 2015 12:28:34 CEST
+update=Wed 14 Oct 2015 20:30:12 CEST
 version=1
 last_client=kicad
 [cvpcb]
@@ -41,16 +41,6 @@ LibName28=atmel
 LibName29=contrib
 LibName30=valves
 LibName31=dfmt
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=/home/fox/banan/
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceForceRefPrefix=0
-SpiceUseNetNumbers=0
-LabSize=200
 [pcbnew]
 version=1
 PageLayoutDescrFile=
@@ -73,3 +63,13 @@ BoardOutlineThickness=0.09999999999999999
 ModuleOutlineThickness=0.15
 [general]
 version=1
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=../exports/
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=200

@@ -10,7 +10,6 @@ LIBS:cmos4000
 LIBS:adc-dac
 LIBS:memory
 LIBS:xilinx
-LIBS:special
 LIBS:microcontrollers
 LIBS:dsp
 LIBS:microchip
@@ -55,17 +54,6 @@ F 2 "Housings_DIP:DIP-28_W7.62mm" H 6200 4350 60  0001 C CNN
 F 3 "" H 6200 4350 60  0000 C CNN
 	1    7000 4350
 	1    0    0    -1  
-$EndComp
-$Comp
-L USB_OTG P4
-U 1 1 55675507
-P 9200 2250
-F 0 "P4" H 9525 2125 50  0000 C CNN
-F 1 "USB_OTG" H 9200 2450 50  0000 C CNN
-F 2 "Connect:USB_Mini-B" V 9150 2150 60  0001 C CNN
-F 3 "" V 9150 2150 60  0000 C CNN
-	1    9200 2250
-	0    1    1    0   
 $EndComp
 $Comp
 L LE33-SMT IC3
@@ -560,8 +548,6 @@ Wire Wire Line
 Wire Wire Line
 	8850 1650 8850 2050
 Wire Wire Line
-	8850 2050 8900 2050
-Wire Wire Line
 	5150 4400 5150 4800
 Wire Wire Line
 	5150 4600 5250 4600
@@ -669,8 +655,6 @@ Wire Wire Line
 Wire Wire Line
 	7850 3500 8100 3500
 Wire Wire Line
-	8900 2150 8650 2150
-Wire Wire Line
 	8650 2150 8650 4150
 Wire Wire Line
 	7900 4150 7900 4300
@@ -682,8 +666,6 @@ Wire Wire Line
 	7950 4400 7950 4200
 Wire Wire Line
 	8750 4200 8750 2250
-Wire Wire Line
-	8750 2250 8900 2250
 Wire Bus Line
 	8150 4800 8150 5400
 Wire Wire Line
@@ -871,7 +853,6 @@ Wire Wire Line
 	6050 5100 5950 5100
 Connection ~ 5950 5100
 Connection ~ 6400 4900
-NoConn ~ 8900 2350
 NoConn ~ 6450 3800
 NoConn ~ 6450 3900
 NoConn ~ 3000 4250
@@ -925,9 +906,7 @@ F 3 "" H 7000 2100 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8900 2450 8850 2450
-Wire Wire Line
-	8850 2450 8850 2650
+	8850 2350 8850 2650
 $Comp
 L SW_PUSH SW1
 U 1 1 55770C85
@@ -1231,4 +1210,25 @@ Text Label 6350 4000 2    60   ~ 0
 DFS
 Text Label 6350 4300 2    60   ~ 0
 DFS
+$Comp
+L USB_B P4
+U 1 1 5619540A
+P 9200 2250
+F 0 "P4" H 9400 2050 50  0000 C CNN
+F 1 "USB_B" H 9150 2450 50  0000 C CNN
+F 2 "dfmt:USB20_B_F_molex_tht_kink" V 9150 2150 60  0001 C CNN
+F 3 "" V 9150 2150 60  0000 C CNN
+	1    9200 2250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8850 2050 8900 2050
+Wire Wire Line
+	8900 2150 8650 2150
+Wire Wire Line
+	8750 2250 8900 2250
+Wire Wire Line
+	8900 2350 8850 2350
+Wire Wire Line
+	9300 2550 9300 2650
 $EndSCHEMATC
