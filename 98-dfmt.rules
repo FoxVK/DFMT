@@ -1,0 +1,4 @@
+# Dual FM Tuner
+ACTION=="add", SUBSYSTEM=="usb_device", SYSFS{idVendor}=="00a6", SYSFS{idProduct}=="ff01", MODE="0666"
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="00a6", ATTR{idProduct}=="ff01", MODE="0666"
+
