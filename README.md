@@ -18,7 +18,7 @@ First version of device will alows you to receive sound from first tuner while s
 * I2C is done and tested.
 * I2S is working but there is a problem with discarding buffers due to USB and I2S clock inaccuracy.
 
-##Software
+##Software:
 
 ### Library libdfmt:
 * low level interface: Done and tested exept ping.
@@ -31,3 +31,4 @@ First version of device will alows you to receive sound from first tuner while s
 ## Hardware:
 * Schematic was sucessfully tested on breadborad.
 * PCB design is done and was send to fab.
+![PCB](/hardware/exports/dfmt-top.png)
