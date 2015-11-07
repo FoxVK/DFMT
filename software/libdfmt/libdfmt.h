@@ -2,9 +2,25 @@
 #define LIBDFMT_H
 
 #include <stdlib.h>
+#include <stdint.h>
 
 /** @file libdfmt.h
- * @brief libdfmt public header file
+ * @brief libdfmt public header file.
+ * @copyright
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * @copyright
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * @copyright
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * @copyright
+ * Copyright: Pavel Kovar 2015 <pavel.kovar@vsetin.org>.
  */
 
 #ifdef __cplusplus
@@ -82,6 +98,7 @@ void libdfmt_scan_devs();
 
 /**
  * @brief Returns connected devices
+ *
  * To update list use libdfmt_scan_devs().
  * You can go through list usign libdfmt_next().
  * To reset list just call this function again. It does not perform any scan.
@@ -202,7 +219,9 @@ Libdfmt_error libdfmt_i2c_recv(Libdfmt_tuner *tuner, char *buf, size_t *size,
 /**
  * @brief Gets status byte of tuner.
  * Useful for determining is is safe to send next command.
- * Unlike libdfmt_check_bussy() this function does not return @ref LIBDFMT_ERROR_TUNER_BUSY as result of status byte. This error code will be returned only in case unfinished previvous I2C read or write.
+ *
+ * Unlike libdfmt_check_bussy() this function does not return @ref LIBDFMT_ERROR_TUNER_BUSY as result of status byte.
+ * This error code will be returned only in case unfinished previvous I2C read or write.
  * @param tuner Selected tuner
  * @param status_byte Pointer to store status byte.
  * @return LIBDFMT_OK on success or other @ref Libdfmt_error.
@@ -261,17 +280,43 @@ Libdfmt_error libdfmt_cmd_recv_reply(Libdfmt_tuner *tuner,
  **/
 Libdfmt_error libdfmt_check_int(Libdfmt_tuner *, char *status_byte);
 
+//ml_property.c
+
+/**
+ * @brief libdfmt_prop_set Sets property.
+ * @param tuner Tuner on which porperty wil be set.
+ * @param prop Property
+ * @param value Desired value of property.
+ * @return @ref LIBDFMT_OK on success or other @ref Libdfmt_error.
+ */
+Libdfmt_error libdfmt_prop_set(Libdfmt_tuner *tuner,
+                               unsigned prop, unsigned value);
+
+/**
+ * @brief libdfmt_prop_set Gets property.
+ * @param tuner Selected tuner.
+ * @param prop Property
+ * @param value Pointer to memory where value of property will be stored.
+ * @return @ref LIBDFMT_OK on success or other @ref Libdfmt_error.
+ */
+Libdfmt_error libdfmt_prop_get(Libdfmt_tuner *tuner,
+                               unsigned prop, unsigned *value);
+
 /** @} */ // end of ml group
 
 
 
 /** @defgroup hl High level tuner access
  *  @brief Funcitons for tunning, retrieving metrics and RDS.
+ *
+ *  For better understanding to RDS see <a href=https://en.wikipedia.org/wiki/Radio_Data_System>wikipedia</a> or for more detailed description,
+ *  folowing article <a href=http://www.2wcom.com/fileadmin/redaktion/dokumente/Company/RDS_Basics.pdf>2wcom - RDS Basics</a>.
  *  @{
  */
 
 /**
  * @brief Search for valid frequency.
+ *
  * Function check if tuner is bussy before tune cmd and error responce after issuing cmd.
  * Seek starts on current frequency and goes up (up=1) or down(up=0). Tuner automaticaly rollover end of frequency range and continues in selected direction. If whole band is scanned and no station was found tunner stops seeking.
  * Function does not wait until tunning is done.
@@ -290,6 +335,63 @@ Libdfmt_error libdfmt_seek(Libdfmt_tuner *tuner, int up);
  * @return @ref LIBDFMT_OK on success, @ref LIBDFMT_ERROR_BAD_ARGUMENT if frequency is not in range or other @ref Libdfmt_error .
  **/
 Libdfmt_error libdfmt_tune(Libdfmt_tuner *tuner, float freq);
+
+/**
+ * @brief Libdfmt_tunning_done Call this function after libdfmt_tune() or libdfmt_seek() to get know if tunning was done.
+ * If called multiple times, it resturns 1 only once.
+ * @param tuner Selected tuner
+ * @param done  Pointer to int where 1 will be set if tunning is done or 0 if not
+ * @return @ref LIBDFMT_OK on success or @ref Libdfmt_error.
+ */
+Libdfmt_error libdfmt_tunning_done(Libdfmt_tuner *tuner, int *done);
+
+/**
+ * @brief Libdfmt_get_freq reads tunned frequency from tuner.
+ * Each parameter of this function (exept tuner) can be NULL if not needed.
+ * @param tuner Selected tuner.
+ * @param freq Frequency in MHz.
+ * @param rssi Reseived signal strength indicator in dBμV.
+ * @param snr Signal to noise ration 0-127dB.
+ * @param multipath Current multipath metric (0 = no multipath; 100 = full multipath).
+ * See Silicon lab's <a href=http://www.silabs.com/Marcom%20Documents/WhitePapers/Automotive-Radio-Key-Requirements.pdf>
+ * Key Requirements for Multi-Tuner Automotive Radio Designs</a>.
+ * @param valid True if tuned frequency is valid channel - you are not receiving noise.
+ * @return @ref LIBDFMT_OK on success or @ref Libdfmt_error.
+ */  
+Libdfmt_error libdfmt_get_freq(Libdfmt_tuner *tuner, float *freq,
+                               unsigned *rssi, unsigned *snr,
+                               unsigned *multipath, int *is_valid);
+
+/**
+ * @brief libdfmt_rds_receiving
+ * @param tuner Selected tuner to turn receiving on or off.
+ * @param receive 0 stop receiving of rds, any other value turs receiving on.
+ * @return @ref LIBDFMT_OK on success or @ref Libdfmt_error.
+ */
+Libdfmt_error libdfmt_rds_receiving(Libdfmt_tuner *tuner, int receive);
+
+/** @brief Struct representing one group of RDS data.
+ *  @see libdfmt_rds_read()
+  */
+typedef struct{
+    uint16_t blockA;
+    uint16_t blockB;
+    uint16_t blockC;
+    uint16_t blockD;
+}Libdfmt_rds_group;
+
+
+/**
+ * @brief libdfmt_rds_read Reads one group from tuner's FIFO and/or returns how many groups are stored in tuner.
+ *
+ * Tuner's FIFO is discarded on every call of libdfmt_seek() or libdfmt_tune().
+ * @param tuner Tuner to read from.
+ * @param group @ref pointer to Libdfmt_rds_group were received blocks of one group will be stored,
+ * or NULL to get only information (without touching FIFO) how many groups are received in tuner's FIFO.
+ * Data is only valid when grps_received is greater than zero.
+ * @param grps_received Returns how many groups are stored in tuner.
+ */
+Libdfmt_error libdfmt_rds_read(Libdfmt_tuner *tuner, Libdfmt_rds_group *group, int *grps_received);
 
 /** @} */ // end of hl group
 

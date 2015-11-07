@@ -1,7 +1,7 @@
 #include "libdfmt.h"
 #include "shared.h"
 #include "libdfmt_tuner.h"
-#include "libdfmt_commands.h"
+#include "libdfmt_cmds_props.h"
 
 Libdfmt_error libdfmt_cmd_status(Libdfmt_tuner *tuner, char *status_byte)
 {
