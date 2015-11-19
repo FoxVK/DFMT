@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="D">
   <design>
-    <source>/home/fox/Dropbox/Diplomka/DFMT/hardware/kicad/dfmt.sch</source>
-    <date>Sat 10 Oct 2015 16:18:25 CEST</date>
-    <tool>Eeschema (2015-06-18 BZR 5767)-product</tool>
+    <source>/home/fox/DFMT/hardware/kicad/dfmt.sch</source>
+    <date>Ne 15. listopad 2015, 20:30:32 CET</date>
+    <tool>Eeschema (2015-10-12 BZR 6264)-product</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
-        <title/>
-        <company/>
+        <title>DFMT v1.0</title>
+        <company>VSB-TUO</company>
         <rev/>
-        <date/>
+        <date>2015-10-14</date>
         <source>dfmt.sch</source>
         <comment number="1" value=""/>
         <comment number="2" value=""/>
@@ -25,13 +25,6 @@
       <libsource lib="dfmt" part="PIC220F032B"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>55675407</tstamp>
-    </comp>
-    <comp ref="P4">
-      <value>USB_OTG</value>
-      <footprint>Connect:USB_Mini-B</footprint>
-      <libsource lib="conn" part="USB_OTG"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>55675507</tstamp>
     </comp>
     <comp ref="IC3">
       <value>LE33-SMT</value>
@@ -285,6 +278,13 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamp>55770F13</tstamp>
     </comp>
+    <comp ref="P4">
+      <value>USB_B</value>
+      <footprint>dfmt:USB20_B_F_molex_tht_kink</footprint>
+      <libsource lib="conn" part="USB_B"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5619540A</tstamp>
+    </comp>
   </components>
   <libparts>
     <libpart lib="device" part="C">
@@ -364,7 +364,7 @@
       </pins>
     </libpart>
     <libpart lib="device" part="SW_PUSH">
-      <description>Push Button</description>
+      <description>Button</description>
       <fields>
         <field name="Reference">SW</field>
         <field name="Value">SW_PUSH</field>
@@ -407,22 +407,21 @@
         <pin num="3" name="P3" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="conn" part="USB_OTG">
-      <description>USB OTG micro/mini connector</description>
+    <libpart lib="conn" part="USB_B">
+      <description>B connector</description>
       <footprints>
         <fp>USB*</fp>
       </footprints>
       <fields>
         <field name="Reference">P</field>
-        <field name="Value">USB_OTG</field>
+        <field name="Value">USB_B</field>
       </fields>
       <pins>
         <pin num="1" name="VCC" type="power_out"/>
         <pin num="2" name="D-" type="passive"/>
         <pin num="3" name="D+" type="passive"/>
-        <pin num="4" name="ID" type="power_in"/>
-        <pin num="5" name="GND" type="power_in"/>
-        <pin num="6" name="shield" type="passive"/>
+        <pin num="4" name="GND" type="power_in"/>
+        <pin num="5" name="shield" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="dfmt" part="LE33-SMT">
@@ -518,132 +517,134 @@
       <uri>/usr/local/share/kicad/library/conn.lib</uri>
     </library>
     <library logical="dfmt">
-      <uri>/home/fox/Dropbox/Diplomka/DFMT/hardware/kicad/dfmt.lib</uri>
+      <uri>/home/fox/DFMT/hardware/kicad/dfmt.lib</uri>
     </library>
   </libraries>
   <nets>
-    <net code="1" name="Net-(C3-Pad1)">
-      <node ref="C5" pin="1"/>
-      <node ref="P2" pin="2"/>
-      <node ref="C3" pin="1"/>
-    </net>
-    <net code="2" name="Net-(C2-Pad1)">
-      <node ref="C2" pin="1"/>
-      <node ref="P1" pin="2"/>
-      <node ref="C4" pin="1"/>
-    </net>
-    <net code="3" name="Net-(C3-Pad2)">
-      <node ref="C3" pin="2"/>
-      <node ref="IC1" pin="12"/>
-    </net>
-    <net code="4" name="Net-(C2-Pad2)">
-      <node ref="C2" pin="2"/>
-      <node ref="IC1" pin="8"/>
-    </net>
-    <net code="5" name="Net-(C5-Pad2)">
-      <node ref="IC2" pin="12"/>
-      <node ref="C5" pin="2"/>
-    </net>
-    <net code="6" name="Net-(C4-Pad2)">
-      <node ref="C4" pin="2"/>
-      <node ref="IC2" pin="8"/>
-    </net>
-    <net code="7" name="Net-(MCU1-Pad5)">
+    <net code="1" name="Net-(MCU1-Pad5)">
       <node ref="MCU1" pin="5"/>
       <node ref="P3" pin="1"/>
     </net>
-    <net code="8" name="Net-(C17-Pad1)">
-      <node ref="C17" pin="1"/>
-      <node ref="MCU1" pin="20"/>
+    <net code="2" name="Net-(C13-Pad1)">
+      <node ref="P4" pin="1"/>
+      <node ref="L1" pin="1"/>
+      <node ref="C13" pin="1"/>
     </net>
-    <net code="9" name="Net-(MCU1-Pad21)">
-      <node ref="MCU1" pin="21"/>
-      <node ref="P4" pin="3"/>
+    <net code="3" name="Net-(C2-Pad1)">
+      <node ref="P1" pin="2"/>
+      <node ref="C2" pin="1"/>
+      <node ref="C4" pin="1"/>
     </net>
-    <net code="10" name="Net-(MCU1-Pad22)">
-      <node ref="MCU1" pin="22"/>
-      <node ref="P4" pin="2"/>
+    <net code="4" name="Net-(C3-Pad1)">
+      <node ref="P2" pin="2"/>
+      <node ref="C5" pin="1"/>
+      <node ref="C3" pin="1"/>
     </net>
-    <net code="11" name="Net-(C6-Pad1)">
-      <node ref="C6" pin="1"/>
-      <node ref="IC1" pin="22"/>
+    <net code="5" name="Net-(C3-Pad2)">
+      <node ref="C3" pin="2"/>
+      <node ref="IC1" pin="12"/>
     </net>
-    <net code="12" name="Net-(IC1-Pad3)">
-      <node ref="R3" pin="1"/>
-      <node ref="IC1" pin="3"/>
+    <net code="6" name="Net-(C2-Pad2)">
+      <node ref="IC1" pin="8"/>
+      <node ref="C2" pin="2"/>
     </net>
-    <net code="13" name="Net-(IC1-Pad2)">
+    <net code="7" name="Net-(C5-Pad2)">
+      <node ref="IC2" pin="12"/>
+      <node ref="C5" pin="2"/>
+    </net>
+    <net code="8" name="Net-(C4-Pad2)">
+      <node ref="C4" pin="2"/>
+      <node ref="IC2" pin="8"/>
+    </net>
+    <net code="9" name="Net-(IC1-Pad2)">
       <node ref="R2" pin="1"/>
       <node ref="IC1" pin="2"/>
     </net>
-    <net code="14" name="Net-(IC1-Pad1)">
-      <node ref="R1" pin="1"/>
+    <net code="10" name="Net-(IC1-Pad1)">
       <node ref="IC1" pin="1"/>
+      <node ref="R1" pin="1"/>
     </net>
-    <net code="15" name="GND">
-      <node ref="IC2" pin="13"/>
+    <net code="11" name="Net-(MCU1-Pad21)">
+      <node ref="MCU1" pin="21"/>
+      <node ref="P4" pin="3"/>
+    </net>
+    <net code="12" name="Net-(MCU1-Pad22)">
+      <node ref="P4" pin="2"/>
+      <node ref="MCU1" pin="22"/>
+    </net>
+    <net code="13" name="Net-(C17-Pad1)">
+      <node ref="MCU1" pin="20"/>
+      <node ref="C17" pin="1"/>
+    </net>
+    <net code="14" name="GND">
+      <node ref="IC2" pin="10"/>
+      <node ref="IC2" pin="9"/>
+      <node ref="IC2" pin="11"/>
+      <node ref="IC3" pin="7"/>
+      <node ref="C1" pin="1"/>
+      <node ref="P4" pin="4"/>
+      <node ref="P4" pin="5"/>
+      <node ref="IC3" pin="3"/>
+      <node ref="IC3" pin="5"/>
+      <node ref="SW1" pin="2"/>
+      <node ref="IC3" pin="6"/>
+      <node ref="SW2" pin="2"/>
+      <node ref="MCU1" pin="27"/>
+      <node ref="MCU1" pin="19"/>
       <node ref="C9" pin="2"/>
       <node ref="C17" pin="2"/>
       <node ref="C16" pin="2"/>
-      <node ref="C11" pin="2"/>
-      <node ref="IC1" pin="11"/>
-      <node ref="P2" pin="1"/>
-      <node ref="SW1" pin="2"/>
-      <node ref="SW2" pin="2"/>
-      <node ref="C12" pin="2"/>
+      <node ref="C13" pin="2"/>
       <node ref="IC1" pin="9"/>
       <node ref="IC1" pin="10"/>
+      <node ref="IC1" pin="11"/>
+      <node ref="C11" pin="2"/>
+      <node ref="IC1" pin="13"/>
+      <node ref="C10" pin="2"/>
+      <node ref="C14" pin="2"/>
+      <node ref="C15" pin="2"/>
+      <node ref="IC2" pin="13"/>
       <node ref="IC2" pin="14"/>
+      <node ref="MCU1" pin="8"/>
+      <node ref="IC3" pin="2"/>
+      <node ref="C12" pin="2"/>
       <node ref="IC1" pin="16"/>
       <node ref="IC1" pin="14"/>
-      <node ref="IC1" pin="13"/>
-      <node ref="C15" pin="2"/>
-      <node ref="C14" pin="2"/>
-      <node ref="C13" pin="2"/>
-      <node ref="C1" pin="1"/>
-      <node ref="C10" pin="2"/>
-      <node ref="P4" pin="6"/>
-      <node ref="P4" pin="5"/>
-      <node ref="IC3" pin="2"/>
-      <node ref="IC3" pin="3"/>
       <node ref="C7" pin="2"/>
-      <node ref="IC3" pin="5"/>
-      <node ref="IC3" pin="6"/>
-      <node ref="IC3" pin="7"/>
-      <node ref="IC2" pin="9"/>
-      <node ref="IC2" pin="10"/>
-      <node ref="MCU1" pin="19"/>
-      <node ref="IC2" pin="11"/>
-      <node ref="MCU1" pin="8"/>
-      <node ref="MCU1" pin="27"/>
+      <node ref="P2" pin="1"/>
     </net>
-    <net code="16" name="/DOUT_B">
+    <net code="15" name="Net-(C6-Pad1)">
+      <node ref="IC1" pin="22"/>
+      <node ref="C6" pin="1"/>
+    </net>
+    <net code="16" name="Net-(IC1-Pad3)">
+      <node ref="R3" pin="1"/>
+      <node ref="IC1" pin="3"/>
+    </net>
+    <net code="17" name="/DCLK">
+      <node ref="R6" pin="2"/>
+      <node ref="MCU1" pin="26"/>
+      <node ref="MCU1" pin="25"/>
+      <node ref="R3" pin="2"/>
+    </net>
+    <net code="18" name="/DOUT_B">
       <node ref="MCU1" pin="12"/>
       <node ref="R4" pin="2"/>
     </net>
-    <net code="17" name="/DOUT_A">
-      <node ref="MCU1" pin="14"/>
+    <net code="19" name="/DOUT_A">
       <node ref="R1" pin="2"/>
+      <node ref="MCU1" pin="14"/>
     </net>
-    <net code="18" name="/DFS">
+    <net code="20" name="/DFS">
+      <node ref="MCU1" pin="4"/>
+      <node ref="MCU1" pin="7"/>
+      <node ref="R2" pin="2"/>
       <node ref="P3" pin="2"/>
       <node ref="R5" pin="2"/>
-      <node ref="MCU1" pin="7"/>
-      <node ref="MCU1" pin="4"/>
-      <node ref="R2" pin="2"/>
-    </net>
-    <net code="19" name="/DCLK">
-      <node ref="R6" pin="2"/>
-      <node ref="MCU1" pin="25"/>
-      <node ref="MCU1" pin="26"/>
-      <node ref="R3" pin="2"/>
-    </net>
-    <net code="20" name="Net-(IC2-Pad19)">
-      <node ref="IC2" pin="19"/>
     </net>
     <net code="21" name="Net-(C1-Pad2)">
-      <node ref="C1" pin="2"/>
       <node ref="P1" pin="1"/>
+      <node ref="C1" pin="2"/>
     </net>
     <net code="22" name="Net-(MCU1-Pad11)">
       <node ref="MCU1" pin="11"/>
@@ -669,20 +670,20 @@
     <net code="29" name="Net-(IC2-Pad23)">
       <node ref="IC2" pin="23"/>
     </net>
-    <net code="30" name="Net-(IC2-Pad5)">
+    <net code="30" name="Net-(IC2-Pad19)">
+      <node ref="IC2" pin="19"/>
+    </net>
+    <net code="31" name="Net-(IC2-Pad5)">
       <node ref="IC2" pin="5"/>
     </net>
-    <net code="31" name="Net-(IC2-Pad4)">
+    <net code="32" name="Net-(IC2-Pad4)">
       <node ref="IC2" pin="4"/>
     </net>
-    <net code="32" name="Net-(MCU1-Pad3)">
+    <net code="33" name="Net-(MCU1-Pad3)">
       <node ref="MCU1" pin="3"/>
     </net>
-    <net code="33" name="Net-(MCU1-Pad2)">
+    <net code="34" name="Net-(MCU1-Pad2)">
       <node ref="MCU1" pin="2"/>
-    </net>
-    <net code="34" name="Net-(P4-Pad4)">
-      <node ref="P4" pin="4"/>
     </net>
     <net code="35" name="Net-(MCU1-Pad24)">
       <node ref="SW1" pin="1"/>
@@ -692,36 +693,19 @@
       <node ref="MCU1" pin="16"/>
       <node ref="SW2" pin="1"/>
     </net>
-    <net code="37" name="Net-(C14-Pad1)">
-      <node ref="L1" pin="2"/>
-      <node ref="IC3" pin="8"/>
-      <node ref="C14" pin="1"/>
-      <node ref="C15" pin="1"/>
-    </net>
-    <net code="38" name="Net-(IC2-Pad3)">
-      <node ref="R6" pin="1"/>
+    <net code="37" name="Net-(IC2-Pad3)">
       <node ref="IC2" pin="3"/>
+      <node ref="R6" pin="1"/>
     </net>
-    <net code="39" name="VDD">
-      <node ref="C12" pin="1"/>
-      <node ref="IC3" pin="1"/>
-      <node ref="R9" pin="1"/>
-      <node ref="R8" pin="1"/>
-      <node ref="C16" pin="1"/>
-      <node ref="MCU1" pin="23"/>
-      <node ref="MCU1" pin="15"/>
-      <node ref="MCU1" pin="28"/>
-      <node ref="C8" pin="2"/>
-      <node ref="C9" pin="1"/>
-      <node ref="IC1" pin="20"/>
-      <node ref="R7" pin="1"/>
-      <node ref="IC2" pin="16"/>
-      <node ref="IC1" pin="21"/>
-      <node ref="C7" pin="1"/>
-      <node ref="C6" pin="2"/>
-      <node ref="IC2" pin="20"/>
-      <node ref="IC2" pin="21"/>
-      <node ref="MCU1" pin="13"/>
+    <net code="38" name="Net-(IC2-Pad1)">
+      <node ref="R4" pin="1"/>
+      <node ref="IC2" pin="1"/>
+    </net>
+    <net code="39" name="Net-(C14-Pad1)">
+      <node ref="IC3" pin="8"/>
+      <node ref="C15" pin="1"/>
+      <node ref="L1" pin="2"/>
+      <node ref="C14" pin="1"/>
     </net>
     <net code="40" name="Net-(IC1-Pad7)">
       <node ref="IC1" pin="7"/>
@@ -730,62 +714,74 @@
       <node ref="IC1" pin="6"/>
     </net>
     <net code="42" name="Net-(MCU1-Pad1)">
+      <node ref="P3" pin="3"/>
       <node ref="MCU1" pin="1"/>
       <node ref="R7" pin="2"/>
-      <node ref="P3" pin="3"/>
     </net>
-    <net code="43" name="Net-(C8-Pad1)">
-      <node ref="IC2" pin="22"/>
-      <node ref="C8" pin="1"/>
-    </net>
-    <net code="44" name="Net-(C13-Pad1)">
-      <node ref="P4" pin="1"/>
-      <node ref="C13" pin="1"/>
-      <node ref="L1" pin="1"/>
-    </net>
-    <net code="45" name="Net-(C10-Pad1)">
-      <node ref="MCU1" pin="9"/>
-      <node ref="Y1" pin="1"/>
+    <net code="43" name="Net-(C10-Pad1)">
       <node ref="C10" pin="1"/>
+      <node ref="Y1" pin="1"/>
+      <node ref="MCU1" pin="9"/>
+    </net>
+    <net code="44" name="Net-(IC2-Pad7)">
+      <node ref="IC2" pin="7"/>
+    </net>
+    <net code="45" name="Net-(IC2-Pad6)">
+      <node ref="IC2" pin="6"/>
     </net>
     <net code="46" name="Net-(IC2-Pad2)">
       <node ref="R5" pin="1"/>
       <node ref="IC2" pin="2"/>
     </net>
-    <net code="47" name="Net-(IC2-Pad7)">
-      <node ref="IC2" pin="7"/>
-    </net>
-    <net code="48" name="Net-(IC2-Pad6)">
-      <node ref="IC2" pin="6"/>
-    </net>
-    <net code="49" name="Net-(IC2-Pad1)">
-      <node ref="IC2" pin="1"/>
-      <node ref="R4" pin="1"/>
-    </net>
-    <net code="50" name="Net-(IC3-Pad4)">
+    <net code="47" name="Net-(IC3-Pad4)">
       <node ref="IC3" pin="4"/>
     </net>
-    <net code="51" name="Net-(C11-Pad1)">
+    <net code="48" name="Net-(C11-Pad1)">
       <node ref="C11" pin="1"/>
-      <node ref="Y1" pin="2"/>
       <node ref="MCU1" pin="10"/>
+      <node ref="Y1" pin="2"/>
     </net>
-    <net code="52" name="/RST">
-      <node ref="IC1" pin="15"/>
-      <node ref="IC2" pin="15"/>
-      <node ref="MCU1" pin="6"/>
+    <net code="49" name="Net-(C8-Pad1)">
+      <node ref="C8" pin="1"/>
+      <node ref="IC2" pin="22"/>
     </net>
-    <net code="53" name="/SCLK">
+    <net code="50" name="VDD">
+      <node ref="C6" pin="2"/>
+      <node ref="C7" pin="1"/>
+      <node ref="IC1" pin="21"/>
+      <node ref="C9" pin="1"/>
+      <node ref="R9" pin="1"/>
+      <node ref="IC1" pin="20"/>
+      <node ref="R8" pin="1"/>
+      <node ref="IC2" pin="20"/>
+      <node ref="C12" pin="1"/>
+      <node ref="R7" pin="1"/>
+      <node ref="C8" pin="2"/>
+      <node ref="C16" pin="1"/>
+      <node ref="IC3" pin="1"/>
+      <node ref="MCU1" pin="28"/>
+      <node ref="MCU1" pin="15"/>
+      <node ref="MCU1" pin="23"/>
+      <node ref="MCU1" pin="13"/>
+      <node ref="IC2" pin="16"/>
+      <node ref="IC2" pin="21"/>
+    </net>
+    <net code="51" name="/SCLK">
       <node ref="MCU1" pin="17"/>
-      <node ref="R9" pin="2"/>
       <node ref="IC1" pin="17"/>
       <node ref="IC2" pin="17"/>
+      <node ref="R9" pin="2"/>
     </net>
-    <net code="54" name="/SDA">
+    <net code="52" name="/SDA">
       <node ref="R8" pin="2"/>
       <node ref="IC2" pin="18"/>
-      <node ref="IC1" pin="18"/>
       <node ref="MCU1" pin="18"/>
+      <node ref="IC1" pin="18"/>
+    </net>
+    <net code="53" name="/RST">
+      <node ref="IC2" pin="15"/>
+      <node ref="MCU1" pin="6"/>
+      <node ref="IC1" pin="15"/>
     </net>
   </nets>
 </export>

@@ -35,10 +35,10 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title ""
-Date ""
+Title "DFMT v1.0"
+Date "2015-10-14"
 Rev ""
-Comp ""
+Comp "VSB-TUO"
 Comment1 ""
 Comment2 ""
 Comment3 ""

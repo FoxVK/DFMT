@@ -1,0 +1,73 @@
+Source:,/home/fox/DFMT/hardware/kicad/dfmt.sch
+Date:,"Ne 15. listopad 2015, 20:30:32 CET"
+Tool:,Eeschema (2015-10-12 BZR 6264)-product
+Generator:,/usr/local/share/doc/kicad/scripts/bom-in-python/bom_csv_grouped_by_value.py
+Component Count:,38
+
+Individual Components:
+
+Item,Qty,Reference(s),Value,LibPart,Footprint,Datasheet
+,,C1,100nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C2,1nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C3,470nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C4,1nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C5,470nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C6,22pF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C7,100nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C8,22pF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C9,100nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C10,22pF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C11,22pF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C12,100nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C13,2.2uF,device:CP,Capacitors_Tantalum_SMD:TantalC_SizeB_EIA-3528_HandSoldering,
+,,C14,2.2uF,device:CP,Capacitors_Tantalum_SMD:TantalC_SizeB_EIA-3528_HandSoldering,
+,,C15,100nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C16,100nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+,,C17,10uF,device:CP,Capacitors_Tantalum_SMD:TantalC_SizeB_EIA-3528_HandSoldering,
+,,IC1,SI4735-D60,dfmt:SI4735-D60,Housings_SSOP:SSOP-24_3.9x8.7mm_Pitch0.635mm,
+,,IC2,SI4735-D60,dfmt:SI4735-D60,Housings_SSOP:SSOP-24_3.9x8.7mm_Pitch0.635mm,
+,,IC3,LE33-SMT,dfmt:LE33-SMT,Power_Integrations:SO-8,
+,,L1,10uH,device:INDUCTOR_SMALL,Resistors_SMD:R_1210_HandSoldering,
+,,MCU1,PIC32MX220F032B,dfmt:PIC220F032B,Housings_DIP:DIP-28_W7.62mm,
+,,P1,FM ANT,conn:CONN_01X02,Pin_Headers:Pin_Header_Straight_1x02,
+,,P2,AM ANT,conn:CONN_01X02,Pin_Headers:Pin_Header_Straight_1x02,
+,,P3,PROG,conn:CONN_01X03,Pin_Headers:Pin_Header_Straight_1x03,
+,,P4,USB_B,conn:USB_B,dfmt:USB20_B_F_molex_tht_kink,
+,,R1,5R6,device:R,Resistors_SMD:R_1206_HandSoldering,
+,,R2,2k2,device:R,Resistors_SMD:R_1206_HandSoldering,
+,,R3,2k2,device:R,Resistors_SMD:R_1206_HandSoldering,
+,,R4,5R6,device:R,Resistors_SMD:R_1206_HandSoldering,
+,,R5,2k2,device:R,Resistors_SMD:R_1206_HandSoldering,
+,,R6,2k2,device:R,Resistors_SMD:R_1206_HandSoldering,
+,,R7,4k7,device:R,Resistors_SMD:R_1206_HandSoldering,
+,,R8,4k7,device:R,Resistors_SMD:R_1206_HandSoldering,
+,,R9,4k7,device:R,Resistors_SMD:R_1206_HandSoldering,
+,,SW1,UP,device:SW_PUSH,dfmt:button-TACT,
+,,SW2,DOWN,device:SW_PUSH,dfmt:button-TACT,
+,,Y1,8MHz,device:Crystal,Crystals:Crystal_HC49-SD_SMD,
+
+
+
+Collated Components:
+
+Item,Qty,Reference(s),Value,LibPart,Footprint,Datasheet
+1,6,"C1, C7, C9, C12, C15, C16",100nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+2,2,"C2, C4",1nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+3,2,"C3, C5",470nF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+4,4,"C6, C8, C10, C11",22pF,device:C,Capacitors_SMD:C_1206_HandSoldering,
+5,2,"C13, C14",2.2uF,device:CP,Capacitors_Tantalum_SMD:TantalC_SizeB_EIA-3528_HandSoldering,
+6,1,C17,10uF,device:CP,Capacitors_Tantalum_SMD:TantalC_SizeB_EIA-3528_HandSoldering,
+7,2,"IC1, IC2",SI4735-D60,dfmt:SI4735-D60,Housings_SSOP:SSOP-24_3.9x8.7mm_Pitch0.635mm,
+8,1,IC3,LE33-SMT,dfmt:LE33-SMT,Power_Integrations:SO-8,
+9,1,L1,10uH,device:INDUCTOR_SMALL,Resistors_SMD:R_1210_HandSoldering,
+10,1,MCU1,PIC32MX220F032B,dfmt:PIC220F032B,Housings_DIP:DIP-28_W7.62mm,
+11,1,P1,FM ANT,conn:CONN_01X02,Pin_Headers:Pin_Header_Straight_1x02,
+12,1,P2,AM ANT,conn:CONN_01X02,Pin_Headers:Pin_Header_Straight_1x02,
+13,1,P3,PROG,conn:CONN_01X03,Pin_Headers:Pin_Header_Straight_1x03,
+14,1,P4,USB_B,conn:USB_B,dfmt:USB20_B_F_molex_tht_kink,
+15,2,"R1, R4",5R6,device:R,Resistors_SMD:R_1206_HandSoldering,
+16,4,"R2, R3, R5, R6",2k2,device:R,Resistors_SMD:R_1206_HandSoldering,
+17,3,"R7, R8, R9",4k7,device:R,Resistors_SMD:R_1206_HandSoldering,
+18,1,SW1,UP,device:SW_PUSH,dfmt:button-TACT,
+19,1,SW2,DOWN,device:SW_PUSH,dfmt:button-TACT,
+20,1,Y1,8MHz,device:Crystal,Crystals:Crystal_HC49-SD_SMD,
