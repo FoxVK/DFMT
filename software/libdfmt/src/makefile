@@ -5,7 +5,7 @@ DOC=../doc
 NAME=libdfmt
 
 CC=gcc
-CFLAGS=-Wall -std=c99 -I../ -I$(IDIR) -I/usr/include/libusb-1.0/ -g
+CFLAGS=-Wall -std=c99 -I../ -I$(IDIR) -I/usr/include/libusb-1.0/ -O0 -g
 
 LIBS= -lusb-1.0
 

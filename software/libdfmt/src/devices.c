@@ -146,13 +146,14 @@ static void remove_not_present()
     {
         Libdfmt_device *next = d->next;
 
-        if(!d->present)
+        if(!d->present) //remove d from linked list
         {
-            if(!d_prev)
-                devices_connected->next = d->next;
-            else
+            if(!d_prev) //d is first
+                devices_connected = d->next;
+            else        //d is not first
                 d_prev->next = d->next;
 
+            //put to the front of disconnected list
             d->next = devices_disconnected;
             devices_disconnected = d;
 
