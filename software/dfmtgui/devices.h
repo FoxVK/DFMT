@@ -6,7 +6,7 @@
 #include <QList>
 #include <QMap>
 
-#include "libdfmt.h"
+#include "libdfmt.h" //TODO make forward declaration.
 
 class Device;
 typedef struct Libdfmt_device Libdfmt_device;
@@ -14,34 +14,33 @@ typedef struct Libdfmt_device Libdfmt_device;
 class Devices : public QObject
 {
     Q_OBJECT
+    friend class Device;
 public:
     explicit Devices(QObject *parent = 0);
     ~Devices();
 
-
-
-
-    QList<Device*> get_connected();
+    static Devices* get_instance();
 
 signals:
-    void device_connected(Device *dev);
-    void device_disconnected(Device *dev);
-
+    void dev_connected(Device* dev);
+    void dev_diconnected(Device*dev);
 
 public slots:
-    void scan_devs();
-    void set_scan_interval(int seconds = 1);
+    void scan();
+    void set_scan_interval(int msec=1000);
 
 private:
+    void dev_removed(Device *dev);
+    void dev_added(Device *dev);
+    void dev_removed(Libdfmt_device *ld);
+
+    static Devices *instance;
+    QMap<Libdfmt_device*, Device*> lib2dev;
+
     QTimer timer;
-    static Devices *devs_instance;
-    static QMap<Libdfmt_device*, Device *> lib2dev;
 
-    static void connected_cb(Libdfmt_device * lib_dev);
-    static void removed_cb(Libdfmt_device *lib_dev);
-
-    void emit_dev(Device *dev, bool connected);
-
+    static void dap_cb(Libdfmt_device *ld);
+    static void dda_cb(Libdfmt_device *ld);
 };
 
 #endif // DEVICES_H

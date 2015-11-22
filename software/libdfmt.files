@@ -15,5 +15,7 @@ libdfmt/include/libdfmt_tuner.h
 libdfmt/src/hl_tuning.c
 libdfmt/include/devices.h
 libdfmt/src/ml_command.c
-libdfmt/libdfmt_commands.h
+libdfmt/libdfmt_cmds_props.h
 libdfmt/doc/Doxyfile
+libdfmt/src/hl_rds.c
+libdfmt/src/ml_property.c

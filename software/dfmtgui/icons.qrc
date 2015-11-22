@@ -8,4 +8,7 @@
         <file>icons/media-seek-forward.svg</file>
         <file>icons/readme</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file>icons/radio.svg</file>
+    </qresource>
 </RCC>
