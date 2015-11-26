@@ -24,12 +24,13 @@ Libdfmt_error libdfmt_seek(Libdfmt_tuner *tuner, int up)
     const char seek_up = 1<<3;
     const char wrap = 1<<2;
 
-    char arg = wrap || (up) ? seek_up : 0;
+    char arg = wrap;
+    if(up) arg|=seek_up;
 
     return libdfmt_cmd_send(tuner, LIBDFMT_CMD_FM_SEEK_START, &arg, sizeof(arg));
 }
 
-Libdfmt_error libdfmt_tune(Libdfmt_tuner *tuner, float freq)
+Libdfmt_error libdfmt_tune(Libdfmt_tuner *tuner, double freq)
 {
     unsigned int ifreq = freq*100;
     char arg[] = {
@@ -47,15 +48,19 @@ Libdfmt_error libdfmt_tunning_done(Libdfmt_tuner *tuner, int *done)
 {
     char status;
     
-    Libdfmt_error err = libdfmt_check_int(tuner, &status);
-    
+    Libdfmt_error err = libdfmt_cmd_send(tuner, LIBDFMT_CMD_GET_INT_STATUS, NULL, 0);
+
+    if(err)
+        return err;
+
+    err = libdfmt_check_int(tuner, &status);
     *done = ((status&LIBDFMT_TUNER_STAT_STCINT) && (err==LIBDFMT_OK)) ? 1 : 0;
 
     return err;
 }
 
 
-Libdfmt_error libdfmt_get_freq(Libdfmt_tuner *tuner, float *freq,
+Libdfmt_error libdfmt_get_freq(Libdfmt_tuner *tuner, double *freq,
                                unsigned *rssi, unsigned *snr,
                                unsigned *multipath, int *is_valid)
 {
@@ -71,11 +76,47 @@ Libdfmt_error libdfmt_get_freq(Libdfmt_tuner *tuner, float *freq,
     if (err != LIBDFMT_OK)
         return err;
 
-    if(is_valid)    *is_valid   = reply[2] & 1;
-    if(freq)        *freq       = ((float)(((unsigned)reply[2])<<8 || ((unsigned)reply[3])))/100;
+    if(is_valid)    *is_valid   = reply[1] & 1;
     if(rssi)        *rssi       = reply[4];
     if(snr)         *snr        = reply[5];
     if(multipath)   *multipath  = reply[6];
+    if(freq)
+    {
+        unsigned h = *(unsigned char*)&reply[2];
+        unsigned l = *(unsigned char*)&reply[3];
+        h<<=8;
+
+        *freq = ((double)(h+l))/100.0;
+    }
+
+
+    return err;
+}
+
+
+Libdfmt_error libdfmt_get_metrics(Libdfmt_tuner *tuner,
+                               unsigned *rssi, unsigned *snr,
+                               unsigned *multipath, int *is_valid,
+                               int *freq_offset, unsigned *stereo_blend)
+{
+    char arg = 0;
+    char reply[8];
+
+    Libdfmt_error err = libdfmt_cmd_send(tuner, LIBDFMT_CMD_FM_TUNE_STATUS, &arg, sizeof(arg));
+    if (err != LIBDFMT_OK)
+        return err;
+
+    err = libdfmt_cmd_recv_reply(tuner, reply, sizeof(reply));
+
+    if (err != LIBDFMT_OK)
+        return err;
+
+    if(is_valid)    *is_valid       = reply[2] & 1;
+    if(stereo_blend)*stereo_blend   = reply[3];
+    if(rssi)        *rssi           = reply[4];
+    if(snr)         *snr            = reply[5];
+    if(multipath)   *multipath      = reply[6];
+    if(freq_offset)  *freq_offset   = (int)*((signed char*)&reply[7]);
 
     return err;
 }

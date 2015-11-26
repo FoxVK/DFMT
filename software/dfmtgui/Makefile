@@ -308,14 +308,14 @@ compiler_rcc_make_all: qrc_icons.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_icons.cpp
 qrc_icons.cpp: icons.qrc \
+		icons/radio.svg \
 		icons/media-playback-start.svg \
-		icons/readme \
-		icons/media-playback-pause.svg \
-		icons/media-seek-backward.svg \
 		icons/media-seek-forward.svg \
-		icons/media-playback-stop.svg \
 		icons/media-record.svg \
-		icons/radio.svg
+		icons/media-seek-backward.svg \
+		icons/media-playback-pause.svg \
+		icons/readme \
+		icons/media-playback-stop.svg
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name icons icons.qrc -o qrc_icons.cpp
 
 compiler_moc_header_make_all: moc_mainwin.cpp moc_device.cpp moc_devices.cpp moc_deviceform.cpp
@@ -998,11 +998,12 @@ mainwin.o: mainwin.cpp /usr/include/qt5/QtCore/QDebug \
 		/usr/include/qt5/QtGui/qinputmethod.h \
 		/usr/include/qt5/QtWidgets/QButtonGroup \
 		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QFrame \
+		/usr/include/qt5/QtWidgets/qframe.h \
 		/usr/include/qt5/QtWidgets/QHeaderView \
 		/usr/include/qt5/QtWidgets/qheaderview.h \
 		/usr/include/qt5/QtWidgets/qabstractitemview.h \
 		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
-		/usr/include/qt5/QtWidgets/qframe.h \
 		/usr/include/qt5/QtCore/qabstractitemmodel.h \
 		/usr/include/qt5/QtCore/qitemselectionmodel.h \
 		/usr/include/qt5/QtWidgets/qabstractitemdelegate.h \
@@ -1015,12 +1016,11 @@ mainwin.o: mainwin.cpp /usr/include/qt5/QtCore/QDebug \
 		/usr/include/qt5/QtWidgets/qstyle.h \
 		/usr/include/qt5/QtWidgets/qtabbar.h \
 		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
 		/usr/include/qt5/QtWidgets/QMenuBar \
 		/usr/include/qt5/QtWidgets/qmenubar.h \
-		/usr/include/qt5/QtWidgets/qmenu.h \
 		/usr/include/qt5/QtWidgets/QTabWidget \
-		/usr/include/qt5/QtWidgets/QToolBar \
-		/usr/include/qt5/QtWidgets/qtoolbar.h \
 		/usr/include/qt5/QtWidgets/QVBoxLayout \
 		/usr/include/qt5/QtWidgets/qboxlayout.h \
 		/usr/include/qt5/QtWidgets/qlayout.h \
@@ -1348,6 +1348,8 @@ deviceform.o: deviceform.cpp deviceform.h \
 		/usr/include/qt5/QtWidgets/qtabbar.h \
 		/usr/include/qt5/QtWidgets/qtabwidget.h \
 		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QLabel \
+		/usr/include/qt5/QtWidgets/qlabel.h \
 		/usr/include/qt5/QtWidgets/QPushButton \
 		/usr/include/qt5/QtWidgets/qpushbutton.h \
 		/usr/include/qt5/QtWidgets/qabstractbutton.h \

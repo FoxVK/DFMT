@@ -334,7 +334,7 @@ Libdfmt_error libdfmt_seek(Libdfmt_tuner *tuner, int up);
  * @param freq Frequency in MHz. Must be between 76.0 and 108.0.
  * @return @ref LIBDFMT_OK on success, @ref LIBDFMT_ERROR_BAD_ARGUMENT if frequency is not in range or other @ref Libdfmt_error .
  **/
-Libdfmt_error libdfmt_tune(Libdfmt_tuner *tuner, float freq);
+Libdfmt_error libdfmt_tune(Libdfmt_tuner *tuner, double freq);
 
 /**
  * @brief Libdfmt_tunning_done Call this function after libdfmt_tune() or libdfmt_seek() to get know if tunning was done.
@@ -346,7 +346,7 @@ Libdfmt_error libdfmt_tune(Libdfmt_tuner *tuner, float freq);
 Libdfmt_error libdfmt_tunning_done(Libdfmt_tuner *tuner, int *done);
 
 /**
- * @brief Libdfmt_get_freq reads tunned frequency from tuner.
+ * @brief Libdfmt_get_freq reads tunned frequency and metrics from tuner <b>after tunnig/seek</b>.
  * Each parameter of this function (exept tuner) can be NULL if not needed.
  * @param tuner Selected tuner.
  * @param freq Frequency in MHz.
@@ -355,12 +355,31 @@ Libdfmt_error libdfmt_tunning_done(Libdfmt_tuner *tuner, int *done);
  * @param multipath Current multipath metric (0 = no multipath; 100 = full multipath).
  * See Silicon lab's <a href=http://www.silabs.com/Marcom%20Documents/WhitePapers/Automotive-Radio-Key-Requirements.pdf>
  * Key Requirements for Multi-Tuner Automotive Radio Designs</a>.
- * @param valid True if tuned frequency is valid channel - you are not receiving noise.
+ * @param is_valid True if tuned frequency is valid channel - you are not receiving noise.
  * @return @ref LIBDFMT_OK on success or @ref Libdfmt_error.
  */  
-Libdfmt_error libdfmt_get_freq(Libdfmt_tuner *tuner, float *freq,
+Libdfmt_error libdfmt_get_freq(Libdfmt_tuner *tuner, double *freq,
                                unsigned *rssi, unsigned *snr,
                                unsigned *multipath, int *is_valid);
+
+/**
+ * @brief Libdfmt_get_freq reads metrics from tuner.
+ * Each parameter of this function (exept tuner) can be NULL if not needed. Function can be called multiple times.
+ * @param tuner Selected tuner..
+ * @param rssi Reseived signal strength indicator in dBμV.
+ * @param snr Signal to noise ration 0-127dB.
+ * @param multipath Current multipath metric (0 = no multipath; 100 = full multipath).
+ * See Silicon lab's <a href=http://www.silabs.com/Marcom%20Documents/WhitePapers/Automotive-Radio-Key-Requirements.pdf>
+ * Key Requirements for Multi-Tuner Automotive Radio Designs</a>.
+ * @param is_valid True if tuned frequency is valid channel - you are not receiving noise.
+ * @param freq_offset Frequency offset in kHz.
+ * @param stereo_blend 0=full mono 100 full stereo.
+ * @return @ref LIBDFMT_OK on success or @ref Libdfmt_error.
+ */  
+Libdfmt_error libdfmt_get_metrics(Libdfmt_tuner *tuner,
+                               unsigned *rssi, unsigned *snr,
+                               unsigned *multipath, int *is_valid,
+                               int *freq_offset, unsigned *stereo_blend);
 
 /**
  * @brief libdfmt_rds_receiving

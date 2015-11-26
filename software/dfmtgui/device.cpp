@@ -9,6 +9,9 @@ Device::Device(Libdfmt_device * dev, Devices *parrent) :
     this->dev = dev;
     this->parrent = parrent;
     this->opened = false;
+
+    this->freq[0] = this->freq[1] = -1;
+    this->tun_done[0] = this->tun_done[1] = true;
 }
 
 Device::~Device()
@@ -53,42 +56,60 @@ Libdfmt_tuner * Device::get_tuner(Tuner tuner)
 
 void Device::tune(Tuner tuner, double freq_mhz)
 {
-    //todo timer na spozdeni ladeni
-    //todo udrzovat info o naladene frekvenci a pokud je naladena stejna neladit
+    int t = (tuner==Device::TUNER_A?1:0);
+
+    if(freq_mhz==this->freq[t])
+    {
+        this->tun_done[t] = true;
+        return;
+    }
+    this->tun_done[t] = false;
     qDebug() << Q_FUNC_INFO << "=" << libdfmt_tune(get_tuner(tuner), freq_mhz);
-    freq_changed(tuner, (float)freq_mhz);
+    freq_changed(tuner, (double)freq_mhz);
 }
 
 void Device::seek(Tuner tuner, bool up)
 {
     qDebug() << Q_FUNC_INFO << "=" << libdfmt_seek(get_tuner(tuner), (up)?1:0);
-    //todo timer na testovani dokonceni ladeni
+}
+
+void Device::check_freq(Tuner tuner)
+{
+    double *f = &freq[(tuner==Device::TUNER_A)?1:0];
+    if(libdfmt_get_freq(get_tuner(tuner),f, NULL, NULL, NULL, NULL)==LIBDFMT_OK)
+    {
+        if(tuner==Device::TUNER_A)
+            emit freq_tunA_changed(*f);
+        else
+            emit freq_tunB_changed(*f);
+    }
 }
 
 void Device::check_metrics(Tuner tuner)
 {
-    float freq = 0;
-    unsigned rssi, snr, multipath;
-    int is_valid;
+    unsigned rssi, snr, multipath, stereo;
+    int is_valid, freq_offset;
 
-    qDebug() << Q_FUNC_INFO << "=" << libdfmt_get_freq(get_tuner(tuner), &freq, &rssi, &snr, &multipath, &is_valid);
-    if(freq != 0)
-    {
-        if(tuner == Device::TUNER_A)
-            emit tunA_metrics((double)freq, rssi, snr, multipath, is_valid ? true : false);
-        else
-            emit tunB_metrics((double)freq, rssi, snr, multipath, is_valid ? true : false);
-    }
+    libdfmt_get_metrics(get_tuner(tuner), &rssi, &snr, &multipath, &is_valid, &freq_offset, &stereo);
+
+    if(tuner == Device::TUNER_A)
+        emit tunA_metrics(rssi, snr, multipath, is_valid, freq_offset, stereo);
+    else
+        emit tunB_metrics(rssi, snr, multipath, is_valid, freq_offset, stereo);
+
 }
 
 bool Device::tunning_done(Tuner tuner)
 {
-    int done;
+
+    int done = tun_done[tuner==Device::TUNER_A?0:1];
+    if(done) return done;
+
     qDebug() << Q_FUNC_INFO << "=" << libdfmt_tunning_done(get_tuner(tuner), &done);
     return done;
 }
 
-void Device::freq_changed(Tuner tuner, float freq)
+void Device::freq_changed(Tuner tuner, double freq)
 {
     if(tuner == Device::TUNER_A)
         emit(freq_tunA_changed(freq));

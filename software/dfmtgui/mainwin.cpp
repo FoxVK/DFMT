@@ -17,6 +17,17 @@ MainWin::MainWin(QWidget *parent) :
 
 MainWin::~MainWin()
 {
+
+    for (int i = 0; i < ui->Tabs->count(); i++)
+    {
+        DeviceForm *form = (DeviceForm*)ui->Tabs->widget(i);
+        if(form)
+        {
+            ui->Tabs->removeTab(i);
+            delete form;
+        }
+    }
+
     delete ui;
 }
 
