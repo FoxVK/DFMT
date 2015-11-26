@@ -28,7 +28,7 @@ public:
 
 signals:
     void freq_tunA_changed(double freq);
-    void freq_tunB_changed(double freq);
+    void freq_tunB_changed(double freq, unsigned rssi, unsigned snr, bool valid);
 
     void tunA_metrics(unsigned rssi, unsigned snr, unsigned multipath, bool is_valid, int freq_offset, unsigned stereo);
     void tunB_metrics(unsigned rssi, unsigned snr, unsigned multipath, bool is_valid, int freq_offset, unsigned stereo);
