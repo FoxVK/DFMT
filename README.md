@@ -26,9 +26,17 @@ First version of device will alows you to receive sound from first tuner while s
 * High level interface is under construction. Only tune cmd is available right now
 
 ### Gui:
-* Under heavy development.
+* Has a bit slow responses because of wrong design
+* Tunig and seek works.
+* Seek other stations by second tuner. Works but cold be better.
+* RDS. Not implemented yet.
 
 ## Hardware:
 * Schematic was sucessfully tested on breadborad.
-* PCB design is done and was send to fab.
-![PCB](/hardware/exports/dfmt-top.png)
+* First PCB is finally assembled and successfuly tested.
+![PCB](/media/boardV1-top.jpg)
+* Issues:
+  * Span of holes for buttons is 1mm bigger, but with little bit effort buttons fits.
+  * Silkscreen of LE33 and PIC have no orientation mark.
+  * Swapped labels PGD and RST.
+* Acrylic case could be nice.
