@@ -1,0 +1,106 @@
+% Nejprve uvedeme tridu dokumentu s volbami
+\documentclass[bc,male,java,dept460]{diploma}						% jednostranny dokument
+%\documentclass[bc,male,java,dept460,twoside]{diploma}		% oboustranny dokument
+\usepackage[utf8]{inputenc}
+\usepackage[czech]{babel}
+
+\newcommand{\iic}{I\textsuperscript{2}C}
+\newcommand{\iis}{I\textsuperscript{2}S}
+
+
+% Zadame pozadovane vstupy pro generovani titulnich stran.
+\ThesisAuthor{Bc. Pavel Kovář}
+
+% U bakalarske praxe neni nutne nazev zadavat
+\ThesisTitle{Modul USB FM rádia}
+
+% U bakalarske praxe neni nutne anglicky nazev zadavat
+\EnglishThesisTitle{USB FM Radio Modul}
+
+\SubmissionDate{1. dubna 2016}
+
+\PrintPublicationAgreement{true}
+
+\Thanks{Rád bych na tomto místě poděkoval všem, kteří mi s prací pomohli, protože bez nich by tato práce nevznikla. (Uprav)}
+
+\CzechAbstract{Cílem této práce je navrhnout USB FM přijímač, který bude v operačním systému reprezentován jako zvuková karta. Tento přijímač bude obsahovat dva tunery, první tuner se bude využívat na přehrávání rádia a druhý tuner jako pomocný pro prohledávání rádiových frekvencí.\\
+Toto bylo realizováno pomocí dvojice tunerů Si.... . Rozhraní mezi tunery a počítačem realizuje MCU PIC32MX250F128B. Knihovna byla napsána v jazyku C s pomocí knihovny libusb. Demonstrační aplikace v C++ s využitím QT frameworku.}
+
+\CzechKeywords{FM rádio, USB, RDS, QT}
+
+\EnglishAbstract{This is English abstract. This is English abstract. This is English abstract. This is English abstract. This is English abstract. This is English abstract.}
+
+\EnglishKeywords{USB FM Radio Modul}
+
+% Pridame pouzivane zkratky (pokud nejake pouzivame).
+\AddAcronym{MCU}{Microcontroller unit}
+\AddAcronym{\iic}{Inter-Integrated Circuit}
+\AddAcronym{\iis}{Integrated Interchip Sound}
+\AddAcronym{USB}{Universal Serial Bus}
+\AddAcronym{PCM}{Pulse-code modulation}
+
+
+% Zadame cestu a jmeno souboru ci nekolika souboru s digitalizovanou podobou zadani prace
+% Pri sazbe se pak hledaji soubory Figures/Zadani1.jpg, Figures/Zadani2.jpg atd.
+% Do diplomove prace se postupne vlozi vsechny existujici soubory Figures/ZadaniXXX.jpg
+% Pokud toto makro zapoznamkujeme sazi se stranka s upozornenim
+%\ThesisAssignmentImagePath{Figures/Zadani}
+
+% Zadame soubor s digitalizovanou podobou prohlaseni
+% Pokud toto makro zapoznamkujeme sazi se cisty text prohlaseni
+%\DeclarationImageFile{figures/Prohlaseni.jpg}
+
+
+
+% Zacatek dokumentu
+\begin{document}
+
+% Nechame vysazet titulni strany.
+\MakeTitlePages
+
+% Asi urcite budeme potrebovat obsah prace.
+\tableofcontents
+\cleardoublepage	% odstrankujeme, u jednostranneho dokumentu o jednu stranku, u oboustrenneho o dve
+
+% Jsou v praci tabulky? Pokud ano vysazime jejich seznam.
+% Pokud ne smazeme nasledujici makro.
+\listoftables
+\cleardoublepage	% odstrankujeme, u jednostranneho dokumentu o jednu stranku, u oboustrenneho o dve
+
+% Jsou v praci obrazky? Pokud ano vysazime jejich seznam.
+\listoffigures
+\cleardoublepage	% odstrankujeme, u jednostranneho dokumentu o jednu stranku, u oboustrenneho o dve
+
+
+% Jsou v praci vypisy programu? Pokud ano vysazime jejich seznam.
+\lstlistoflistings
+\cleardoublepage	% odstrankujeme, u jednostranneho dokumentu o jednu stranku, u oboustrenneho o dve
+
+
+
+\input{chapters/uvod.tex}
+
+\input{chapters/zaver.tex}
+
+\begin{thebibliography}{99}
+
+\bibitem{goossens94} Goossens, Michel,
+\textit{The \LaTeX\ companion,} New York: Addison, 1994.
+
+\bibitem{lamport94} Lamport, Leslie,
+\textit{\LaTeX: a document preparation system: user's guide and reference manual},
+New York: Addison-Wesley Pub. Co., 1994.
+
+\end{thebibliography}
+
+
+\appendix
+\section{Grafy a měření}
+Tohle je příloha k práci. Většinou se sem dávají grafy, tabulky, které by vzhledem
+ke svému počtu překážely v textu diplomky. (Upravit)
+\clearpage
+
+%\InsertFigure{figures/Graf}{0.7\textwidth}{Nějaký graf}{fig:SampleGraph}
+
+
+\end{document}
