@@ -4,8 +4,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[czech]{babel}
 
-\newcommand{\iic}{I\textsuperscript{2}C}
-\newcommand{\iis}{I\textsuperscript{2}S}
+\newcommand{\iic}{I\textsuperscript{2}C }
+\newcommand{\iis}{I\textsuperscript{2}S }
 
 
 % Zadame pozadovane vstupy pro generovani titulnich stran.
@@ -23,14 +23,21 @@
 
 \Thanks{Rád bych na tomto místě poděkoval všem, kteří mi s prací pomohli, protože bez nich by tato práce nevznikla. (Uprav)}
 
-\CzechAbstract{Cílem této práce je navrhnout USB FM přijímač, který bude v operačním systému reprezentován jako zvuková karta. Tento přijímač bude obsahovat dva tunery, první tuner se bude využívat na přehrávání rádia a druhý tuner jako pomocný pro prohledávání rádiových frekvencí.\\
-Toto bylo realizováno pomocí dvojice tunerů Si.... . Rozhraní mezi tunery a počítačem realizuje MCU PIC32MX250F128B. Knihovna byla napsána v jazyku C s pomocí knihovny libusb. Demonstrační aplikace v C++ s využitím QT frameworku.}
+\CzechAbstract{Tato práce popisuje návrh USB FM přijímače se dvěma tunery. Jeden tuner slouží pro přehrávání zvuku a druhý pro vyhledávání dalších stanic. přijímač je v systému reprezentován jako USB zvuková karta.\\ 
+Příjem je realizován dvojicí integrovaných obvodů Si4735-DU. Tyto jsou přes \iis a \iic  spojeny s MCU PIC32MX250F128B, který přes USB zajišťuje komunikaci s počítačem. V rámci firmware MCU je, po neúspěchu s Microchip harmony frameworkem, napsán vlastní USB stack.\\
+Knihovna je napsána v jazyku C s využitím knihovny libusb. Poskytuje funkce pro tři úrovně přístupu k tunerům.\\
+Demonstrační aplikace je ve formě grafického uživatelského rozhraní, napsaná  v C++ s využitím QT frameworku.\\
+Vše je funkční pod OS Linux i Windows.}
 
-\CzechKeywords{FM rádio, USB, RDS, QT}
+\CzechKeywords{FM rádio, USB, RDS, QT, libusb, PIC}
 
-\EnglishAbstract{This is English abstract. This is English abstract. This is English abstract. This is English abstract. This is English abstract. This is English abstract.}
+\EnglishAbstract{This work describes design of USB FM radio receiver with two tuners. One tuner is for radio playback, second one seeks new stations. In computer, device acts as sound card.\\
+Receiving is done by couple of Si4735-DU integrated circuits, which are connected to MCU via \iic and \iis. MCU forwards data over USB to computer and back. Use of Microchip harmony framework was not successful so in firmware is USB stack written from scratch.\\
+Library is written in C with use of libusb library. There are three levels of functions to access tuners.\\
+Demo application has graphical user interface and is written in C++ in QT framework.\\
+All works under Linux and Windows.}
 
-\EnglishKeywords{USB FM Radio Modul}
+\EnglishKeywords{FM radio receiver, USB, RDS, QT, libusb, PIC}
 
 % Pridame pouzivane zkratky (pokud nejake pouzivame).
 \AddAcronym{MCU}{Microcontroller unit}
@@ -38,6 +45,7 @@ Toto bylo realizováno pomocí dvojice tunerů Si.... . Rozhraní mezi tunery a 
 \AddAcronym{\iis}{Integrated Interchip Sound}
 \AddAcronym{USB}{Universal Serial Bus}
 \AddAcronym{PCM}{Pulse-code modulation}
+\AddAcronym{RDS}{Radio Data System}
 
 
 % Zadame cestu a jmeno souboru ci nekolika souboru s digitalizovanou podobou zadani prace
