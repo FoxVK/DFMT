@@ -2,6 +2,7 @@
 \documentclass[bc,male,java,dept460]{diploma}						% jednostranny dokument
 %\documentclass[bc,male,java,dept460,twoside]{diploma}		% oboustranny dokument
 \usepackage[utf8]{inputenc}
+\inputencoding{utf8}
 \usepackage[czech]{babel}
 
 \newcommand{\iic}{I\textsuperscript{2}C }
@@ -21,7 +22,7 @@
 
 \PrintPublicationAgreement{true}
 
-\Thanks{Rád bych na tomto místě poděkoval všem, kteří mi s prací pomohli, protože bez nich by tato práce nevznikla. (Uprav)}
+\Thanks{Rád bych na tomto místě poděkoval zejména mému vedoucímu za bezbřehou trpělivost.}
 
 \CzechAbstract{Tato práce popisuje návrh USB FM přijímače se dvěma tunery. Jeden tuner slouží pro přehrávání zvuku a druhý pro vyhledávání dalších stanic. přijímač je v systému reprezentován jako USB zvuková karta.\\ 
 Příjem je realizován dvojicí integrovaných obvodů Si4735-DU. Tyto jsou přes \iis a \iic  spojeny s MCU PIC32MX250F128B, který přes USB zajišťuje komunikaci s počítačem. V rámci firmware MCU je, po neúspěchu s Microchip harmony frameworkem, napsán vlastní USB stack.\\
@@ -92,12 +93,61 @@ All works under Linux and Windows.}
 
 \begin{thebibliography}{99}
 
-\bibitem{goossens94} Goossens, Michel,
-\textit{The \LaTeX\ companion,} New York: Addison, 1994.
+\bibitem{usb-complete} AXELSON, Jan. 
+\textit{USB complete: the developer's guide.} 4th ed. Madison, WI: Lakeview Research, 2009, xxiii, 504 p. ISBN 1-931448-08-6.
 
-\bibitem{lamport94} Lamport, Leslie,
-\textit{\LaTeX: a document preparation system: user's guide and reference manual},
-New York: Addison-Wesley Pub. Co., 1994.
+%usb reference
+\bibitem{usb-spec} Compaq, Hewlett-Packard, Intel, Lucent, Microsoft, NEC, Philips. 
+\textit{Universal Serial Bus Specification: Revision 2.0} [online] 2000-04-27 [2015-12-26]
+\url{http://www.usb.org/developers/docs/usb20_docs/usb_20_0702115.zip}
+
+%usb audio 1.0
+\bibitem{usb-audio} Gal Ashour, Billy Brackenridge, Oren Tirosh, Altec Lansing, Craig Todd, Remy Zimmermann, Geert Knapen. 
+\textit{Universal Serial Bus Device Class Definition for Audio Devices: Release 1.0} [online] 1998-03-18 [2015-12-26]
+\url{http://www.usb.org/developers/docs/devclass_docs/audio10.pdf}
+
+%usb audio formats ??
+
+\bibitem{tuner-datasheet} Silicon Laboratories,
+\textit{Si4730/Si4731/Si4734/Si4735-D60 Broadcast AM/FM/SW/LW Radio Receiver: Rev. 1.2 8/13} [online] 2013-08-08 [2015-12-26] \url{https://www.silabs.com/Support\%20Documents/TechnicalDocs/Si4730-31-34-35-D60.pdf}
+
+\bibitem{tuner-programing} Silicon Laboratories,
+\textit{AN332: Si47xx Programming Guide: Rev. 1.0 9/14 } [online] 2014-09-10 [2015-12-26] \url{http://www.silabs.com/Support\%20Documents/TechnicalDocs/AN332.pdf}
+
+%microchip pic
+\bibitem{pic} Microchip Technology Inc.
+\textit{PIC32MX1XX/2XX Family Data Sheet: Revision H} [online] 2015-07-29 [2015-12-26]
+\url{http://ww1.microchip.com/downloads/en/DeviceDoc/60001168H.pdf}
+
+%microchip i2s
+\bibitem{pic-iis} Microchip Technology Inc.
+\textit{PIC32 Family Reference Manual, Sect. 23 Serial Peripheral Interface} [online] 2011-10-11 [2015-12-26]
+\url{http://ww1.microchip.com/downloads/en/DeviceDoc/61106G.pdf}
+
+%microchip i2c
+\bibitem{pic-iic} Microchihttp://ww1.microchip.com/downloads/en/DeviceDoc/61116F.pdp Technology Inc.
+\textit{PIC32 Family Reference Manual,  Sect 24. Inter-Integrated Circui} [online] 2013-03 [2015-12-26]
+\url{http://ww1.microchip.com/downloads/en/DeviceDoc/61116F.pdf}
+
+%microchip dma
+\bibitem{pic-dma} Microchip Technology Inc.
+\textit{PIC32 Family Reference Manual, Sect. 31 DMA Controller} [online] 2013-11-15 [2015-12-26]
+\url{http://ww1.microchip.com/downloads/en/DeviceDoc/60001117H.pdf}
+
+%microchip usb
+\bibitem{pic-usb} Microchip Technology Inc.
+\textit{PIC32 Family Reference Manual, Sect. 27 USB On-The-Go} [online] 2011-04-13 [2015-12-26]
+\url{http://ww1.microchip.com/downloads/en/DeviceDoc/61126F.pdf}
+
+%microchip errata
+\bibitem{pic-errata} Microchip Technology Inc.
+\textit{PIC32MX1XX/2XX 28/36/44-pin Family Silicon Errata and Data Sheet Clarification} [online] 2015-07-29 [2015-12-26]
+\url{http://ww1.microchip.com/downloads/en/DeviceDoc/80000531G.pdf}
+
+%microchip harmony reference
+\bibitem{harmony} Microchip Technology Inc.
+\textit{MPLAB Harmony USB Libraries Help} [online] 2012-11-15 [2015-12-26]
+\url{http://ww1.microchip.com/downloads/en/DeviceDoc/MPLAB\%20Harmony\%20USB\%20Libraries\%20\%28v1.06.02\%29.pdf}
 
 \end{thebibliography}
 
