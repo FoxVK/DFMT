@@ -1,5 +1,5 @@
 % Nejprve uvedeme tridu dokumentu s volbami
-\documentclass[bc,male,java,dept460]{diploma}						% jednostranny dokument
+\documentclass[bc,male,c,dept460]{diploma}						% jednostranny dokument
 %\documentclass[bc,male,java,dept460,twoside]{diploma}		% oboustranny dokument
 \usepackage[utf8]{inputenc}
 \inputencoding{utf8}
@@ -41,12 +41,13 @@ All works under Linux and Windows.}
 \EnglishKeywords{FM radio receiver, USB, RDS, QT, libusb, PIC}
 
 % Pridame pouzivane zkratky (pokud nejake pouzivame).
-\AddAcronym{MCU}{Microcontroller unit}
+\AddAcronym{CD}{Compact disc}
 \AddAcronym{\iic}{Inter-Integrated Circuit}
 \AddAcronym{\iis}{Integrated Interchip Sound}
-\AddAcronym{USB}{Universal Serial Bus}
+\AddAcronym{MCU}{Microcontroller unit}
 \AddAcronym{PCM}{Pulse-code modulation}
 \AddAcronym{RDS}{Radio Data System}
+\AddAcronym{USB}{Universal Serial Bus}
 
 
 % Zadame cestu a jmeno souboru ci nekolika souboru s digitalizovanou podobou zadani prace
@@ -89,7 +90,15 @@ All works under Linux and Windows.}
 
 \input{chapters/uvod.tex}
 
+\input{chapters/vyber.tex}
+\input{chapters/usb.tex}
+\input{chapters/tuner.tex}
+\input{chapters/knihovna.tex}
+
 \input{chapters/zaver.tex}
+
+
+
 
 \begin{thebibliography}{99}
 
