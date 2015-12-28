@@ -1,9 +1,38 @@
 \section{Výběr součástek}
 \label{sec:Vyber}
+Vzhledem k tomu, že není možné se cenou zařízení přiblížit zavedeným výrobcům elektroniky, rozhodl jsme se výběr součástek a konstrukci modulu přizpůsobit tak, aby bylo možné modul vyrobit v domácích podmínkách.
+
+%mužeš přidat zmínku o snaze mít možnost rozšiřování funkcionality po strance FW a SW
+ 
+\subsection{Volba rozhraní pro spojení modulu a počítače}
+Po tomto rozhraní se budou přenášet dva druhy informací a to samotný zvuk a ovládání tunerů.\\
+V současné době je prakticky jediným schůdným řešením použití rozhraní USB díky celé řadě výhod, které nabízí. Zejména jeho širokým rozšířením na téměř všech počítačích, od osobních přes servery až po jednodeskové či průmyslové počítače. Stejně tak je k dispozici velké množství součástek se zabudovanou podporou tohoto rozhraní. USB dále poskytuje možnost napájení připojených zařízení až do příkonu 2,5W. Má zabudovanou podporu pro různé druhy přenosů včetně isochronních (garantovaný periodický přenos předem dohodnutého množství dat). Specifikace USB zavádí standardní třídy funkcí v zařízení. V době psaní tohoto textu sice neexistuje třída pro ovládání tuneru, ale existuje třída popisující zvuková zařízení. Díky tomuto není potřeba vyvíjet vlastní ovladač zvukové karty na straně počítače.\\
+%mužeš to vycpat textem o PCI - PCI-e
+
+-je nemožné konkurovat cenou
+-hoby platforma
+-způsoby jak to vyřešit 
+ -diskrítní tuner
+ -analogový zvuk
+ -digitální zvuk
+-připojení s PC USB
+- požadavky na USB
+
 
 Bud v uvodu a nebo tady zmínit, že pro nemožnost konkurovat výrobcům spotřební elektroniy byl výběr součástek a celá konstrukce přispůsobena možnosti amatérké výroby a dostupnosti součástek u nás.
 
-\subsection{Tunery}
-	Dab x to co mám
+\subsection{Způsob příjmu rozhlasového vyslání}
+Jednou možností je řešení příjmu z diskrétních součástek a nebo s pomocí analogových IO. Ovšem toto je příliš komplikované.\\
+Na trhu je ovšem řada integrovaných obvodů, které zajišťují samotný příjem vysílání včetně vyhledávání static, měření kvality signálu a přijmu RDS a to s minimem potřebných externích součástek. Tyto IO se typicky ovládají pomocí \iic nebo SPI a zvuk poskytují digitálně přes rozhraní \iis a nebo analogově.\\
+Bohužel drtivá většina je dostupná pouze v pouzdru QFN, které se velmi obtížně pájí a v minimální množství 1000 kusů. Výjimkou je SI4735-D60 od výrobce SILICON LABS, který je dostupný v pouzdru SSOP24 a je možné jej u nás zakoupit i po jednotlivých kusech. IO neumožňuje přijímat DAB, ale umí nasledující:
+\begin{itemize}
+\item{Pásma: FM, SW, MW, LW}
+\item{Vzorkovací frekvence až do 48kHz}
+\item{Rozlišení vzorku kanálu až do 24bitů}
+\item{Stereofonní příjem.}
+\item{Příjem RDS}
+\end{itemize}
+
+
 \subsection{I2S -> USB}
 	TAS x Osmi bit x PIC32mx
