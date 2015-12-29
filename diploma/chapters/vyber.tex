@@ -3,28 +3,18 @@
 Vzhledem k tomu, že není možné se cenou zařízení přiblížit zavedeným výrobcům elektroniky, rozhodl jsme se výběr součástek a konstrukci modulu přizpůsobit tak, aby bylo možné modul vyrobit v domácích podmínkách.
 
 %mužeš přidat zmínku o snaze mít možnost rozšiřování funkcionality po strance FW a SW
+%možná by stáo za to popsat i2s
  
 \subsection{Volba rozhraní pro spojení modulu a počítače}
 Po tomto rozhraní se budou přenášet dva druhy informací a to samotný zvuk a ovládání tunerů.\\
 V současné době je prakticky jediným schůdným řešením použití rozhraní USB díky celé řadě výhod, které nabízí. Zejména jeho širokým rozšířením na téměř všech počítačích, od osobních přes servery až po jednodeskové či průmyslové počítače. Stejně tak je k dispozici velké množství součástek se zabudovanou podporou tohoto rozhraní. USB dále poskytuje možnost napájení připojených zařízení až do příkonu 2,5W. Má zabudovanou podporu pro různé druhy přenosů včetně isochronních (garantovaný periodický přenos předem dohodnutého množství dat). Specifikace USB zavádí standardní třídy funkcí v zařízení. V době psaní tohoto textu sice neexistuje třída pro ovládání tuneru, ale existuje třída popisující zvuková zařízení. Díky tomuto není potřeba vyvíjet vlastní ovladač zvukové karty na straně počítače.\\
 %mužeš to vycpat textem o PCI - PCI-e
 
--je nemožné konkurovat cenou
--hoby platforma
--způsoby jak to vyřešit 
- -diskrítní tuner
- -analogový zvuk
- -digitální zvuk
--připojení s PC USB
-- požadavky na USB
-
-
-Bud v uvodu a nebo tady zmínit, že pro nemožnost konkurovat výrobcům spotřební elektroniy byl výběr součástek a celá konstrukce přispůsobena možnosti amatérké výroby a dostupnosti součástek u nás.
 
 \subsection{Způsob příjmu rozhlasového vyslání}
 Jednou možností je řešení příjmu z diskrétních součástek a nebo s pomocí analogových IO. Ovšem toto je příliš komplikované.\\
 Na trhu je ovšem řada integrovaných obvodů, které zajišťují samotný příjem vysílání včetně vyhledávání static, měření kvality signálu a přijmu RDS a to s minimem potřebných externích součástek. Tyto IO se typicky ovládají pomocí \iic nebo SPI a zvuk poskytují digitálně přes rozhraní \iis a nebo analogově.\\
-Bohužel drtivá většina je dostupná pouze v pouzdru QFN, které se velmi obtížně pájí a v minimální množství 1000 kusů. Výjimkou je SI4735-D60 od výrobce SILICON LABS, který je dostupný v pouzdru SSOP24 a je možné jej u nás zakoupit i po jednotlivých kusech. IO neumožňuje přijímat DAB, ale umí nasledující:
+Bohužel drtivá většina je dostupná pouze v pouzdru QFN, které se velmi obtížně pájí a v minimální množství 1000 kusů. Výjimkou je SI4735-D60 od výrobce SILICON LABS, který je dostupný v pouzdru SSOP24 a je možné jej u nás zakoupit i po jednotlivých kusech. IO neumožňuje přijímat DAB, ale umí následující:
 \begin{itemize}
 \item{Pásma: FM, SW, MW, LW}
 \item{Vzorkovací frekvence až do 48kHz}
@@ -32,7 +22,30 @@ Bohužel drtivá většina je dostupná pouze v pouzdru QFN, které se velmi obt
 \item{Stereofonní příjem.}
 \item{Příjem RDS}
 \end{itemize}
+%popis vlastností jako že jsou na 3.3v a taky vypíchnoout že frekvence se dá odvozovat přímo z i2s
 
+\subsection{Napojení tuneru na USB}
+\textbf{Požadavky:\\}
+\begin{itemize}
+\item{Schopnost přenášet dvoukanálový zvuk beze znatelného zkreslení. Zvolil jsem PCM formát o vzorkovací frekvenci 48kHz a rozlišení 16bitů na jeden kanál. Pro srovnání audio CD používá 44,1kHz/16bitů.}
+\item{Alespoň jedno rozhraní \iis schopné přijímat zvuk a fungující v režimu master.}
+\item{Podporu pro USB audio. To implikuje nutnost podpory full speed USB a nebo rychlejší. Low speed nepodporuje isochronní přenosy, které jsou nezbytné pro přenos zvuku.}
+\item{Rozhraní \iic master pro ovládání tunerů.}
+\item{Kompatibilita s 3,3V logikou tunerů.}
+\end{itemize}
 
-\subsection{I2S -> USB}
+\subsubsection{TAS1020b}	
+\InsertFigure{figures/tas-block.png}{\textwidth}{Blokové schéma TAS1020b. (Převzato z \cite{tas})}{fig:tas-block}
+Jak je patrné z obrázku \ref{fig:tas-block}, jedná se o USB \iis zvukovou kartu a MCU v jednom. Narozdíl od většiny MCU nemá interní paměť programu. Program se načítá při spuštění buď z eeprom paměti připojené přes \iic a nebo z přes USB ze zařízení ke kterému je obvod připojen.\\
+Obvod podle specifikace \cite{tas} podporuje všechno potřebné. Full speed USB1.1 včetně USB audio 1.0, 14 endpointů z toho až dva mohou být isochronní. Dále až dvě vstupní \iis rozhraní a jednu \iic sběrnici. Nevýhodou je absence programové paměti, kusová dostupnost obvodu pouze ve formě vzorků a v mém případě také fakt, že s tímto druhem obvodů nemá žádné zkušenosti.
+
+\subsubsection{PIC16F1454}
+Je osmi bitový MCU od firmy Microchip s podporou full speed USB 2.0. Obvod obsahuje továrně kalibrovaný oscilátor a umí pracovat při napájecím napětí 2,3-5,5V. Díky tomu obvod nepotřebuje prakticky žádné externí součástky. Prakticky k němu stačí připojit USB kabel.\\
+Výrobce poskytuje k tomuto MCU knihovnu Microchip Library for aplications, které mimo jiné obsahuje implementaci USB audio 1.0. Navíc jedním ze vzorových projektů u této knihovny je i USB mikrofón, který řeší přenos zvuku do počítače.\\
+Bohužel tento MCU nemá podporu \iis a na jeho softwarovou implementaci je příliš pomalý. 
+
+\subsubsection{PIC32MX250F128}
 	TAS x Osmi bit x PIC32mx
+
+
+%přidat nákres 
