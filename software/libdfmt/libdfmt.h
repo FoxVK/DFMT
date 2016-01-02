@@ -47,6 +47,7 @@ typedef enum {
     LIBDFMT_ERROR_USB_ERROR           =7, ///< Libusb error, probably more than one instaces is running.
     LIBDFMT_ERROR_BAD_ARGUMENT        =8, ///< Argument of invalid value or out of range.
     LIBDFMT_ERROR_NO_PERMISSION       =9, ///< You have insufficient permissions to open device. (probably missing udev rules on linux)
+    LIBDFMT_DEVICE_CLOSED             =10,///< Device is not opened or was closed.
     LIBDFMT_ERROR                     =255///< General error
 }Libdfmt_error;
 

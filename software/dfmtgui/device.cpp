@@ -44,6 +44,7 @@ bool Device::open()
 void Device::close()
 {
     libdfmt_dev_close(this->dev);
+    this->dev = NULL;
 }
 
 
@@ -64,14 +65,17 @@ void Device::tune(Tuner tuner, double freq_mhz)
         return;
     }
     this->tun_done[t] = false;
-    qDebug() << Q_FUNC_INFO << "=" << libdfmt_tune(get_tuner(tuner), freq_mhz);
+
+    if(libdfmt_tune(get_tuner(tuner), freq_mhz)!=LIBDFMT_OK)
+        return;
+
     if(tuner == Device::TUNER_A)
         freq_changed(tuner, (double)freq_mhz);
 }
 
 void Device::seek(Tuner tuner, bool up)
 {
-    qDebug() << Q_FUNC_INFO << "=" << libdfmt_seek(get_tuner(tuner), (up)?1:0);
+    libdfmt_seek(get_tuner(tuner), (up)?1:0);
 }
 
 void Device::check_freq(Tuner tuner)
@@ -95,7 +99,8 @@ void Device::check_metrics(Tuner tuner)
     unsigned rssi, snr, multipath, stereo;
     int is_valid, freq_offset;
 
-    libdfmt_get_metrics(get_tuner(tuner), &rssi, &snr, &multipath, &is_valid, &freq_offset, &stereo);
+    if(libdfmt_get_metrics(get_tuner(tuner), &rssi, &snr, &multipath, &is_valid, &freq_offset, &stereo)!=LIBDFMT_OK)
+        return;
 
     if(tuner == Device::TUNER_A)
         emit tunA_metrics(rssi, snr, multipath, is_valid, freq_offset, stereo);
@@ -110,16 +115,16 @@ bool Device::tunning_done(Tuner tuner)
     int done = tun_done[tuner==Device::TUNER_A?0:1];
     if(done) return done;
 
-    qDebug() << Q_FUNC_INFO << "=" << libdfmt_tunning_done(get_tuner(tuner), &done);
-    return done;
+    if(libdfmt_tunning_done(get_tuner(tuner), &done)!=LIBDFMT_OK)
+        return true;
+    else
+        return done;
 }
 
 void Device::freq_changed(Tuner tuner, double freq)
 {
-    //if(tuner == Device::TUNER_A)
+    if(tuner == Device::TUNER_A)
         emit(freq_tunA_changed(freq));
-    /*else
-        emit(freq_tunB_changed(freq));*/
 }
 
 

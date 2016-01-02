@@ -11,9 +11,12 @@ static char transaction = 0;
 
 static Libdfmt_error usb_com(Libdfmt_device *dev, void *buf, size_t *size,
                              int send,unsigned int timeout)
-{   //fixme
+{
     int transferred;
     enum libusb_error ret;
+
+    if(!dev || !dev->lusb_handle) return LIBDFMT_DEVICE_CLOSED;
+
     ret = libusb_bulk_transfer( dev->lusb_handle,
                                 send ? TUNNEL_EP_OUT : TUNNEL_EP_IN,
                                 (unsigned char*)buf,
@@ -63,6 +66,9 @@ Libdfmt_error  libdfmt_i2c_com(Libdfmt_tuner *tuner, char *buf, size_t *size,
 
     if(!buf || *size < 1)
         return LIBDFMT_ERROR_BAD_ARGUMENT;
+
+    if(!tuner || !tuner->dev)
+        return LIBDFMT_DEVICE_CLOSED;
 
     //send req
     transaction ++;

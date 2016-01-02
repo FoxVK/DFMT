@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_DeviceForm_t {
-    QByteArrayData data[25];
-    char stringdata[244];
+    QByteArrayData data[26];
+    char stringdata[264];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -53,7 +53,8 @@ QT_MOC_LITERAL(20, 193, 11),
 QT_MOC_LITERAL(21, 205, 6),
 QT_MOC_LITERAL(22, 212, 16),
 QT_MOC_LITERAL(23, 229, 6),
-QT_MOC_LITERAL(24, 236, 6)
+QT_MOC_LITERAL(24, 236, 6),
+QT_MOC_LITERAL(25, 243, 19)
     },
     "DeviceForm\0tune_A\0\0freq\0seek_forward_A\0"
     "seek_back_A\0sound\0on\0freq_chk_trm_fired\0"
@@ -62,6 +63,7 @@ QT_MOC_LITERAL(24, 236, 6)
     "valid\0metrics_changed\0multipath\0"
     "is_valid\0freq_offset\0stereo\0"
     "metrics_changedB\0task_A\0task_B\0"
+    "taskB_switch_ss_tmr\0"
 };
 #undef QT_MOC_LITERAL
 
@@ -71,7 +73,7 @@ static const uint qt_meta_data_DeviceForm[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      14,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -79,20 +81,21 @@ static const uint qt_meta_data_DeviceForm[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,   84,    2, 0x08,
-       4,    0,   87,    2, 0x08,
-       5,    0,   88,    2, 0x08,
-       6,    1,   89,    2, 0x08,
-       6,    0,   92,    2, 0x28,
-       8,    0,   93,    2, 0x08,
-       9,    0,   94,    2, 0x08,
-      10,    1,   95,    2, 0x08,
-      12,    1,   98,    2, 0x08,
-      13,    4,  101,    2, 0x08,
-      17,    6,  110,    2, 0x08,
-      22,    6,  123,    2, 0x08,
-      23,    0,  136,    2, 0x08,
-      24,    0,  137,    2, 0x08,
+       1,    1,   89,    2, 0x08,
+       4,    0,   92,    2, 0x08,
+       5,    0,   93,    2, 0x08,
+       6,    1,   94,    2, 0x08,
+       6,    0,   97,    2, 0x28,
+       8,    0,   98,    2, 0x08,
+       9,    0,   99,    2, 0x08,
+      10,    1,  100,    2, 0x08,
+      12,    1,  103,    2, 0x08,
+      13,    4,  106,    2, 0x08,
+      17,    6,  115,    2, 0x08,
+      22,    6,  128,    2, 0x08,
+      23,    0,  141,    2, 0x08,
+      24,    0,  142,    2, 0x08,
+      25,    0,  143,    2, 0x08,
 
  // slots: parameters
     QMetaType::Void, QMetaType::Double,    3,
@@ -107,6 +110,7 @@ static const uint qt_meta_data_DeviceForm[] = {
     QMetaType::Void, QMetaType::Double, QMetaType::UInt, QMetaType::UInt, QMetaType::Bool,    3,   14,   15,   16,
     QMetaType::Void, QMetaType::UInt, QMetaType::UInt, QMetaType::UInt, QMetaType::Bool, QMetaType::Int, QMetaType::UInt,   14,   15,   18,   19,   20,   21,
     QMetaType::Void, QMetaType::UInt, QMetaType::UInt, QMetaType::UInt, QMetaType::Bool, QMetaType::Int, QMetaType::UInt,   14,   15,   18,   19,   20,   21,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -132,6 +136,7 @@ void DeviceForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 11: _t->metrics_changedB((*reinterpret_cast< uint(*)>(_a[1])),(*reinterpret_cast< uint(*)>(_a[2])),(*reinterpret_cast< uint(*)>(_a[3])),(*reinterpret_cast< bool(*)>(_a[4])),(*reinterpret_cast< int(*)>(_a[5])),(*reinterpret_cast< uint(*)>(_a[6]))); break;
         case 12: _t->task_A(); break;
         case 13: _t->task_B(); break;
+        case 14: _t->taskB_switch_ss_tmr(); break;
         default: ;
         }
     }
@@ -162,13 +167,13 @@ int DeviceForm::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 14)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 15;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 14)
+        if (_id < 15)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 14;
+        _id -= 15;
     }
     return _id;
 }

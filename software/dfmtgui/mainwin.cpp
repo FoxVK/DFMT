@@ -84,7 +84,7 @@ void MainWin::dev_removed(Device *dev)
             if(form->get_dev() == dev)
             {
                 ui->Tabs->removeTab(i);
-                delete form;
+                //delete form;
             }
         }
 

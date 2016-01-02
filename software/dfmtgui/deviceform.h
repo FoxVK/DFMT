@@ -37,13 +37,12 @@ private:
         TaskB()
         {
             super_state = SS_SEEK;
-            ss_seek = SS_S_SEEK;
-            ss_update = SS_U_TUNE;
+            ss_seek = SS_S_INIT;
+            ss_update = SS_U_INIT;
             tmr.setSingleShot(true);
             table_ptr = metrics_table_ptr = 0;
             super_state_tmr.setSingleShot(true);
             switch_ss = false;
-            //connect(&tmr, SIGNAL(timeout()), this, SLOT(switch_ss_slot()));
         }
 
         enum{SS_SEEK, SS_UPDATE}super_state;
@@ -79,7 +78,9 @@ private slots:
     void task_A();
     void task_B();
 
-    void taskB_switch_ss_tmr() {taskB.switch_ss = true;}
+    void taskB_switch_ss_tmr() {
+        taskB.switch_ss = true;
+    }
 };
 
 #endif // DEVICEFORM_H

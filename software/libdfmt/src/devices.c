@@ -1,5 +1,3 @@
-//SMAZAT
-
 #include <stdlib.h>
 #include <libusb.h>
 
@@ -173,8 +171,9 @@ static void remove_not_present()
 
 void libdfmt_scan_devs()
 {
-    const u_int16_t vid=libusb_cpu_to_le16(USB_VID);
-    const u_int16_t pid=libusb_cpu_to_le16(USB_PID);
+    //FIXME: this is robably wrong
+    const unsigned vid=libusb_cpu_to_le16(USB_VID);
+    const unsigned pid=libusb_cpu_to_le16(USB_PID);
 
     libusb_device **lusb_list;
     ssize_t cnt = libusb_get_device_list(NULL, &lusb_list);

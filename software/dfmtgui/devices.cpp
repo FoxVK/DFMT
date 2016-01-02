@@ -26,7 +26,10 @@ void Devices::dev_added(Device *dev)
 void Devices::dev_removed(Libdfmt_device *ld)
 {
     if(lib2dev.contains(ld))
-        dev_removed(lib2dev[ld]);
+    {
+        Device *d = lib2dev[ld];
+        dev_removed(d);
+    }
 }
 
 void Devices::dev_removed(Device *dev)

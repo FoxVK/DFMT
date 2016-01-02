@@ -1,6 +1,7 @@
 #include "deviceform.h"
 #include "ui_deviceform.h"
 #include <QFile>
+#include <QDebug>
 
 #define FREQ_HIGH 107
 #define FREQ_LOW 80
@@ -23,15 +24,26 @@ DeviceForm::DeviceForm(Device *dev, QWidget *parent) :
 
     connect(dev, SIGNAL(tunA_metrics(uint,uint,uint,bool,int,uint)), this, SLOT(metrics_changed(uint,uint,uint,bool,int,uint)));
     connect(&taskA.tmr, SIGNAL(timeout()), this, SLOT(task_A()));
-    taskA.tmr.start(1000);
+
+    connect(dev, SIGNAL(tunB_metrics(uint,uint,uint,bool,int,uint)), this, SLOT(metrics_changedB(uint,uint,uint,bool,int,uint)));
+    connect(dev, SIGNAL(freq_tunB_changed(double,uint,uint,bool)), this, SLOT(freq_cangedB(double,uint,uint,bool)));
+    connect(&taskB.tmr, SIGNAL(timeout()), this, SLOT(task_B()));
+
+    connect(&this->taskB.super_state_tmr, SIGNAL(timeout()), this, SLOT(taskB_switch_ss_tmr()));
+
 
     connect(&freq_change_tmr, SIGNAL(timeout()), this, SLOT(freq_chg_tmr_fired()));
     freq_change_tmr.setSingleShot(true);
     freq_change_tmr.setInterval(10);
+
+    taskA.tmr.start(1000);
+    taskB.tmr.start(900);
 }
 
 DeviceForm::~DeviceForm()
 {
+    taskA.tmr.stop();
+    taskB.tmr.stop();
     delete ui;
     //dev->close(); close will be performed by devices
 }
@@ -196,14 +208,15 @@ void DeviceForm::task_B()
                 case TaskB::SS_S_INIT:
                     dev->tune(tuner, FREQ_LOW);
                     t->ss_seek = TaskB::SS_S_SEEKING;
-                    t->super_state_tmr.setInterval(5000);
+                    t->super_state_tmr.start(5000);
                     break;
                 \
                 case TaskB::SS_S_SEEK:
-                    if(t->ss_update)
+                    if(t->switch_ss)
                     {
                         t->switch_ss = false;
                         t->ss_seek = TaskB::SS_S_INIT;
+                        t->ss_update = TaskB::SS_U_INIT;
                         t->super_state = TaskB::SS_UPDATE;
                     }
                     else
@@ -219,10 +232,14 @@ void DeviceForm::task_B()
                     if(st_tout>SEEK_TOUT_B)
                         t->ss_seek = TaskB::SS_S_SEEK;
 
+                    if(dev->tunning_done(tuner))
+                        t->ss_seek = TaskB::SS_S_CHECK_FREQ;
+
                     break;
 
                 case TaskB::SS_S_CHECK_FREQ:
                     dev->check_freq(tuner);
+                    t->ss_seek = TaskB::SS_S_SEEK;
                     break;
             }
             break;
@@ -275,6 +292,8 @@ void DeviceForm::task_B()
 
 void DeviceForm::freq_cangedB(double freq, unsigned rssi, unsigned snr, bool valid)
 {
+    qDebug("%s f=%f snr=%d valid=%d rssi=%d", Q_FUNC_INFO, freq, snr, valid, rssi);
+
     int i;
     QTableWidget *t = ui->stationsTable;
 
@@ -288,12 +307,23 @@ void DeviceForm::freq_cangedB(double freq, unsigned rssi, unsigned snr, bool val
         if(taskB.freq[i]==freq)
         {   if(valid)
             {//update
-                t->itemAt(i,0)->setText(freqS);
-                t->itemAt(i,1)->setText(rssiS);
-                t->itemAt(i,2)->setText(snrS);
+                QTableWidgetItem *itm;
+
+                itm = t->item(i, 0);
+                if(itm) itm->setText(freqS);
+                else qCritical() << Q_FUNC_INFO << "table item freq not found";
+
+                itm = t->item(i, 1);
+                if(itm) itm->setText(rssiS);
+                else qCritical() << Q_FUNC_INFO << "table item rssi not found";
+
+                itm = t->item(i, 2);
+                if(itm) itm->setText(snrS);
+                else qCritical() << Q_FUNC_INFO << "table item snr not found";
             }
             else
             { //delete
+                qDebug("delete");
                 taskB.freq.removeAt(i);
                 t->removeRow(i);
             }
@@ -301,7 +331,7 @@ void DeviceForm::freq_cangedB(double freq, unsigned rssi, unsigned snr, bool val
         }
         else if(taskB.freq[i]>freq)
         {   //insert one back
-            i--;
+            //i--;
             break;
         }
     }
@@ -309,17 +339,18 @@ void DeviceForm::freq_cangedB(double freq, unsigned rssi, unsigned snr, bool val
     //insert
     if(valid)
     {
+        qDebug("insert");
         taskB.freq.insert(i, freq);
         t->insertRow(i);
         t->setItem(i, 0, new QTableWidgetItem(freqS));
         t->setItem(i, 1, new QTableWidgetItem(rssiS));
         t->setItem(i, 2, new QTableWidgetItem(snrS));
     }
-
 }
 
 void DeviceForm::metrics_changedB(unsigned rssi, unsigned snr, unsigned multipath, bool is_valid, int freq_offset, unsigned stereo)
 {
+    //qDebug("%s snr=%d valid=%d", Q_FUNC_INFO, snr, is_valid);
     (void) multipath; (void)stereo; (void)freq_offset;
     freq_cangedB(taskB.freq.at(taskB.metrics_table_ptr), rssi, snr, is_valid);
 }
