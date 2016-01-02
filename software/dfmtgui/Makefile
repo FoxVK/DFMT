@@ -309,13 +309,13 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_icons.cpp
 qrc_icons.cpp: icons.qrc \
 		icons/radio.svg \
-		icons/media-playback-start.svg \
-		icons/media-seek-forward.svg \
 		icons/media-record.svg \
 		icons/media-seek-backward.svg \
+		icons/media-seek-forward.svg \
 		icons/media-playback-pause.svg \
+		icons/media-playback-stop.svg \
 		icons/readme \
-		icons/media-playback-stop.svg
+		icons/media-playback-start.svg
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name icons icons.qrc -o qrc_icons.cpp
 
 compiler_moc_header_make_all: moc_mainwin.cpp moc_device.cpp moc_devices.cpp moc_deviceform.cpp
@@ -701,8 +701,8 @@ moc_deviceform.cpp: /usr/include/qt5/QtWidgets/QWidget \
 		/usr/include/qt5/QtCore/QTimer \
 		/usr/include/qt5/QtCore/qtimer.h \
 		/usr/include/qt5/QtCore/qbasictimer.h \
-		device.h \
 		/usr/include/qt5/QtCore/QList \
+		device.h \
 		/usr/include/qt5/QtCore/QObject \
 		deviceform.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include deviceform.h -o moc_deviceform.cpp
@@ -1304,8 +1304,8 @@ deviceform.o: deviceform.cpp deviceform.h \
 		/usr/include/qt5/QtCore/QTimer \
 		/usr/include/qt5/QtCore/qtimer.h \
 		/usr/include/qt5/QtCore/qbasictimer.h \
-		device.h \
 		/usr/include/qt5/QtCore/QList \
+		device.h \
 		/usr/include/qt5/QtCore/QObject \
 		ui_deviceform.h \
 		/usr/include/qt5/QtCore/QVariant \
@@ -1355,8 +1355,12 @@ deviceform.o: deviceform.cpp deviceform.h \
 		/usr/include/qt5/QtWidgets/qabstractbutton.h \
 		/usr/include/qt5/QtWidgets/QSlider \
 		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QTableWidget \
+		/usr/include/qt5/QtWidgets/qtablewidget.h \
+		/usr/include/qt5/QtWidgets/qtableview.h \
 		/usr/include/qt5/QtWidgets/QVBoxLayout \
-		/usr/include/qt5/QtCore/QFile
+		/usr/include/qt5/QtCore/QFile \
+		/usr/include/qt5/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o deviceform.o deviceform.cpp
 
 qrc_icons.o: qrc_icons.cpp 

@@ -26,18 +26,11 @@ HEADERS  += mainwin.h \
 FORMS    += mainwin.ui \
     deviceform.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libdfmt -ldfmt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libdfmt -ldfmt
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libdfmt -ldfmtwin32 -L$$PWD/../libdfmt/lusb-win -lusb-1.0
 else:unix: LIBS += -L$$PWD/../libdfmt -ldfmt -lusb-1.0
 
 INCLUDEPATH += $$PWD/../libdfmt
 DEPENDPATH += $$PWD/../libdfmt
-
-#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../libdfmt/libdfmt.a
-#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../libdfmt/libdfmt.a
-#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../libdfmt/dfmt.lib
-#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../libdfmt/dfmt.lib
-#else:unix: PRE_TARGETDEPS += $$PWD/../../../libdfmt/libdfmt.a
 
 RESOURCES += \
     icons.qrc
