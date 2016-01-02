@@ -40,12 +40,19 @@ Jak je patrné z obrázku \ref{fig:tas-block}, jedná se o USB \iis zvukovou kar
 Obvod podle specifikace \cite{tas} podporuje všechno potřebné. Full speed USB1.1 včetně USB audio 1.0, 14 endpointů z toho až dva mohou být isochronní. Dále až dvě vstupní \iis rozhraní a jednu \iic sběrnici. Nevýhodou je absence programové paměti, kusová dostupnost obvodu pouze ve formě vzorků a v mém případě také fakt, že s tímto druhem obvodů nemá žádné zkušenosti.
 
 \subsubsection{PIC16F1454}
-Je osmi bitový MCU od firmy Microchip s podporou full speed USB 2.0. Obvod obsahuje továrně kalibrovaný oscilátor a umí pracovat při napájecím napětí 2,3-5,5V. Díky tomu obvod nepotřebuje prakticky žádné externí součástky. Prakticky k němu stačí připojit USB kabel.\\
+Je osmi bitový MCU od firmy Microchip s podporou full speed USB 2.0. Obvod obsahuje továrně kalibrovaný oscilátor a umí pracovat při napájecím napětí 2,3-5,5V. Díky tomu obvod nepotřebuje prakticky žádné externí součástky. V podstatě k němu stačí připojit pouze USB kabel.\\
 Výrobce poskytuje k tomuto MCU knihovnu Microchip Library for aplications, které mimo jiné obsahuje implementaci USB audio 1.0. Navíc jedním ze vzorových projektů u této knihovny je i USB mikrofón, který řeší přenos zvuku do počítače.\\
 Bohužel tento MCU nemá podporu \iis a na jeho softwarovou implementaci je příliš pomalý. 
 
 \subsubsection{PIC32MX250F128}
-	TAS x Osmi bit x PIC32mx
+Tento 32 bitový MCU, taktéž od firmy Microchip, je vybaven všemi potřebnými rozhraními. Full speed USB 2.0, 2x nezávislé \iis, 2x \iic. Pracuje v rozmezí napájecích napětí 2,3-3,6V. V MCU jsou k dispozici čtyři DMA kanály, které je možné řetězit (po ukončení jednoho kanálu se automaticky spustí druhý). Podobně jako u PIC16F1454 je i k tomuto čipu je k dispozici framework Harmony \cite{harmony} s podporou pro USB Audio 1.0. Je k dispozici v různých pouzdrech, dokonce i v DIP, které je možné přímo zapojit do nepájivého pole.\\
+Pro modul jsem vybral právě tento MCU.
 
+\subsection{Výsledná konstrukce}
+%-alternativa PIC32MX128F032b
+%-proč 2x i2s
+%-staboš LE33
+%-blokove schema ?
+%-zmiti že se frekvence u tuneru da brát z i2s
 
 %přidat nákres 
