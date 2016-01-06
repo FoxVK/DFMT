@@ -5,12 +5,6 @@ Vzhledem k tomu, že není možné se cenou zařízení přiblížit zavedeným 
 %mužeš přidat zmínku o snaze mít možnost rozšiřování funkcionality po strance FW a SW
 %možná by stáo za to popsat i2s
  
-\subsection{Volba rozhraní pro spojení modulu a počítače}
-Po tomto rozhraní se budou přenášet dva druhy informací a to samotný zvuk a ovládání tunerů.\\
-V současné době je prakticky jediným schůdným řešením použití rozhraní USB díky celé řadě výhod, které nabízí. Zejména jeho širokým rozšířením na téměř všech počítačích, od osobních přes servery až po jednodeskové či průmyslové počítače. Stejně tak je k dispozici velké množství součástek se zabudovanou podporou tohoto rozhraní. USB dále poskytuje možnost napájení připojených zařízení až do příkonu 2,5W. Má zabudovanou podporu pro různé druhy přenosů včetně isochronních (garantovaný periodický přenos předem dohodnutého množství dat). Specifikace USB zavádí standardní třídy funkcí v zařízení. V době psaní tohoto textu sice neexistuje třída pro ovládání tuneru, ale existuje třída popisující zvuková zařízení. Díky tomuto není potřeba vyvíjet vlastní ovladač zvukové karty na straně počítače.\\
-%mužeš to vycpat textem o PCI - PCI-e
-
-
 \subsection{Způsob příjmu rozhlasového vyslání}
 Jednou možností je řešení příjmu z diskrétních součástek a nebo s pomocí analogových IO. Ovšem toto je příliš komplikované.\\
 Na trhu je ovšem řada integrovaných obvodů, které zajišťují samotný příjem vysílání včetně vyhledávání static, měření kvality signálu a přijmu RDS a to s minimem potřebných externích součástek. Tyto IO se typicky ovládají pomocí \iic nebo SPI a zvuk poskytují digitálně přes rozhraní \iis a nebo analogově.\\
@@ -23,6 +17,15 @@ Bohužel drtivá většina je dostupná pouze v pouzdru QFN, které se velmi obt
 \item{Příjem RDS}
 \end{itemize}
 %popis vlastností jako že jsou na 3.3v a taky vypíchnoout že frekvence se dá odvozovat přímo z i2s
+
+\subsection{Volba rozhraní pro spojení modulu a počítače}
+Po tomto rozhraní se budou přenášet dva druhy informací a to samotný zvuk a ovládání tunerů.\\
+V současné době je prakticky jediným schůdným řešením použití rozhraní USB díky celé řadě výhod, které nabízí. Zejména jeho širokým rozšířením na téměř všech počítačích, od osobních přes servery až po jednodeskové či průmyslové počítače. Stejně tak je k dispozici velké množství součástek se zabudovanou podporou tohoto rozhraní. USB dále poskytuje možnost napájení připojených zařízení až do příkonu 2,5W. Má zabudovanou podporu pro různé druhy přenosů včetně isochronních (garantovaný periodický přenos předem dohodnutého množství dat). Specifikace USB zavádí standardní třídy funkcí v zařízení. V době psaní tohoto textu sice neexistuje třída pro ovládání tuneru, ale existuje třída popisující zvuková zařízení. Díky tomuto není potřeba vyvíjet vlastní ovladač zvukové karty na straně počítače.
+%mužeš to vycpat textem o PCI - PCI-e
+\subsubsection{Verze USB specifikací}
+V současné době je možné se setkat s USB verze 1.0, 1.1, 2.0 a 3.0. Dobrou zprávou je zpětná kompatibilita všech verzí. tj. zařízení podle specifikace 1.0 by mělo fungovat s jakýmkoliv hostem. Rychlost full speed definuje už první specifikace, její maximální propustnost 12Mbit je pro věrný přenos dvoukanálového zvuku více než dostatečná. Novější verze nepřinášejí žádnou vlastnost, která by byla por tento projekt přínosná.\\
+Odlišná situace je v případě specifikací třídy USB audio. Existují vzájemně nekompatibilní verze 1.0 a 2.0. Ani zde mladší verze nepřináší žádný benefit, který bych mohl využít. Navíc doposud nemá nativní podporu ani ve Windows 10. Z tohoto důvodu není použití USB audio 2.0 příliš vhodné.
+
 
 \subsection{Napojení tuneru na USB}
 \textbf{Požadavky:\\}
@@ -37,7 +40,7 @@ Bohužel drtivá většina je dostupná pouze v pouzdru QFN, které se velmi obt
 \subsubsection{TAS1020b}	
 \InsertFigure{figures/tas-block.png}{\textwidth}{Blokové schéma TAS1020b. (Převzato z \cite{tas})}{fig:tas-block}
 Jak je patrné z obrázku \ref{fig:tas-block}, jedná se o USB \iis zvukovou kartu a MCU v jednom. Narozdíl od většiny MCU nemá interní paměť programu. Program se načítá při spuštění buď z eeprom paměti připojené přes \iic a nebo z přes USB ze zařízení ke kterému je obvod připojen.\\
-Obvod podle specifikace \cite{tas} podporuje všechno potřebné. Full speed USB1.1 včetně USB audio 1.0, 14 endpointů z toho až dva mohou být isochronní. Dále až dvě vstupní \iis rozhraní a jednu \iic sběrnici. Nevýhodou je absence programové paměti, kusová dostupnost obvodu pouze ve formě vzorků a v mém případě také fakt, že s tímto druhem obvodů nemá žádné zkušenosti.
+Obvod podle specifikace \cite{tas} podporuje všechno potřebné. Full speed USB1.1 včetně USB audio 1.0, 14 endpointů z toho až dva mohou být isochronní. Dále až dvě vstupní \iis rozhraní a jednu \iic sběrnici. Nevýhodou je absence programové paměti, kusová dostupnost obvodu pouze ve formě vzorků a v mém případě také fakt, že s tímto druhem obvodů nemám žádné zkušenosti.
 
 \subsubsection{PIC16F1454}
 Je osmi bitový MCU od firmy Microchip s podporou full speed USB 2.0. Obvod obsahuje továrně kalibrovaný oscilátor a umí pracovat při napájecím napětí 2,3-5,5V. Díky tomu obvod nepotřebuje prakticky žádné externí součástky. V podstatě k němu stačí připojit pouze USB kabel.\\
@@ -46,7 +49,7 @@ Bohužel tento MCU nemá podporu \iis a na jeho softwarovou implementaci je př�
 
 \subsubsection{PIC32MX250F128}
 Tento 32 bitový MCU, taktéž od firmy Microchip, je vybaven všemi potřebnými rozhraními. Full speed USB 2.0, 2x nezávislé \iis, 2x \iic. Pracuje v rozmezí napájecích napětí 2,3-3,6V. V MCU jsou k dispozici čtyři DMA kanály, které je možné řetězit (po ukončení jednoho kanálu se automaticky spustí druhý). Podobně jako u PIC16F1454 je i k tomuto čipu je k dispozici framework Harmony \cite{harmony} s podporou pro USB Audio 1.0. Je k dispozici v různých pouzdrech, dokonce i v DIP, které je možné přímo zapojit do nepájivého pole.\\
-Pro modul jsem vybral právě tento MCU.
+Pro modul jsem vybral právě tento MCU. Případně je možné něco málo ušetřit a použít PIC32MX128F032. Liší se pouze menšími velikostmi pamětí.
 
 \subsection{Výsledná konstrukce}
 %-alternativa PIC32MX128F032b
