@@ -49,10 +49,11 @@ Bohužel tento MCU nemá podporu \iis a na jeho softwarovou implementaci je př�
 
 \subsubsection{PIC32MX250F128}
 Tento 32 bitový MCU, taktéž od firmy Microchip, je vybaven všemi potřebnými rozhraními. Full speed USB 2.0, 2x nezávislé \iis, 2x \iic. Pracuje v rozmezí napájecích napětí 2,3-3,6V. V MCU jsou k dispozici čtyři DMA kanály, které je možné řetězit (po ukončení jednoho kanálu se automaticky spustí druhý). Podobně jako u PIC16F1454 je i k tomuto čipu je k dispozici framework Harmony \cite{harmony} s podporou pro USB Audio 1.0. Je k dispozici v různých pouzdrech, dokonce i v DIP, které je možné přímo zapojit do nepájivého pole.\\
-Pro modul jsem vybral právě tento MCU. Případně je možné něco málo ušetřit a použít PIC32MX128F032. Liší se pouze menšími velikostmi pamětí.
+Pro modul jsem vybral právě tento MCU. Případně je možné něco málo ušetřit a použít PIC32MX220F032. Liší se pouze menšími velikostmi pamětí, konkrétně 32KB programové paměti místo 128KB a 8KB datové paměti namísto 32KB.
 
 \subsection{Výsledná konstrukce}
-%-alternativa PIC32MX128F032b
+\InsertFigure{figures/tuner-block.eps}{100mm}{Blokové schéma zapojení.}{fig:tuner-block}
+Propojení jednotlivých komponent je naznačeno na obrázku \ref{fig:tuner-block}.
 %-proč 2x i2s
 %-staboš LE33
 %-blokove schema ?
