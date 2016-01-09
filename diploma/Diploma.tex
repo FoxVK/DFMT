@@ -5,6 +5,8 @@
 \inputencoding{utf8}
 \usepackage[czech]{babel}
 
+\usepackage{pdflscape}
+
 \newcommand{\iic}{I\textsuperscript{2}C }
 \newcommand{\iis}{I\textsuperscript{2}S }
 
@@ -41,15 +43,25 @@ All works under Linux and Windows.}
 \EnglishKeywords{FM radio receiver, USB, RDS, QT, libusb, PIC}
 
 % Pridame pouzivane zkratky (pokud nejake pouzivame).
+\AddAcronym{AM}{Amlitudová Modulace (Rozhlasové vysílání v pásmu dlouhých vln)}
 \AddAcronym{CD}{Compact disc}
+\AddAcronym{DAB}{Digital Audio Broadcasting (Digitální pozemní rozhlasové vysílání)}
+\AddAcronym{DIP}{Dual Inline Package}
+\AddAcronym{FM}{Rozhlasové vysílání v pásmu velmi krátkých vln}
 \AddAcronym{\iic}{Inter-Integrated Circuit}
 \AddAcronym{\iis}{Integrated Interchip Sound}
+\AddAcronym{LW}{Long Waves (Rozhlasové vysílání v pásmu dlouhých vln)}
 \AddAcronym{MCU}{Microcontroller unit}
 \AddAcronym{PCM}{Pulse-code modulation}
 \AddAcronym{RDS}{Radio Data System}
+\AddAcronym{SPI}{TODO Serial Peripheral Interface ??}
+\AddAcronym{SSOP}{TODO}
+\AddAcronym{SW}{Short Waves (Rozhlasové vysílání v pásmu krátkých vln)}
 \AddAcronym{USB}{Universal Serial Bus}
+\AddAcronym{QFN}{TODO}
 
-%todo QFN SPI SSOP DAB FM AM SW LW MW
+%todo QFN SPI SSOP DAB FM AM SW LW MW DIP
+
 
 
 % Zadame cestu a jmeno souboru ci nekolika souboru s digitalizovanou podobou zadani prace
@@ -160,13 +172,23 @@ All works under Linux and Windows.}
 \textit{MPLAB Harmony USB Libraries Help} [online] 2012-11-15 [2015-12-26]
 \url{http://ww1.microchip.com/downloads/en/DeviceDoc/MPLAB\%20Harmony\%20USB\%20Libraries\%20\%28v1.06.02\%29.pdf}
 
+\bibitem{tas}
+\textit{TAS1020B USB Streaming Controller} [online] 2011-05 [2015-12-29]
+\url{http://www.ti.com/lit/ds/symlink/tas1020b.pdf} 
+
+\bibitem{le} STMicroelectronics
+\textit{Very low-dropout voltage regulator with inhibit function} [online] 03-2014 [2016-01-09]
+\url{http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/CD00000545.pdf}
 \end{thebibliography}
 
 
 \appendix
-\section{Grafy a měření}
-Tohle je příloha k práci. Většinou se sem dávají grafy, tabulky, které by vzhledem
-ke svému počtu překážely v textu diplomky. (Upravit)
+
+\section{Schéma zapojení modulu}
+\begin{landscape}
+Na štorc
+\end{landscape}
+
 \clearpage
 
 %\InsertFigure{figures/Graf}{0.7\textwidth}{Nějaký graf}{fig:SampleGraph}
