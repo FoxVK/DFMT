@@ -53,10 +53,8 @@ Pro modul jsem vybral právě tento MCU. Případně je možné něco málo uše
 
 \subsection{Výsledná konstrukce}
 \InsertFigure{figures/tuner-block.eps}{100mm}{Blokové schéma zapojení.}{fig:tuner-block}
-Propojení jednotlivých komponent je naznačeno na obrázku \ref{fig:tuner-block}. Rozhodl jsem se 
-%-proč 2x i2s
-%-staboš LE33
-%-blokove schema ?
-%-zmiti že se frekvence u tuneru da brát z i2s
 
-%přidat nákres 
+Propojení jednotlivých komponent je naznačeno na obrázku \ref{fig:tuner-block}. Jak je patrné, zahrnul jsem i propojení tuneru B s MCU přes \iis a také vyvedení anténních AM vstupů tunerů (v obrázku čárkovaně). Aktuálně nejsou využity, ale v budoucnu bude možné zařízení rozšířit o podporu příjmu všech pásem, které tunery podporují a nebo přidat režim, kdy se modul bude chovat jako dvě nezávislé zvukové karty.\\
+Celé zařízení je napájeno z USB přes jediný lineární stabilizátor LE33CD, který snižuje napájecí napětí na 3,3V. Dokáže poskytnout až 100mA a je odolný proti nadproudu a přehřátí \cite{le}. MCU je zapojen podle doporučení v katalogovém listu \cite{pic} kapitola 2.1. Stejně tak tunery jsem zapojeny podle doporučení v katalogovém listu \cite{tuner-datasheet} kapitola 2.2.\\
+ Tady bych chtěl zmínit vstup RCLK. Tuner potřebuje v době ladění hodinový signál. V katalogovém listu je několikrát zmíněno, že tento signál je nutné buď přivést přímo na vstup RCLK a nebo se získá zapojením 32,768kHz krystalu. Až v programovací příručce \cite{tuner-programing} v popisu propery \verb|REFCLK_PRESCALE| je možnost odvodit hodinový signál od vstupu hodinového signálu \iis DCLK. Této možnosti jsem samozřejmě využil. \\
+Kompletní schéma zapojení je součástí příloh.
