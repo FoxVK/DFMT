@@ -38,7 +38,8 @@ Odlišná situace je v případě specifikací třídy USB audio. Existují vzá
 \end{itemize}
 
 \subsubsection{TAS1020b}	
-\InsertFigure{figures/tas-block.png}{\textwidth}{Blokové schéma TAS1020b. (Převzato z \cite{tas})}{fig:tas-block}
+\InsertFigure{figures/tas-block.png}{\textwidth}{Blokové schéma TAS1020b. (Převzato z \cite{tas})}{fig:tas-block}[!htbp]
+
 Jak je patrné z obrázku \ref{fig:tas-block}, jedná se o USB \iis zvukovou kartu a MCU v jednom. Narozdíl od většiny MCU nemá interní paměť programu. Program se načítá při spuštění buď z eeprom paměti připojené přes \iic a nebo z přes USB ze zařízení ke kterému je obvod připojen.\\
 Obvod podle specifikace \cite{tas} podporuje všechno potřebné. Full speed USB1.1 včetně USB audio 1.0, 14 endpointů z toho až dva mohou být isochronní. Dále až dvě vstupní \iis rozhraní a jednu \iic sběrnici. Nevýhodou je absence programové paměti, kusová dostupnost obvodu pouze ve formě vzorků a v mém případě také fakt, že s tímto druhem obvodů nemám žádné zkušenosti.
 
@@ -52,7 +53,7 @@ Tento 32 bitový MCU, taktéž od firmy Microchip, je vybaven všemi potřebným
 Pro modul jsem vybral právě tento MCU. Případně je možné něco málo ušetřit a použít PIC32MX220F032. Liší se pouze menšími velikostmi pamětí, konkrétně 32KB programové paměti místo 128KB a 8KB datové paměti namísto 32KB.
 
 \subsection{Výsledná konstrukce}
-\InsertFigure{figures/tuner-block.eps}{100mm}{Blokové schéma zapojení.}{fig:tuner-block}
+\InsertFigure{figures/tuner-block.eps}{100mm}{Blokové schéma zapojení.}{fig:tuner-block}[!htbp]
 
 Propojení jednotlivých komponent je naznačeno na obrázku \ref{fig:tuner-block}. Jak je patrné, zahrnul jsem i propojení tuneru B s MCU přes \iis a také vyvedení anténních AM vstupů tunerů (v obrázku čárkovaně). Aktuálně nejsou využity, ale v budoucnu bude možné zařízení rozšířit o podporu příjmu všech pásem, které tunery podporují a nebo přidat režim, kdy se modul bude chovat jako dvě nezávislé zvukové karty.\\
 Celé zařízení je napájeno z USB přes jediný lineární stabilizátor LE33CD, který snižuje napájecí napětí na 3,3V. Dokáže poskytnout až 100mA a je odolný proti nadproudu a přehřátí \cite{le}. MCU je zapojen podle doporučení v katalogovém listu \cite{pic} kapitola 2.1. Stejně tak tunery jsem zapojeny podle doporučení v katalogovém listu \cite{tuner-datasheet} kapitola 2.2.\\

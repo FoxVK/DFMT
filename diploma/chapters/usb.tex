@@ -8,9 +8,8 @@ S vydáním specifikace USB 2.0 byly předchozí specifikace označeny jako zast
 
 
 \subsection{Stručný úvod do full-speed USB 2.0}
-
 \subsubsection{Topologie}
-\InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-functions}
+\InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-functions}[!htbp]
 
 %TODO obrázek topologie \InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-topo}
 Ačkoliv v název rozhraní (Univerzální Sériová Sběrnice) napovídá, že jde o sběrnici, jedná se o zapojení typu hvězda. Přesněji, jak je vidět z obrázku \ref{fig:usb-topo}, připojená zařízení a rozbočovače tvoří strom jehož kořenem je hostitel. Tento implementuje tzv. kořenový rozbočovač (root hub), ke kterému je možné buď přímo připojit jedno zařízení a nebo rozbočovač a do něj dalších až osm zařízení/rozbočovačů. je možné takto za sebe zřetězit až pět rozbočovačů. Celkově je možné na jeden kořenový rozbočovač připojit až 127 zařízení (včetně rozbočovačů).\\
@@ -19,7 +18,7 @@ Ve specifikaci je také zohledněn fakt, že zařízení zpravidla nezastává p
 
 \subsubsection{Komunikace}
 
-\begin{table}[!H]
+\begin{table}[!htbp]
 \label{tab:usb-transfer-types}
 \begin{center}
 \begin{tabular}{|l|c|c|c|c|}
@@ -51,14 +50,51 @@ Přenos vždy sestává z alespoň jedné transakce (transaction), která se dá
 \end{itemize}
 Za tímto paketem následuje nula nebo více paketů s daty. Aby bylo možné detekovat výpadek nebo duplikaci některého z paketů jsou specifikovány hned dva typy paketů. A to DATA0 a DATA1. U izochronních transakcí se vždy posílají pakety DATA0. U ostatních transakcí se vyšle nejprve DATA0 a poté se tyto druhy paketů střídají nezávisle na transakcích. Znovu se od DATA0 začne pouze v následujících případech:
 \begin{itemize}
-\item USB complete pg 77 TODO
+\item Na začátku každé řídící transakce.
+\item Po následujících žádostech hostitele (bude popsáno dále):
+\begin{itemize}
+\item Přiřazení konfigurace.
+\item Zrušení zastavení koncového bodu.
+\item Nastavení rozhraní.
 \end{itemize}
+\end{itemize}
+Za datovými pakety následuje potvrzování transakce protistranou. Izochronní přenosy potvrzování nepodporují, tudíž datovými pakety jejich transakce končí. Transkace hromadných přenosů a přenosu přerušení jsou vždy zakončeny jedním potvrzovacím (handshake) paketem.  Transkace řídících přenosů mají před potvrzovací paket vložen jeden datový paket nulové délky (zero length packet často zkracovaný ZLP), ale opačného směru než všechny předchozí datové pakety. Potvrzovací paket vždy vysílá zařízení. Má vždy jeden z následujících typů:
+\begin{itemize}
+\item \textbf{ACK} (Úspěch) - Úspěšné ukončení transakce.
+\item \textbf{NAK} (Neúspěch) - Typicky poškozená přijímaná data a nebo častěji zařízení nemá připravena data k odeslání.
+\item \textbf{STALL}(Chyba) - Zařízení takto reaguje na požadavek, který nepodporuje.
+\end{itemize}
+Rozdíl mezi NAK a STALL je, že po NAK potvrzení bude hostitel požadavek opakovat (počet opakování není explicitně specifikován), kdežto STALL signalizuje nemožnost vyřízení požadavku a tudíž jej opakovat nemá smysl.
 
-%paket a transakce
+Formátování a rozpoznávání paketů řeší přímo USB modul v Mikrokontroléru, není tedy nutné se jím hlouběji zabývat. Detailní popis je v kapitole 8 USB specifikace \cite{usb-spec}.
+
+
+\subsubsection{Dekriptory}
+USB specifikace zavádí deskriptory (descriptors). Jedná se o unifikovaný způsob jak může zařízení informovat hostitele o svých schopnostech a požadavcích. Na základě právě těchto informací může operační systém vybrat pro funkce zařízení odpovídající ovladače, řadič v hostiteli se dozví kolik dat, jak často bude přenášet po jednotlivých koncových bodech a jakou má tomuto přenosu přiřadit prioritu a podobně.\\
+Deskriptory jsou binární struktury takže je nutné vzít v potaz endianitu. U USB je to vždy little-endian, to znamená, že se čílo odesílá od nejméně významného bytu po nejvíce významný. Například 0x1234 se přenese nejdříve 0x34 a poté 0x12. Ačkoliv MCU PIC32 s použítím dodáveného kompilátoru XC32 používá taktéž little-endian, je z hlediska případné přenositelnosti výhodné implementovat jako pole typu \InlCode{char} viz ukázka \ref{lst:usb-dev-desc}.
+\begin{lstlisting}[caption=Deskriptor zařízení.]
+const static Usb_descriptor_device usb_desc_device =
+{
+    .bLength            = sizeof(Usb_descriptor_device),
+    .bDescriptorType    = USB_DSC_DEVICE,
+    .bcdUSB             = 0x0200, //2.0
+    .bDeviceClass       = 0x00,
+    .bDeviceSubClass    = 0x00,
+    .bDeviceProtocol    = 0x00,
+    .bMaxPacketSize0    = 64,
+    .idVendor           = USB_VID,
+    .idProduct          = USB_PID,
+    .bcdDevice          = 0x0003,
+    .iManufacturer      = 1,
+    .iProduct           = 2,
+    .iSerialNumber      = 0,
+    .bNumConfigurations = 1
+};
+\end{lstlisting}
+\label{lst:usb-dev-desc}
+
 
 %konfigurace
-
-%deskriptory
 
 \subsubsection{USB audio 1.0}
 
@@ -70,7 +106,6 @@ Nepoužitelnost Harmony frameworku\\
 
 \subsection{USB \iic tunel}
 i2c -> usb\\
-
 
 % zmínit chyby v křemíku (nefunkčnost pinu, a problém dvojího zápisu po přerušení)
 
