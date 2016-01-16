@@ -19,7 +19,6 @@ Ve specifikaci je také zohledněn fakt, že zařízení zpravidla nezastává p
 \subsubsection{Komunikace}
 
 \begin{table}[!htbp]
-\label{tab:usb-transfer-types}
 \begin{center}
 \begin{tabular}{|l|c|c|c|c|}
 \hline 
@@ -35,7 +34,8 @@ Přenos přerušení & Minimální & až 90\% & Ano & Proud \\
 \hline 
 \end{tabular} 
 \end{center}
-\caption{Druhy USB přenosů.} 
+\caption{Druhy USB přenosů.}
+\label{tab:usb-transfer-types} 
 \end{table}
 
 Aby bylo možné uspokojit nároky na přenos(transfer) dat rozdílné povahy různými funkcemi, zavádí specifikace koncové body (endpoint). Osm výstupních (OUT) pro směr z hostitele do zařízení a osm pro směr opačný (IN). Směr je vždy určován právě z pohledu hostitele. Každému bodu je možné přiřadit jeden ze čtyř druhů přenosu podle tabulky \ref{tab:usb-transfer-types}. Výjimkou je  Vstupní a výstupní koncový bod nula. Tyto vždy slouží pro řídící přenosy a na rozdíl od ostatních bodů je musí podporovat všechna zařízení.
@@ -69,9 +69,61 @@ Rozdíl mezi NAK a STALL je, že po NAK potvrzení bude hostitel požadavek opak
 Formátování a rozpoznávání paketů řeší přímo USB modul v Mikrokontroléru, není tedy nutné se jím hlouběji zabývat. Detailní popis je v kapitole 8 USB specifikace \cite{usb-spec}.
 
 
-\subsubsection{Dekriptory}
+\subsubsection{Deskriptory}
 USB specifikace zavádí deskriptory (descriptors). Jedná se o unifikovaný způsob jak může zařízení informovat hostitele o svých schopnostech a požadavcích. Na základě právě těchto informací může operační systém vybrat pro funkce zařízení odpovídající ovladače, řadič v hostiteli se dozví kolik dat, jak často bude přenášet po jednotlivých koncových bodech a jakou má tomuto přenosu přiřadit prioritu a podobně.\\
-Deskriptory jsou binární struktury takže je nutné vzít v potaz endianitu. U USB je to vždy little-endian, to znamená, že se čílo odesílá od nejméně významného bytu po nejvíce významný. Například 0x1234 se přenese nejdříve 0x34 a poté 0x12. Ačkoliv MCU PIC32 s použítím dodáveného kompilátoru XC32 používá taktéž little-endian, je z hlediska případné přenositelnosti výhodné implementovat jako pole typu \InlCode{char} viz ukázka \ref{lst:usb-dev-desc}.
+Při vývoji zařízení je základním rozdělením deskriptorů rozdělení podle požadavků hostitele:
+\begin{itemize}
+\item \textbf{Deskriptor zařízení} (Sevice descriptor) - Nejnutnější informace pro pro správu zařízení na sběrnici.
+\item \textbf{Deskriptory řetězců} (String dscriptors) - Pole textových řetěců a informace o dostupných lokalizacích.
+\item \textbf{Deskriptory konfigurace} (Configuration descriptor) - Struktura deskriptorů s veškerými dalšími informacemi.
+\end{itemize}
+Popis všech deskriptorů všech možných funkcí je zcela mimo rozsah tohoto textu. Dále se omezím pouze na deskriptory a jejich hodnoty použité v modulu.
+
+
+\begin{table}[!htbp]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1 & 18 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1 & 0x01 & Typ deskriptoru. \\
+\hline
+bcdUSB & 2 & 0x0200 & \makecell[l]{Verze USB specifikace implementovaná\\ zařízením. (2.0)}\\
+\hline
+bDeviceClass & 1 & 0x00 & \makecell[l]{Třída zařízení.0x00 znamená, že třídu\\ specifikuje každé rozhraní zvlášť.}\\
+\hline
+bDeviceSubClass & 1 & 0x00 & \makecell[l]{Podtřída zařízení. Pokud je bDeviceClass\\ 0x00, musí být i toto pole 0x00.}\\
+\hline
+bDeviceProtocol & 1 & 0x00 & \makecell[l]{Protokol zařízení. Pokud je bDeviceClass\\ 0x00, musí být i toto pole 0x00.}\\
+\hline
+bMaxPacketSize & 1 & 64 & \makecell[l]{Největší délka data, kterou je možné\\ odeslat koncovým bodem 0.}\\
+\hline
+idVendor & 2 & \VID & ID Výrobce zařízení.\\
+\hline
+idProduct & 2 & \PID & ID zařízení. \\
+\hline
+bcdDevice & 2 & 0x0100 & Verze zařízení 1.0.\\
+\hline
+iManufacturer & 1 & 1 & \makecell[l]{Odkaz na řetězec s názvem výrobce.} \\
+\hline
+iProduct & 1 & 2 & \makecell[l]{Odkaz na řetězec s názvem zařízení. \\0 znamená nespecifikován.} \\
+\hline
+iSerialNumber & 1 & 0 & \makecell[l]{Odkaz na řetězec se sérovým číslem\\ zařízení.}\\
+\hline
+bNumConfigurations & 1 & 1 & Počet konfigurací zařízení.\\
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor zařízení.}
+\label{tab:usb-device-descriptor} 
+\end{table}
+
+V tabulce \ref{tab:usb-device-descriptor} je uveden deskriptor zařízení tak jak je použit v modulu. Myslím, že popis významu  polí v tabulce je dostatečný.  Za zmínku stojí ID výrobce a zařízení. Jejich účel je stejný jak například MAC adresa síťových zařízení a to jednoznačně identifikovat druh zařízení. Oficiální cesta je požádat o přiřazení ID výrobce USB implementers fórum, což v době psaní toho textu stojí 5000 amerických dolarů \cite{usb-vid}.
+
+%formát deskriptoru v mcu
+Deskriptory jsou binární struktury takže je nutné vzít v potaz endianitu. U USB je to vždy little-endian, to znamená, že se čílo odesílá od nejméně významného bytu po nejvíce významný. Například 0x1234 se přenese nejdříve 0x34 a poté 0x12. Mikrokontrolér PIC32 s dodáveným kompilátor XC32 používá taktéž little-endian, je z hlediska případné přenositelnosti výhodné implementovat jako pole typu \InlCode{char} viz ukázka \ref{lst:usb-dev-desc}.
 \begin{lstlisting}[caption=Deskriptor zařízení.]
 const static Usb_descriptor_device usb_desc_device =
 {
@@ -93,6 +145,10 @@ const static Usb_descriptor_device usb_desc_device =
 \end{lstlisting}
 \label{lst:usb-dev-desc}
 
+
+
+
+%string deskriptor
 
 %konfigurace
 
