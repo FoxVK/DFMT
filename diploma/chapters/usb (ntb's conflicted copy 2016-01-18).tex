@@ -1,0 +1,114 @@
+\section{USB}
+\label{sec:USB}
+Na rozdíl například od například populárního rozhraní UART je USB podstatně komplikovanější. Je to určitou daní za jeho univerzálnost. Vzhledem k velkému rozsahu specifikace USB \cite{usb} se omezím pouze na popis částí nezbytných pro implementaci modulu.\\
+S vydáním specifikace USB 2.0 byly předchozí specifikace označeny jako zastaralé a neměly by se používat pro nové konstrukce. Následující text se tedy týká USB 2.0 a rychlosti full-speed.
+%zmiň vid a pid
+
+%minimální zařízení\\
+
+
+\subsection{Stručný úvod do full-speed USB 2.0}
+\subsubsection{Topologie}
+\InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-functions}[!htbp]
+
+%TODO obrázek topologie \InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-topo}
+Ačkoliv v název rozhraní (Univerzální Sériová Sběrnice) napovídá, že jde o sběrnici, jedná se o zapojení typu hvězda. Přesněji, jak je vidět z obrázku \ref{fig:usb-topo}, připojená zařízení a rozbočovače tvoří strom jehož kořenem je hostitel. Tento implementuje tzv. kořenový rozbočovač (root hub), ke kterému je možné buď přímo připojit jedno zařízení a nebo rozbočovač a do něj dalších až osm zařízení/rozbočovačů. je možné takto za sebe zřetězit až pět rozbočovačů. Celkově je možné na jeden kořenový rozbočovač připojit až 127 zařízení (včetně rozbočovačů).\\
+Velkou výhodou je, že zařízení je od topologie odstíněno. Vždy se z jeho pohledu komunikuje přímo s hostem.\\
+Ve specifikaci je také zohledněn fakt, že zařízení zpravidla nezastává pouze jedinou funkci. To je konec konců případ i tohoto modulu. Obsahuje dvě funkce, zvukovou kartu a \iic tunel pro komunikaci s tunery.
+
+\subsubsection{Komunikace}
+
+\begin{table}[!htbp]
+\label{tab:usb-transfer-types}
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|}
+\hline 
+ & Latence & \makecell{Vyhrazená šířka\\ pásma} & \makecell{Spolehlivý\\ přenos} & Typ dat \\ 
+\hline 
+Isochroní přenos & Minimální & až 90\% & Ne & Proud \\ 
+\hline 
+Hromadný přenos & Negarantovaná & Ne & Ano & Proud \\ 
+\hline 
+Přenos přerušení & Minimální & až 90\% & Ano & Proud \\ 
+\hline 
+Řídící přenos & Negarantovaná & až 10\% & Ano & Zprávy \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Druhy USB přenosů.} 
+\end{table}
+
+Aby bylo možné uspokojit nároky na přenos(transfer) dat rozdílné povahy různými funkcemi, zavádí specifikace koncové body (endpoint). Osm výstupních (OUT) pro směr z hostitele do zařízení a osm pro směr opačný (IN). Směr je vždy určován právě z pohledu hostitele. Každému bodu je možné přiřadit jeden ze čtyř druhů přenosu podle tabulky \ref{tab:usb-transfer-types}. Výjimkou je  Vstupní a výstupní koncový bod nula. Tyto vždy slouží pro řídící přenosy a na rozdíl od ostatních bodů je musí podporovat všechna zařízení.
+Full-speed USB podporuje čtyři druhy komunikace uvedené v tabulce \ref{tab:usb-transfer-types}.\\ 
+Body nula jsou využívány jednak k inicializaci a správě vlastního zařízení, ale také můžou být využívány zároveň i funkcemi. Například popisovaný modul jej využívá pro ovládání audio funkce.
+Modul dále využívá vstupní koncový bod 1 pro přenos zvuku do hostitele a potom dvojici koncových bodů 2 v obou směrech pro komunikaci s tunery viz. obrázek \ref{fig:usb-functions}.\\
+Přenos vždy sestává z alespoň jedné transakce (transaction), která se dále dělí na pakety (packets). Transakce je z pohledu zařízení vždy vyřizována od počátku do konce bez přerušení jinou transakcí. Je vždy iniciována vysláním token paketu hostitelem, který takto může řídit šířku pásma přidělovanou jednotlivým zařízením na sběrnici. Token pakety mohou být podle druhu transakce následující třech druhů:
+\begin{itemize}
+\item \textbf{IN} (Vstupní) - Následuje přenos ze zařízení do hostitele.
+\item \textbf{OUT} (Výstupní) - Následuje přenos z hostitele do zařízení.
+\item \textbf{SETUP} - Následuje řídící přenos. %TODO ověř i a doplň překlad
+\end{itemize}
+Za tímto paketem následuje nula nebo více paketů s daty. Aby bylo možné detekovat výpadek nebo duplikaci některého z paketů jsou specifikovány hned dva typy paketů. A to DATA0 a DATA1. U izochronních transakcí se vždy posílají pakety DATA0. U ostatních transakcí se vyšle nejprve DATA0 a poté se tyto druhy paketů střídají nezávisle na transakcích. Znovu se od DATA0 začne pouze v následujících případech:
+\begin{itemize}
+\item Na začátku každé řídící transakce.
+\item Po následujících žádostech hostitele (bude popsáno dále):
+\begin{itemize}
+\item Přiřazení konfigurace.
+\item Zrušení zastavení koncového bodu.
+\item Nastavení rozhraní.
+\end{itemize}
+\end{itemize}
+Za datovými pakety následuje potvrzování transakce protistranou. Izochronní přenosy potvrzování nepodporují, tudíž datovými pakety jejich transakce končí. Transkace hromadných přenosů a přenosu přerušení jsou vždy zakončeny jedním potvrzovacím (handshake) paketem.  Transkace řídících přenosů mají před potvrzovací paket vložen jeden datový paket nulové délky (zero length packet často zkracovaný ZLP), ale opačného směru než všechny předchozí datové pakety. Potvrzovací paket vždy vysílá zařízení. Má vždy jeden z následujících typů:
+\begin{itemize}
+\item \textbf{ACK} (Úspěch) - Úspěšné ukončení transakce.
+\item \textbf{NAK} (Neúspěch) - Typicky poškozená přijímaná data a nebo častěji zařízení nemá připravena data k odeslání.
+\item \textbf{STALL}(Chyba) - Zařízení takto reaguje na požadavek, který nepodporuje.
+\end{itemize}
+Rozdíl mezi NAK a STALL je, že po NAK potvrzení bude hostitel požadavek opakovat (počet opakování není explicitně specifikován), kdežto STALL signalizuje nemožnost vyřízení požadavku a tudíž jej opakovat nemá smysl.
+
+Formátování a rozpoznávání paketů řeší přímo USB modul v Mikrokontroléru, není tedy nutné se jím hlouběji zabývat. Detailní popis je v kapitole 8 USB specifikace \cite{usb-spec}.
+
+
+\subsubsection{Dekriptory}
+USB specifikace zavádí deskriptory (descriptors). Jedná se o unifikovaný způsob jak může zařízení informovat hostitele o svých schopnostech a požadavcích. Na základě právě těchto informací může operační systém vybrat pro funkce zařízení odpovídající ovladače, řadič v hostiteli se dozví kolik dat, jak často bude přenášet po jednotlivých koncových bodech a jakou má tomuto přenosu přiřadit prioritu a podobně.\\
+Deskriptory jsou binární struktury takže je nutné vzít v potaz endianitu. U USB je to vždy little-endian, to znamená, že se čílo odesílá od nejméně významného bytu po nejvíce významný. Například 0x1234 se přenese nejdříve 0x34 a poté 0x12. MCU PIC32 používá taktéž little-endian.  \InlCode{char} viz ukázka \ref{lst:usb-dev-desc}.
+\begin{lstlisting}[caption=Deskriptor zařízení.]
+const static Usb_descriptor_device usb_desc_device =
+{
+    .bLength            = sizeof(Usb_descriptor_device),
+    .bDescriptorType    = USB_DSC_DEVICE,
+    .bcdUSB             = 0x0200, //2.0
+    .bDeviceClass       = 0x00,
+    .bDeviceSubClass    = 0x00,
+    .bDeviceProtocol    = 0x00,
+    .bMaxPacketSize0    = 64,
+    .idVendor           = USB_VID,
+    .idProduct          = USB_PID,
+    .bcdDevice          = 0x0003,
+    .iManufacturer      = 1,
+    .iProduct           = 2,
+    .iSerialNumber      = 0,
+    .bNumConfigurations = 1
+};
+\end{lstlisting}
+\label{lst:usb-dev-desc}
+
+
+%konfigurace
+
+\subsubsection{USB audio 1.0}
+
+
+\subsection{Microchip Harmony framework}
+Nepoužitelnost Harmony frameworku\\
+
+\subsection{Vlastní implementace}
+
+\subsection{USB \iic tunel}
+i2c -> usb\\
+
+% zmínit chyby v křemíku (nefunkčnost pinu, a problém dvojího zápisu po přerušení)
+
+\subsection{Omezení}
+
+%suspend a test mod

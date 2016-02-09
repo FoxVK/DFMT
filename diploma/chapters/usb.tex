@@ -1,20 +1,21 @@
 \section{USB}
 \label{sec:USB}
-Na rozdíl například od například populárního rozhraní UART je USB podstatně komplikovanější. Je to určitou daní za jeho univerzálnost. Vzhledem k velkému rozsahu specifikace USB \cite{usb} se omezím pouze na popis částí nezbytných pro implementaci modulu.\\
-S vydáním specifikace USB 2.0 byly předchozí specifikace označeny jako zastaralé a neměly by se používat pro nové konstrukce. Následující text se tedy týká USB 2.0 a rychlosti full-speed.
-%zmiň vid a pid
+Na rozdíl od například populárního rozhraní UART je USB podstatně komplikovanější. Je to určitou daní za jeho univerzálnost. Vzhledem k velkému rozsahu specifikace USB \cite{usb-spec} se omezím pouze na popis částí nezbytných pro implementaci modulu.\\
+S vydáním specifikace USB 2.0 byly předchozí specifikace označeny jako zastaralé a neměly by se používat pro nové konstrukce. Následující text se tedy týká USB 2.0 a~rychlosti full-speed.
 
 %minimální zařízení\\
 
 
 \subsection{Stručný úvod do full-speed USB 2.0}
 \subsubsection{Topologie}
-\InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-functions}[!htbp]
+\InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-functions}
+
+TODO Obrázek s pyramidou topologie
 
 %TODO obrázek topologie \InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-topo}
-Ačkoliv v název rozhraní (Univerzální Sériová Sběrnice) napovídá, že jde o sběrnici, jedná se o zapojení typu hvězda. Přesněji, jak je vidět z obrázku \ref{fig:usb-topo}, připojená zařízení a rozbočovače tvoří strom jehož kořenem je hostitel. Tento implementuje tzv. kořenový rozbočovač (root hub), ke kterému je možné buď přímo připojit jedno zařízení a nebo rozbočovač a do něj dalších až osm zařízení/rozbočovačů. je možné takto za sebe zřetězit až pět rozbočovačů. Celkově je možné na jeden kořenový rozbočovač připojit až 127 zařízení (včetně rozbočovačů).\\
+Ačkoliv název rozhraní (Univerzální Sériová Sběrnice) napovídá, že jde o sběrnici, jedná se o zapojení typu hvězda. Přesněji, jak je vidět z obrázku \ref{fig:usb-topo}, připojená zařízení a rozbočovače tvoří strom jehož kořenem je hostitel. Tento implementuje tzv. kořenový rozbočovač (root hub), ke kterému je možné buď přímo připojit jedno zařízení a nebo rozbočovač a do něj dalších až osm zařízení/rozbočovačů. Je možné takto za sebe zřetězit až pět rozbočovačů. Celkově je možné na jeden kořenový rozbočovač připojit až 127 zařízení (včetně rozbočovačů).\\
 Velkou výhodou je, že zařízení je od topologie odstíněno. Vždy se z jeho pohledu komunikuje přímo s hostem.\\
-Ve specifikaci je také zohledněn fakt, že zařízení zpravidla nezastává pouze jedinou funkci. To je konec konců případ i tohoto modulu. Obsahuje dvě funkce, zvukovou kartu a \iic tunel pro komunikaci s tunery.
+Ve specifikaci je také zohledněn fakt, že zařízení zpravidla nezastává pouze jedinou funkci. To je konec konců případ i tohoto modulu. Obsahuje dvě funkce - zvukovou kartu a \iic tunel pro komunikaci s tunery.
 
 \subsubsection{Komunikace}
 
@@ -38,17 +39,17 @@ Přenos přerušení & Minimální & až 90\% & Ano & Proud \\
 \label{tab:usb-transfer-types} 
 \end{table}
 
-Aby bylo možné uspokojit nároky na přenos(transfer) dat rozdílné povahy různými funkcemi, zavádí specifikace koncové body (endpoint). Osm výstupních (OUT) pro směr z hostitele do zařízení a osm pro směr opačný (IN). Směr je vždy určován právě z pohledu hostitele. Každému bodu je možné přiřadit jeden ze čtyř druhů přenosu podle tabulky \ref{tab:usb-transfer-types}. Výjimkou je  Vstupní a výstupní koncový bod nula. Tyto vždy slouží pro řídící přenosy a na rozdíl od ostatních bodů je musí podporovat všechna zařízení.
+Aby bylo možné uspokojit nároky na přenos (transfer) dat rozdílné povahy různými funkcemi, zavádí specifikace koncové body (endpoint). Osm výstupních (OUT) pro směr z hostitele do zařízení a osm pro směr opačný (IN). Směr je vždy určován právě z pohledu hostitele. Každému bodu je možné přiřadit jeden ze čtyř druhů přenosu podle tabulky \ref{tab:usb-transfer-types}. Výjimkou je  vstupní a výstupní koncový bod nula. Tyto vždy slouží pro řídící přenosy a na rozdíl od ostatních bodů je musí podporovat všechna zařízení.
 Full-speed USB podporuje čtyři druhy komunikace uvedené v tabulce \ref{tab:usb-transfer-types}.\\ 
 Body nula jsou využívány jednak k inicializaci a správě vlastního zařízení, ale také můžou být využívány zároveň i funkcemi. Například popisovaný modul jej využívá pro ovládání audio funkce.
 Modul dále využívá vstupní koncový bod 1 pro přenos zvuku do hostitele a potom dvojici koncových bodů 2 v obou směrech pro komunikaci s tunery viz. obrázek \ref{fig:usb-functions}.\\
-Přenos vždy sestává z alespoň jedné transakce (transaction), která se dále dělí na pakety (packets). Transakce je z pohledu zařízení vždy vyřizována od počátku do konce bez přerušení jinou transakcí. Je vždy iniciována vysláním token paketu hostitelem, který takto může řídit šířku pásma přidělovanou jednotlivým zařízením na sběrnici. Token pakety mohou být podle druhu transakce následující třech druhů:
+Přenos vždy sestává z alespoň jedné transakce (transaction), která se dále dělí na pakety (packets). Transakce je z pohledu zařízení vždy vyřizována od počátku do konce bez přerušení jinou transakcí. Je vždy iniciována vysláním token paketu hostitelem, který takto může řídit šířku pásma přidělovanou jednotlivým zařízením na sběrnici. Token pakety mohou být podle druhu transakce následujících třech druhů:
 \begin{itemize}
 \item \textbf{IN} (Vstupní) - Následuje přenos ze zařízení do hostitele.
 \item \textbf{OUT} (Výstupní) - Následuje přenos z hostitele do zařízení.
 \item \textbf{SETUP} - Následuje řídící přenos. %TODO ověř i a doplň překlad
 \end{itemize}
-Za tímto paketem následuje nula nebo více paketů s daty. Aby bylo možné detekovat výpadek nebo duplikaci některého z paketů jsou specifikovány hned dva typy paketů. A to DATA0 a DATA1. U izochronních transakcí se vždy posílají pakety DATA0. U ostatních transakcí se vyšle nejprve DATA0 a poté se tyto druhy paketů střídají nezávisle na transakcích. Znovu se od DATA0 začne pouze v následujících případech:
+Za tímto paketem následuje nula nebo více paketů s daty. Aby bylo možné detekovat výpadek nebo duplikaci některého z~paketů jsou specifikovány hned dva typy paketů. A~to DATA0 a~DATA1. U izochronních transakcí se vždy posílají pakety DATA0. U ostatních transakcí se vyšle nejprve DATA0 a~poté se~tyto druhy paketů střídají nezávisle na transakcích. Znovu se~od~DATA0 začne pouze v~následujících případech:
 \begin{itemize}
 \item Na začátku každé řídící transakce.
 \item Po následujících žádostech hostitele (bude popsáno dále):
@@ -62,7 +63,7 @@ Za datovými pakety následuje potvrzování transakce protistranou. Izochronní
 \begin{itemize}
 \item \textbf{ACK} (Úspěch) - Úspěšné ukončení transakce.
 \item \textbf{NAK} (Neúspěch) - Typicky poškozená přijímaná data a nebo častěji zařízení nemá připravena data k odeslání.
-\item \textbf{STALL}(Chyba) - Zařízení takto reaguje na požadavek, který nepodporuje.
+\item \textbf{STALL} (Chyba) - Zařízení takto reaguje na požadavek, který nepodporuje.
 \end{itemize}
 Rozdíl mezi NAK a STALL je, že po NAK potvrzení bude hostitel požadavek opakovat (počet opakování není explicitně specifikován), kdežto STALL signalizuje nemožnost vyřízení požadavku a tudíž jej opakovat nemá smysl.
 
@@ -73,54 +74,68 @@ Formátování a rozpoznávání paketů řeší přímo USB modul v Mikrokontro
 USB specifikace zavádí deskriptory (descriptors). Jedná se o unifikovaný způsob jak může zařízení informovat hostitele o svých schopnostech a požadavcích. Na základě právě těchto informací může operační systém vybrat pro funkce zařízení odpovídající ovladače, řadič v hostiteli se dozví kolik dat, jak často bude přenášet po jednotlivých koncových bodech a jakou má tomuto přenosu přiřadit prioritu a podobně.\\
 Při vývoji zařízení je základním rozdělením deskriptorů rozdělení podle požadavků hostitele:
 \begin{itemize}
-\item \textbf{Deskriptor zařízení} (Sevice descriptor) - Nejnutnější informace pro pro správu zařízení na sběrnici.
+\item \textbf{Deskriptor zařízení} (Sevice descriptor) - Nejnutnější informace pro správu zařízení na~sběrnici.
 \item \textbf{Deskriptory řetězců} (String dscriptors) - Pole textových řetěců a informace o dostupných lokalizacích.
 \item \textbf{Deskriptory konfigurace} (Configuration descriptor) - Struktura deskriptorů s veškerými dalšími informacemi.
 \end{itemize}
 Popis všech deskriptorů všech možných funkcí je zcela mimo rozsah tohoto textu. Dále se omezím pouze na deskriptory a jejich hodnoty použité v modulu.
 
-
-\begin{table}[!htbp]
+\begin{table}
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
 Název pole & Délka & Hodnota &  \\ 
 \hline
-bLength & 1 & 18 & Délka deskriptoru.\\
+bLength & 1B & 18 & Délka deskriptoru.\\
 \hline
-bDescriptorType & 1 & 0x01 & Typ deskriptoru. \\
+bDescriptorType & 1B & 0x01 & Typ deskriptoru. \\
 \hline
-bcdUSB & 2 & 0x0200 & \makecell[l]{Verze USB specifikace implementovaná\\ zařízením. (2.0)}\\
+bcdUSB & 2B & 0x0200 & \makecell[l]{Verze USB specifikace implementovaná\\ zařízením. (2.0)}\\
 \hline
-bDeviceClass & 1 & 0x00 & \makecell[l]{Třída zařízení.0x00 znamená, že třídu\\ specifikuje každé rozhraní zvlášť.}\\
+bDeviceClass & 1B & 0x00 & \makecell[l]{Třída zařízení.0x00 znamená, že třídu\\ specifikuje každé rozhraní zvlášť.}\\
 \hline
-bDeviceSubClass & 1 & 0x00 & \makecell[l]{Podtřída zařízení. Pokud je bDeviceClass\\ 0x00, musí být i toto pole 0x00.}\\
+bDeviceSubClass & 1B & 0x00 & \makecell[l]{Podtřída zařízení. Pokud je bDeviceClass\\ 0x00, musí být i toto pole 0x00.}\\
 \hline
-bDeviceProtocol & 1 & 0x00 & \makecell[l]{Protokol zařízení. Pokud je bDeviceClass\\ 0x00, musí být i toto pole 0x00.}\\
+bDeviceProtocol & 1B & 0x00 & \makecell[l]{Protokol zařízení. Pokud je bDeviceClass\\ 0x00, musí být i toto pole 0x00.}\\
 \hline
-bMaxPacketSize & 1 & 64 & \makecell[l]{Největší délka data, kterou je možné\\ odeslat koncovým bodem 0.}\\
+bMaxPacketSize & 1B & 64 & \makecell[l]{Největší délka data, kterou je možné\\ odeslat koncovým bodem 0.}\\
 \hline
-idVendor & 2 & \VID & ID Výrobce zařízení.\\
+idVendor & 2B & \VID & ID Výrobce zařízení.\\
 \hline
-idProduct & 2 & \PID & ID zařízení. \\
+idProduct & 2B & \PID & ID zařízení. \\
 \hline
-bcdDevice & 2 & 0x0100 & Verze zařízení 1.0.\\
+bcdDevice & 2B & 0x0100 & Verze zařízení 1.0.\\
 \hline
-iManufacturer & 1 & 1 & \makecell[l]{Odkaz na řetězec s názvem výrobce.} \\
+iManufacturer & 1B & 1 & \makecell[l]{Odkaz na řetězec s názvem výrobce.} \\
 \hline
-iProduct & 1 & 2 & \makecell[l]{Odkaz na řetězec s názvem zařízení. \\0 znamená nespecifikován.} \\
+iProduct & 1B & 2 & \makecell[l]{Odkaz na řetězec s názvem zařízení.} \\
 \hline
-iSerialNumber & 1 & 0 & \makecell[l]{Odkaz na řetězec se sérovým číslem\\ zařízení.}\\
+iSerialNumber & 1B & 0 & \makecell[l]{Odkaz na řetězec se sériovým číslem\\ zařízení. 0 znamená nespecifikován.}\\
 \hline
-bNumConfigurations & 1 & 1 & Počet konfigurací zařízení.\\
+bNumConfigurations & 1B & 1 & Počet konfigurací zařízení.\\
 \hline
 \end{tabular} 
 \end{center}
 \caption{Deskriptor zařízení.}
 \label{tab:usb-device-descriptor} 
 \end{table}
+\FloatBarrier
+V tabulce \ref{tab:usb-device-descriptor} je uveden deskriptor zařízení tak, jak je použit v modulu. Myslím, že popis významu  polí v tabulce je dostatečný.  Za zmínku stojí ID výrobce a zařízení. Jejich účel je stejný jak například MAC adresa síťových zařízení a to jednoznačně identifikovat druh zařízení. Oficiální cesta je požádat o přiřazení ID výrobce USB implementers fórum, což v době psaní toho textu stojí 5000 amerických dolarů \cite{usb-vid}. Výrobci programovatelných součástek s podporou USB, ale naštěstí z pravidla nabízejí možnost zdarma získat ID produktu z jejich rozsahů. Jednou z podmínek bývá nutnost použít přidělení ID  právě na jejich součástce. Pro modul jsem získat ID produktu od firmy Microchip \PID. ID výrobce je \VID.
 
-V tabulce \ref{tab:usb-device-descriptor} je uveden deskriptor zařízení tak jak je použit v modulu. Myslím, že popis významu  polí v tabulce je dostatečný.  Za zmínku stojí ID výrobce a zařízení. Jejich účel je stejný jak například MAC adresa síťových zařízení a to jednoznačně identifikovat druh zařízení. Oficiální cesta je požádat o přiřazení ID výrobce USB implementers fórum, což v době psaní toho textu stojí 5000 amerických dolarů \cite{usb-vid}.
+Pole iManufacturer, iProduct a iSerialNumber nesou indexy na deskriptory textových řetězců. Všechna pole jsou nepovinná. V případě jejich vynechání se použije index s hodnotou 0. Jak napovídají názvy jednotlivých polí, je možné takto přidat popisek výrobce a zařízení ve formě lidsky čitelného textu a sériové číslo daného kusu zařízení, které může využít ovladač v hostiteli například pro načtení posledního nastavení po opětovném připojení zařízení.
+
+TODO:Tabulka se zkrácenými string dekriptory.
+
+Deskriptory řetězců jsou organizovány jako pole indexované od nuly. Každý jeden řetězec začíná hlavičkou deskriptoru ve které je určen typ deskriptoru (0x??) a jeho celková délka v bytech a a poté následuje samotný text zakódovaný podle normy unicode, konkrétně UTF-16. Je tedy možné použití i národních znaků.\\
+Jedinou výjimkou je deskriptor s indexem 0. V zařízení je možné mít více sad textů v různých jazycích. Seznam dostupných jazyků (jazykových kódu) je právě v tomto deskriptoru. Seznam těchto kódů popisuje \cite{usb-lang}. V modulu jsem se omezil pouze na angličtinu (kód 0x0409).
+
+
+Deskriptor konfigurace je nejvíce komplikovaný. Popisuje schopnosti zařízení a také jeho nároky na přenos popřípadě definují sady parametrů z nichž si může hostitel vybrat tu, která mu v daný okamžik nejvíce vyhovuje. I samotných konfigurací muže být definováno více. Hostitel potom zařízení jednu přidělí popříadě ji může změnit za jinou.\\
+Deskriptor konfigurace je složen z dalších deskriptorů, které takto tvoří stromovou strukturu. V případě mého modulu vypadá tato struktura takto:
+\begin{itemize}
+
+\end{itemize}
+TODO: configuration descriptor a jeho části
 
 %formát deskriptoru v mcu
 Deskriptory jsou binární struktury takže je nutné vzít v potaz endianitu. U USB je to vždy little-endian, to znamená, že se čílo odesílá od nejméně významného bytu po nejvíce významný. Například 0x1234 se přenese nejdříve 0x34 a poté 0x12. Mikrokontrolér PIC32 s dodáveným kompilátor XC32 používá taktéž little-endian, je z hlediska případné přenositelnosti výhodné implementovat jako pole typu \InlCode{char} viz ukázka \ref{lst:usb-dev-desc}.

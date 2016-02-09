@@ -9,11 +9,18 @@
 
 \usepackage{pdflscape}
 
+\usepackage{placeins}
+
+
 \newcommand{\iic}{I\textsuperscript{2}C }
 \newcommand{\iis}{I\textsuperscript{2}S }
+\newcommand{\eeprom}{E\textsuperscript{2}PROM}
 
-\newcommand{\VID}{0x00a6}
-\newcommand{\PID}{0xb00b}
+\newcommand{\VID}{0x04D8}
+\newcommand{\PID}{0xF32C}
+
+%\widowpenalty10000
+%\clubpenalty10000
 
 
 % Zadame pozadovane vstupy pro generovani titulnich stran.
@@ -63,6 +70,7 @@ All works under Linux and Windows.}
 \AddAcronym{SSOP}{TODO}
 \AddAcronym{SW}{Short Waves (Rozhlasové vysílání v pásmu krátkých vln)}
 \AddAcronym{USB}{Universal Serial Bus}
+\AddAcronym{UTF-16}{Způsob kódování znaků ISO 10646/Unicode}
 \AddAcronym{QFN}{TODO}
 
 %todo QFN SPI SSOP DAB FM AM SW LW MW DIP
@@ -135,6 +143,11 @@ All works under Linux and Windows.}
 \url{http://www.usb.org/developers/docs/devclass_docs/audio10.pdf}
 
 %usb audio formats ??
+
+%usb lang codes
+\bibitem{usb-lang}  USB Implementers’ Forum. 
+\textit{Universal Serial Bus Language Identifiers (LANGIDs): Version 1.0} [online] 2000-03-26 [2016-02-09]
+\url{http://www.usb.org/developers/docs/USB_LANGIDs.pdf}
 
 \bibitem{tuner-datasheet} Silicon Laboratories,
 \textit{Si4730/Si4731/Si4734/Si4735-D60 Broadcast AM/FM/SW/LW Radio Receiver: Rev. 1.2 8/13} [online] 2013-08-08 [2015-12-26] \url{https://www.silabs.com/Support\%20Documents/TechnicalDocs/Si4730-31-34-35-D60.pdf}
