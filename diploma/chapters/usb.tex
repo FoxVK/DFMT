@@ -80,6 +80,8 @@ Při vývoji zařízení je základním rozdělením deskriptorů rozdělení po
 \end{itemize}
 Popis všech deskriptorů všech možných funkcí je zcela mimo rozsah tohoto textu. Dále se omezím pouze na deskriptory a jejich hodnoty použité v modulu.
 
+
+\subsubsection{Deskriptor zařízení}
 \begin{table}
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
@@ -124,19 +126,201 @@ V tabulce \ref{tab:usb-device-descriptor} je uveden deskriptor zařízení tak, 
 
 Pole iManufacturer, iProduct a iSerialNumber nesou indexy na deskriptory textových řetězců. Všechna pole jsou nepovinná. V případě jejich vynechání se použije index s hodnotou 0. Jak napovídají názvy jednotlivých polí, je možné takto přidat popisek výrobce a zařízení ve formě lidsky čitelného textu a sériové číslo daného kusu zařízení, které může využít ovladač v hostiteli například pro načtení posledního nastavení po opětovném připojení zařízení.
 
-TODO:Tabulka se zkrácenými string dekriptory.
+\subsubsection{Deskriptory řetězců}
+TODO:Tabulka se zkrácenými string deskriptory.
 
 Deskriptory řetězců jsou organizovány jako pole indexované od nuly. Každý jeden řetězec začíná hlavičkou deskriptoru ve které je určen typ deskriptoru (0x??) a jeho celková délka v bytech a a poté následuje samotný text zakódovaný podle normy unicode, konkrétně UTF-16. Je tedy možné použití i národních znaků.\\
 Jedinou výjimkou je deskriptor s indexem 0. V zařízení je možné mít více sad textů v různých jazycích. Seznam dostupných jazyků (jazykových kódu) je právě v tomto deskriptoru. Seznam těchto kódů popisuje \cite{usb-lang}. V modulu jsem se omezil pouze na angličtinu (kód 0x0409).
 
+\subsubsection{Konfigurace zařízení}
+Konfigurace zařízení je soubor deskriptorů který popisuje schopnosti zařízení a také jeho nároky na přenos popřípadě definují sady parametrů z nichž si může hostitel vybrat tu, která mu v daný okamžik nejvíce vyhovuje. Zařízení musí specifikovat minimálně jednu konfiguraci,ale také více. Hostitel potom zařízení jednu přidělí případně ji může kdykoliv změnit za jinou.\\
+Každá jedna konfigurace zažíná Deskriptorem konfigurace za kterým následují deskriptory rozhraní a koncových bodů do kterých mohou být zanořeny deskriptory další. Tvoří takto stromovou strukturu. V případě mého modulu je možná pouze jediná konfigurace. Její struktura vypadá následovně:
+\FloatBarrier
+\begin{enumerate}
+\item Deskriptor řídícího rozhraní zvuku.
+	\begin{enumerate}
+	\item Deskriptor řídícího rozhraní zvuku - hlavička.
+	\item Deskriptor řídícího rozhraní zvuku - vstupní terminál přijímač rádia.
+	\item Deskriptor řídícího rozhraní zvuku - výstupní terminál odesílání zvuku přes USB.
+	\end{enumerate}
+\item Deskriptor rozhraní pro odesílání zvuku - varianta s vypnutým přenosem.
+\item Deskriptor rozhraní pro odesílání zvuku - varianta se zapnutým přenosem.
+	\begin{enumerate}
+	\item Deskriptor rozhraní pro odesílání zvuku - obecný deskriptor.
+	\item Deskriptor rozhraní pro odesílání zvuku - popis formátování dat.
+	\item Deskriptor koncového bodu - odesílání zvuku.
+	\end{enumerate}
+\item Deskriptor rozhraní specifikovaného výrobcem - \iic tunel.
+	\begin{enumerate}
+	\item Deskriptor koncového bodu - odesílání dat hostu.
+	\item Deskriptor koncového bodu - příjem dat z hosta.
+	\end{enumerate}
+\end{enumerate}
+\FloatBarrier
 
-Deskriptor konfigurace je nejvíce komplikovaný. Popisuje schopnosti zařízení a také jeho nároky na přenos popřípadě definují sady parametrů z nichž si může hostitel vybrat tu, která mu v daný okamžik nejvíce vyhovuje. I samotných konfigurací muže být definováno více. Hostitel potom zařízení jednu přidělí popříadě ji může změnit za jinou.\\
-Deskriptor konfigurace je složen z dalších deskriptorů, které takto tvoří stromovou strukturu. V případě mého modulu vypadá tato struktura takto:
-\begin{itemize}
 
-\end{itemize}
-TODO: configuration descriptor a jeho části
+\subsubsection{Deskriptor konfigurace}
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 9 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x02 & Typ deskriptoru. \\
+\hline
+wTotalLength & 2B & 127 & Celková délka všech deskriptorů konfigurace.\\
+\hline
+bNumInterfaces & 1B & 3 & Počet rozhraní v konfiguraci.\\
+\hline
+bConfigurationValue & 1B & 1 & Index této konfigurace.\\
+\hline
+iConfiguration & 1B & 0 & Odkaz na řetězec s popisem konfigurace.\\
+\hline
+bmAttributes & 1B & 0b10000000 & Bitová maska s atributy.\\
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor konfigurace.}
+\label{tab:usb-conf-desc} 
+\end{table}
+\FloatBarrier
 
+Jak je vidět z tabulky \ref{tab:usb-conf-desc}, tento deskriptor slouží zejména pro informace pro identifikaci konfigurace. A to zejména index iConfiguration, to je hodnota, kterou poté pošle host do zařízení v požadavku o přidělení konfigurace. Dále pak wTotalLength. Hostitel obdrží všechny případné konfigurace v jednom bloku. Na základě této hodnoty rozliší kde jednotlivé konfigurace začínají a končí.
+
+Za zmínku také stojí pole bmAttributes. Nejvyšší bit musí být z důvodu kompatibility s USB 1.0 nastaven na 1, nejnižší bity 0-4, jsou rezervovány pro budoucí použití a musí být nastaveny na 0. Bit 6 signalizuje, že zařízení není napájeno z USB sběrnice. Bit 5 signalizuje že zařízení chce využívat mechanizmus vlastního probuzení a informování hostitele o události. Modul má oba atributy nastaveny na 0.
+
+%TODO ref na remote wakeup
+
+\subsubsection{USB audio 1.0}
+Největší část konfigurace zabírají deskriptory popisující část přenosu zvuku. Je to dáno také tím, že specifikace USB audio \cite{usb-audio} nepopisuje pouze přenos audia po USB. Nabízí také prostředky pro popis topologie vstupů, výstupů, různých efektových jednotek přepínačů, směšovačů a podobně včetně jejich ovládání. Bylo by například možné takto realizovat kompletní ovládání mixážního pultu kde by přes usb mohlo být realizováno pouze několik vstupů a výstupů a nebo i žádný.
+
+Topologie modulu rádia z pohledu této specifikace je nejjednodušší možná. Je zde pouze jeden výstupní terminál přenosu zvuku přes USB, který má jako vstup nastaven vstupní terminál přijímač rádia.
+
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 9 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x04 & Typ deskriptoru. \\
+\hline
+bInterfaceNumber & 1B & 0 & Pořadové číslo rozhraní.\\
+\hline
+bAlternateSetting & 1B & 0 & Identifikátor alternativní nastavení.\\
+\hline
+bNumEndpoints & 1B & 0 & Počet koncových bodů v tomto rozhraní.\\
+\hline
+bInterfaceClass & 1B & 1 & Třída rozhraní. (Audio)\\
+\hline
+bInterfaceSubClass & 1B & 1 & Podtřída rozhraní. (Control device)\\
+\hline
+bInterfaceProtocol & 1B & 0 & Vždy 0. \\
+\hline
+iInterface & 1B & 0 & Index na textový řetězec.\\
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor řídícího rozhraní zvuku.}
+\label{tab:usb-aud-ctrl} 
+\end{table}
+
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 9 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x24 & Typ deskriptoru. \\
+\hline
+bDescriptorSubType & 1B & 0x01 & Pod typ deskriptoru. (Hlavička)\\
+\hline
+bcdADC & 2B & 0x0100 & Verze USB Audio specifikace.\\
+\hline
+wTotalLength & 2B & 30 & Celková délka deskriptorů tohoto rozhraní.\\
+\hline
+bInCollection & 1B & 1 & Počet rozhraní pro odesílání zvuku.\\
+\hline
+baInterfaceNr(1) & 1B & 1 & Index rozhraní pro odesílání zvuku.\\
+\hline
+\end{tabular}  
+\end{center}
+\caption{Deskriptor řídícího rozhraní zvuku - hlavička.}
+\label{tab:usb-aud-ctrl-head} 
+\end{table}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 12 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x24 & Typ deskriptoru. \\
+\hline
+bDescriptorSubType & 1B & 0x02 & Pod typ deskriptoru. (Vstupní terminál)\\
+\hline
+bterminalID & 1B & 1 & Identifikátor terminálu.\\
+\hline
+wTerminalType & 2B & 0x0710 & Typ terminálu. (Přijímač rádia)\\
+\hline
+bAssocTerminal & 1B & 0 & Přidružený terminál. (Nejedná se o zvukové propojení)\\
+\hline
+bNrChannels & 1B & 2 & Počet zvukových kanálů.\\
+\hline
+wChannelConfig & 2B & 0x0003 & Bitová mapa konfigurace kanálů.\\
+\hline
+iChannelNames & 1B & 0 & Index na textový řetězec s názvem kanálů.\\
+\hline
+iTerminal & 1B & 0 & Index na textový řetězec s popisem terminálu.\\
+\hline
+\end{tabular}  
+\end{center}
+\caption{Deskriptor řídícího rozhraní zvuku - vstupní terminál.}
+\label{tab:usb-aud-ctrl-in} 
+\end{table}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 9 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x24 & Typ deskriptoru. \\
+\hline
+bDescriptorSubType & 1B & 0x03 & Pod typ deskriptoru. (Výstupní terminál)\\
+\hline
+bterminalID & 1B & 2 & Identifikátor terminálu.\\
+\hline
+wTerminalType & 2B & 0x0101 & Typ terminálu. (Odesílání přes USB)\\
+\hline
+bAssocTerminal & 1B & 0 & Přidružený terminál. (Nejedná se o zvukové propojení)\\
+\hline
+bSourceID & 1B & 1 & Identifikátor připojeného vstupního terminálu. \\
+\hline
+iTerminal & 1B & 0 & Index na textový řetězec s popisem terminálu.\\
+\hline
+\end{tabular}  
+
+\end{center}
+\caption{Deskriptor řídícího rozhraní zvuku - výstupní terminál.}
+\label{tab:usb-aud-ctrl-out} 
+\end{table}
+\FloatBarrier
+
+Řízení probíhá přes řídící rozhraní zvuku (Audio control interface), které je vždy napojeno na koncový bod 0.  V popisu tohoto rozhraní se skrývá i topologie. Skládá se z deskriptorů v tabulkách \ref{tab:usb-aud-ctrl}, \ref{tab:usb-aud-ctrl-head}, \ref{tab:usb-aud-ctrl-in} a \ref{tab:usb-aud-ctrl-out}.
+
+\subsubsection{Toto asi vyhodit...}
 %formát deskriptoru v mcu
 Deskriptory jsou binární struktury takže je nutné vzít v potaz endianitu. U USB je to vždy little-endian, to znamená, že se čílo odesílá od nejméně významného bytu po nejvíce významný. Například 0x1234 se přenese nejdříve 0x34 a poté 0x12. Mikrokontrolér PIC32 s dodáveným kompilátor XC32 používá taktéž little-endian, je z hlediska případné přenositelnosti výhodné implementovat jako pole typu \InlCode{char} viz ukázka \ref{lst:usb-dev-desc}.
 \begin{lstlisting}[caption=Deskriptor zařízení.]
@@ -161,13 +345,6 @@ const static Usb_descriptor_device usb_desc_device =
 \label{lst:usb-dev-desc}
 
 
-
-
-%string deskriptor
-
-%konfigurace
-
-\subsubsection{USB audio 1.0}
 
 
 \subsection{Microchip Harmony framework}
