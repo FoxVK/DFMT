@@ -320,6 +320,185 @@ iTerminal & 1B & 0 & Index na textový řetězec s popisem terminálu.\\
 
 Řízení probíhá přes řídící rozhraní zvuku (Audio control interface), které je vždy napojeno na koncový bod 0.  V popisu tohoto rozhraní se skrývá i topologie. Skládá se z deskriptorů v tabulkách \ref{tab:usb-aud-ctrl}, \ref{tab:usb-aud-ctrl-head}, \ref{tab:usb-aud-ctrl-in} a \ref{tab:usb-aud-ctrl-out}.
 
+První deskriptor pouze určuje, že bude následovat popis rozhraní řízení zvuku třídy audio.
+
+Následující deskriptor  (tabulka \ref{tab:usb-aud-ctrl-head}) tvoří hlavičku třídně specifického popisu rozhraní. Specifikuje jednak použitou verzi USB Audio specifikace a také seznam rozhraní pro odesílání zvuku přes USB. Počet položek v tomto seznamu určuje hodnota pole bInCollection. Poté se na konec deskriptoru pro každé rozhraní přidá jedna položka. V tomto případě je použito pouze jediné rozhraní.
+
+Zbylá dvojice deskriptorů (tabulka \ref{tab:usb-aud-ctrl-in} a \ref{tab:usb-aud-ctrl-out}) popisuje vlastní topologii. Výstupní terminály mají vždy pole bSourceID, které se nastaví na hodnotu bTerminalType vstupního terminálu se kterým je propojen.
+
+% v popsat idiotský bassoc
+% přidat dokument s terminal typama
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 9 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x04 & Typ deskriptoru. \\
+\hline
+bInterfaceNumber & 1B & 1 & Pořadové číslo rozhraní.\\
+\hline
+bAlternateSetting & 1B & 0 & Identifikátor alternativní nastavení.\\
+\hline
+bNumEndpoints & 1B & 0 & Počet koncových bodů v tomto rozhraní.\\
+\hline
+bInterfaceClass & 1B & 1 & Třída rozhraní. (Audio)\\
+\hline
+bInterfaceSubClass & 1B & 2 & Podtřída rozhraní. (Streaming)\\
+\hline
+bInterfaceProtocol & 1B & 0 & Vždy 0. \\
+\hline
+iInterface & 1B & 0 & Index na textový řetězec.\\
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor rozhraní odesílání zvuku.}
+\label{tab:usb-aud-snd-0} 
+\end{table}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 9 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x04 & Typ deskriptoru. \\
+\hline
+bInterfaceNumber & 1B & 1 & Pořadové číslo rozhraní.\\
+\hline
+bAlternateSetting & 1B & 1 & Identifikátor alternativní nastavení.\\
+\hline
+bNumEndpoints & 1B & 1 & Počet koncových bodů v tomto rozhraní.\\
+\hline
+bInterfaceClass & 1B & 1 & Třída rozhraní. (Audio)\\
+\hline
+bInterfaceSubClass & 1B & 2 & Podtřída rozhraní. (Streaming)\\
+\hline
+bInterfaceProtocol & 1B & 0 & Vždy 0. \\
+\hline
+iInterface & 1B & 0 & Index na textový řetězec.\\
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor rozhraní odesílání zvuku.}
+\label{tab:usb-aud-snd} 
+\end{table}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 7 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x24 & Typ deskriptoru. \\
+\hline
+bDescriptorSubType & 1B & 1 & Podtyp deskriptoru. \\
+\hline
+bTerminalLink & 1B & 2 & Index připojeného výstupního terminálu.\\
+\hline
+bDelay & 1B & 1 & Zpoždění v rámcích.\\
+\hline
+wFormatTag & 2B & 1 & Formát přenášených dat. (PCM)\\
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor formátu zvuku - hlavička.}
+\label{tab:usb-aud-snd-fmt-head} 
+\end{table}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 11 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x24 & Typ deskriptoru. \\
+\hline
+bDescriptorSubType & 1B & 2 & Podtyp deskriptoru. \\
+\hline
+bFormatType & 1B & 1 & Typ formátu.\\
+\hline
+bNrChannels & 1B & 2 & Počet kanálů.\\
+\hline
+bSubFrameSize & 1B & 2 & Velikost jednoho vzorku v bytech. \\ %TODO vysvětli jak je to se zaokrohlováním
+\hline
+bSubFrameResolution & 1B & 16 & Velikost jednoho vzorku v bitech. \\
+\hline 
+bSamFreqType & 1B & 1 & Způsob určení vzorkovací frekvence. (Diskrétní) \\ %TODO popis diskretni a spojite frekvence
+\hline
+tSamFreq(1) & 3B & 48000 & Vzorkovací frekvence v Hz. \\
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Deskriptor formátu zvuku.}
+\label{tab:usb-aud-snd-fmt} 
+\end{table}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 7 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x25 & Typ deskriptoru. \\
+\hline
+bEndpointAddress & 1B & 0x81 & Číslo koncového bodu. \\
+\hline
+bmAttributes & 1B & 0b00000001 & Bitová mapa s atributy.\\ %TODO
+\hline
+wMaxPacketSize & 2B & 384 & Maximální velikost paketu v bytech.\\ %TODO jak se ktomu dojde
+\hline
+bInterval & 1B & 1 & Interval Odesílání. \\ %TODO vysvětli 
+\hline
+bRefresh & 1B & 0 & ?? \\
+\hline 
+bSynchAddress & 1B & 0 & Adresa synchronizačního koncového bodu. (Nepoužito) \\ %TODO
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor koncového bodu odesílání zvuku.}
+\label{tab:usb-aud-snd-ep} 
+\end{table}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 9 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x05 & Typ deskriptoru. \\
+\hline
+bDescriptorSubType & 1B & 1 & Podtyp deskriptoru. \\
+\hline
+bmAttributes & 1B & 0b00000000 & Bitová mapa s atributy.\\ %TODO
+\hline
+bLockDelayUnits & 1B & 0 & Jednotky prodlevy stabilizace vzorkovací frekvence. (Nepoužito).\\ %TODO 
+\hline
+wLockDelay & 2B & 0 & Doba prodlevy stabilizace vzorkovací frekvence. (Nepoužito) \\ %TODO vysvětli 
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor koncového bodu odesílání zvuku specifický pro danou třídu.}
+\label{tab:usb-aud-snd-ep-spec} 
+\end{table}
+
+\clearpage
+
+
+
 \subsubsection{Toto asi vyhodit...}
 %formát deskriptoru v mcu
 Deskriptory jsou binární struktury takže je nutné vzít v potaz endianitu. U USB je to vždy little-endian, to znamená, že se čílo odesílá od nejméně významného bytu po nejvíce významný. Například 0x1234 se přenese nejdříve 0x34 a poté 0x12. Mikrokontrolér PIC32 s dodáveným kompilátor XC32 používá taktéž little-endian, je z hlediska případné přenositelnosti výhodné implementovat jako pole typu \InlCode{char} viz ukázka \ref{lst:usb-dev-desc}.
