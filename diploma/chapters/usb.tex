@@ -329,7 +329,7 @@ Zbylá dvojice deskriptorů (tabulka \ref{tab:usb-aud-ctrl-in} a \ref{tab:usb-au
 % v popsat idiotský bassoc
 % přidat dokument s terminal typama
 
-\begin{table}
+\begin{table}[ht!]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -359,7 +359,8 @@ iInterface & 1B & 0 & Index na textový řetězec.\\
 \label{tab:usb-aud-snd-0} 
 \end{table}
 
-\begin{table}
+
+\begin{table}[ht!]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -389,7 +390,11 @@ iInterface & 1B & 0 & Index na textový řetězec.\\
 \label{tab:usb-aud-snd} 
 \end{table}
 
-\begin{table}
+Dále následuje sada deskriptorů popisující rozhraní pro odesílání zvuku (audio streaming interface). Stejně jako řídící rozhraní zde se začíná standardním  deskriptorem rozhraní, který nese základní informace o rozhraní.
+
+V tomto případě jsou použity hned dva deskriptory (tabulka \ref{tab:usb-aud-snd-0} a \ref{tab:usb-aud-snd}). Liší se pouze ve dvou polích a to   bAlternateSetting a bNumEndpoints. Druhé z těchto polí určuje počet koncových bodů použitých v rozhraní. Díky tomu, že je v prvním deskriptoru tento počet nulový, má host možnost zvolit toto alternativní nastavení vždy když nemá zájem o zvuková data. K identifikaci tohoto nastavení slouží hodnota v prvním ze  zmíněných polí bAlternateSettings.
+
+\begin{table}[ht!]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -401,11 +406,11 @@ bDescriptorType & 1B & 0x24 & Typ deskriptoru. \\
 \hline
 bDescriptorSubType & 1B & 1 & Podtyp deskriptoru. \\
 \hline
-bTerminalLink & 1B & 2 & Index připojeného výstupního terminálu.\\
+bTerminalLink & 1B & 2 & Index výstupního terminálu.\\ 
 \hline
-bDelay & 1B & 1 & Zpoždění v rámcích.\\
+bDelay & 1B & 1 & Zpoždění v paketech.\\ 
 \hline
-wFormatTag & 2B & 1 & Formát přenášených dat. (PCM)\\
+wFormatTag & 2B & 1 & Formát přenášených dat. (PCM)\\ 
 \hline
 \end{tabular} 
 \end{center}
@@ -413,7 +418,7 @@ wFormatTag & 2B & 1 & Formát přenášených dat. (PCM)\\
 \label{tab:usb-aud-snd-fmt-head} 
 \end{table}
 
-\begin{table}
+\begin{table}[ht!]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -429,9 +434,9 @@ bFormatType & 1B & 1 & Typ formátu.\\
 \hline
 bNrChannels & 1B & 2 & Počet kanálů.\\
 \hline
-bSubFrameSize & 1B & 2 & Velikost jednoho vzorku v bytech. \\ %TODO vysvětli jak je to se zaokrohlováním
+bSubFrameSize & 1B & 2 & Velikost jednoho pod-rámce v bytech. \\ %TODO vysvětli jak je to se zaokrohlováním
 \hline
-bSubFrameResolution & 1B & 16 & Velikost jednoho vzorku v bitech. \\
+bSubFrameResolution & 1B & 16 & Počet platných bitů jednoho pod-rámce. \\
 \hline 
 bSamFreqType & 1B & 1 & Způsob určení vzorkovací frekvence. (Diskrétní) \\ %TODO popis diskretni a spojite frekvence
 \hline
@@ -443,7 +448,24 @@ tSamFreq(1) & 3B & 48000 & Vzorkovací frekvence v Hz. \\
 \label{tab:usb-aud-snd-fmt} 
 \end{table}
 
-\begin{table}
+V tabulce \ref{tab:usb-aud-snd-fmt-head} a \ref{tab:usb-aud-snd-fmt} jsou deskriptory popisující formátování a způsob přenosu zvukových dat. Formátování dat je specifikováno v \cite{usb-audio-formats}. Podle tohoto dokumentu se proud zvukových dat dělí do paketů, které se odesílají každou 1 ms. Paket je složen z rámců (frames), které reprezentují úrovně všech kanálů zachycených v jeden okamžik. Samotné úrovně jednotlivých kanálů se nazývají pod-rámce (subframes).
+
+Deskriptor třídně specifické hlavičky v tabulce \ref{tab:usb-aud-snd-fmt-head} nese kromě poli pro identifikaci sebe sama pouze tři zajímavá pole. 
+
+První je bTerminalLink. Identifikuje ke kterému výstupnímu terminálu se popis formátu formát vztahuje. 
+
+Pole bDelay je hodnota prodlevy mezi zachycením vzorku a jeho odesláním. Veličinou je počet paketů. Hodnota tohoto pole má význam pouze v případe simultánního záznamu zvuku z více zvukových karet a podobně. V případě přijímače rádia na ní nezáleží. 
+
+Posledním polem je wFormatTag, které určuje, že hodnoty jednotlivých vzorků budou ve formátu PCM jako  čísla se znaménkem. I zde nabízí USB Audio specifikace značnou volnost a kromě formátu PCM je možné přenášet zvuk komprimovaný různými kodeky. Detailnější specifikace je v \cite{usb-audio-formats}. 
+
+Následující deskriptor, vyobrazený v tabulce \ref{tab:usb-aud-snd-fmt}, blíže specifikuje parametry PCM formátu. Toto specifikuje hodnota pole bFormatType.
+
+Pole určuje, jak název napovídá, bNrChannels určuje počet kanálů. Pole bSubframeSize určuje velikost jednoho pod-rámce (vzorku) v Bytech. Zároveň pole bSubFrameResolution určuje počet platných bitů v pod-rámci.
+
+Konec deskriptoru je věnován specifikaci vzorkovacích frekvencí. Pomocí hodnoty v poli bSamFreqType se určí způsob specifikace frekvencí. V případě modulu je použita pouze jediná diskrétní frekvence, která je specifikována v poli tSamFreq(1). Je možné zde specifikovat více diskrétních frekvencí, ze kterých si poté hostitel vybírá a nebo specifikovat interval.
+
+
+\begin{table}[ht!]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -461,9 +483,9 @@ wMaxPacketSize & 2B & 384 & Maximální velikost paketu v bytech.\\ %TODO jak se
 \hline
 bInterval & 1B & 1 & Interval Odesílání. \\ %TODO vysvětli 
 \hline
-bRefresh & 1B & 0 & ?? \\
+bRefresh & 1B & 0 & Frekvence synchronizace. (nepoužito) \\
 \hline 
-bSynchAddress & 1B & 0 & Adresa synchronizačního koncového bodu. (Nepoužito) \\ %TODO
+bSynchAddress & 1B & 0 & Adresa synchronizačního koncového bodu. (Nepoužito) \\ %TODO kap 
 \hline
 \end{tabular} 
 \end{center}
@@ -471,7 +493,24 @@ bSynchAddress & 1B & 0 & Adresa synchronizačního koncového bodu. (Nepoužito)
 \label{tab:usb-aud-snd-ep} 
 \end{table}
 
-\begin{table}
+V tabulce \ref{tab:usb-aud-snd-ep} je deskriptor koncového bodu popisující koncový bod odesílání zvuku (audio streaming endpoint). Prvním zajímavým polem je adresa koncového bodu v poli bEndpointAddress. Jako adresa je použito číslo koncového bodu s tím, že v případě vstupního koncového bodu (směr do hostitele) se sedmý (nejvyšší) bit nastaví na 1. U opačného směru tento bit zůstává nulový.
+
+Pole bmAttributes obsahuje bitovou mapu atributů koncového bodu. Význam bitů 0 a 1 je následující:
+\begin{itemize}
+\item 00 - Řídící koncový bod
+\item 01 - Izochronní koncový bod
+\item 10 - Hromadný koncový bod
+\item 11 - Koncový bod přerušení
+\end{itemize}
+Zbylé bity popisují způsob synchronizace izochronních koncových bodů, která ale není použita. Jejich popis je v kapitole  5.12.4 USB specifikace \cite{usb-spec}.
+
+
+Pole wMaxPacket size určuje největší možnou velikost paketu. V tomto případě se spočítá z deskriptoru v tabulce \ref{tab:usb-aud-snd-fmt} jako $ bNrChannels \cdot bSubFrameSize \cdot \frac{tSamFreq(1)}{1000} $ Vypočtenou hodnotu je nutné vždy zaokrouhlit nahoru. Například v případě vzrkovací frekvence 44,1 kHz bude ve většině paketů 44 rámců, ale každý desátý jich bude mít 45.
+
+Pole bInterval určuje periodu čtení dat z koncového bodu. Hodnota 1 znamená, že se bude hostitel pokoušet číst data z koncového bodu každou 1 ms. Zbývající dvě pole se vztahují k synchronizaci, která nebyla použita a tudíž jsou nastavena na hodnotu 0.
+
+
+\begin{table}[ht!]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
