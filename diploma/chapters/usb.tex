@@ -19,7 +19,7 @@ Ve specifikaci je také zohledněn fakt, že zařízení zpravidla nezastává p
 
 \subsubsection{Komunikace}
 
-\begin{table}[!htbp]
+\begin{table}[!ht]
 \begin{center}
 \begin{tabular}{|l|c|c|c|c|}
 \hline 
@@ -82,7 +82,7 @@ Popis všech deskriptorů všech možných funkcí je zcela mimo rozsah tohoto t
 
 
 \subsubsection{Deskriptor zařízení}
-\begin{table}
+\begin{table}[ht!]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -121,7 +121,7 @@ bNumConfigurations & 1B & 1 & Počet konfigurací zařízení.\\
 \caption{Deskriptor zařízení.}
 \label{tab:usb-device-descriptor} 
 \end{table}
-\FloatBarrier
+%\FloatBarrier
 V tabulce \ref{tab:usb-device-descriptor} je uveden deskriptor zařízení tak, jak je použit v modulu. Myslím, že popis významu  polí v tabulce je dostatečný.  Za zmínku stojí ID výrobce a zařízení. Jejich účel je stejný jak například MAC adresa síťových zařízení a to jednoznačně identifikovat druh zařízení. Oficiální cesta je požádat o přiřazení ID výrobce USB implementers fórum, což v době psaní toho textu stojí 5000 amerických dolarů \cite{usb-vid}. Výrobci programovatelných součástek s podporou USB, ale naštěstí z pravidla nabízejí možnost zdarma získat ID produktu z jejich rozsahů. Jednou z podmínek bývá nutnost použít přidělení ID  právě na jejich součástce. Pro modul jsem získat ID produktu od firmy Microchip \PID. ID výrobce je \VID.
 
 Pole iManufacturer, iProduct a iSerialNumber nesou indexy na deskriptory textových řetězců. Všechna pole jsou nepovinná. V případě jejich vynechání se použije index s hodnotou 0. Jak napovídají názvy jednotlivých polí, je možné takto přidat popisek výrobce a zařízení ve formě lidsky čitelného textu a sériové číslo daného kusu zařízení, které může využít ovladač v hostiteli například pro načtení posledního nastavení po opětovném připojení zařízení.
@@ -129,13 +129,13 @@ Pole iManufacturer, iProduct a iSerialNumber nesou indexy na deskriptory textov�
 \subsubsection{Deskriptory řetězců}
 TODO:Tabulka se zkrácenými string deskriptory.
 
-Deskriptory řetězců jsou organizovány jako pole indexované od nuly. Každý jeden řetězec začíná hlavičkou deskriptoru ve které je určen typ deskriptoru (0x??) a jeho celková délka v bytech a a poté následuje samotný text zakódovaný podle normy unicode, konkrétně UTF-16. Je tedy možné použití i národních znaků.\\
+Deskriptory řetězců jsou organizovány jako pole indexované od nuly. Každý jeden řetězec začíná hlavičkou deskriptoru ve které je určen typ deskriptoru (0x??) a jeho celková délka v bytech. Poté následuje samotný text zakódovaný podle normy unicode, konkrétně UTF-16. Je tedy možné použití i národních znaků.\\
 Jedinou výjimkou je deskriptor s indexem 0. V zařízení je možné mít více sad textů v různých jazycích. Seznam dostupných jazyků (jazykových kódu) je právě v tomto deskriptoru. Seznam těchto kódů popisuje \cite{usb-lang}. V modulu jsem se omezil pouze na angličtinu (kód 0x0409).
 
 \subsubsection{Konfigurace zařízení}
 Konfigurace zařízení je soubor deskriptorů který popisuje schopnosti zařízení a také jeho nároky na přenos popřípadě definují sady parametrů z nichž si může hostitel vybrat tu, která mu v daný okamžik nejvíce vyhovuje. Zařízení musí specifikovat minimálně jednu konfiguraci,ale také více. Hostitel potom zařízení jednu přidělí případně ji může kdykoliv změnit za jinou.\\
 Každá jedna konfigurace zažíná Deskriptorem konfigurace za kterým následují deskriptory rozhraní a koncových bodů do kterých mohou být zanořeny deskriptory další. Tvoří takto stromovou strukturu. V případě mého modulu je možná pouze jediná konfigurace. Její struktura vypadá následovně:
-\FloatBarrier
+%\FloatBarrier
 \begin{enumerate}
 \item Deskriptor řídícího rozhraní zvuku.
 	\begin{enumerate}
@@ -156,11 +156,11 @@ Každá jedna konfigurace zažíná Deskriptorem konfigurace za kterým následu
 	\item Deskriptor koncového bodu - příjem dat z hosta.
 	\end{enumerate}
 \end{enumerate}
-\FloatBarrier
+%\FloatBarrier
 
 
 \subsubsection{Deskriptor konfigurace}
-\begin{table}
+\begin{table}[ht!]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -185,7 +185,7 @@ bmAttributes & 1B & 0b10000000 & Bitová maska s atributy.\\
 \caption{Deskriptor konfigurace.}
 \label{tab:usb-conf-desc} 
 \end{table}
-\FloatBarrier
+%\FloatBarrier
 
 Jak je vidět z tabulky \ref{tab:usb-conf-desc}, tento deskriptor slouží zejména pro informace pro identifikaci konfigurace. A to zejména index iConfiguration, to je hodnota, kterou poté pošle host do zařízení v požadavku o přidělení konfigurace. Dále pak wTotalLength. Hostitel obdrží všechny případné konfigurace v jednom bloku. Na základě této hodnoty rozliší kde jednotlivé konfigurace začínají a končí.
 
@@ -199,7 +199,7 @@ Největší část konfigurace zabírají deskriptory popisující část přeno
 Topologie modulu rádia z pohledu této specifikace je nejjednodušší možná. Je zde pouze jeden výstupní terminál přenosu zvuku přes USB, který má jako vstup nastaven vstupní terminál přijímač rádia.
 
 
-\begin{table}
+\begin{table}[t]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -229,8 +229,7 @@ iInterface & 1B & 0 & Index na textový řetězec.\\
 \label{tab:usb-aud-ctrl} 
 \end{table}
 
-
-\begin{table}
+\begin{table}[t]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -256,7 +255,9 @@ baInterfaceNr(1) & 1B & 1 & Index rozhraní pro odesílání zvuku.\\
 \label{tab:usb-aud-ctrl-head} 
 \end{table}
 
-\begin{table}
+\clearpage
+
+\begin{table}[t]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -288,7 +289,7 @@ iTerminal & 1B & 0 & Index na textový řetězec s popisem terminálu.\\
 \label{tab:usb-aud-ctrl-in} 
 \end{table}
 
-\begin{table}
+\begin{table}[t]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
 \hline 
@@ -448,6 +449,8 @@ tSamFreq(1) & 3B & 48000 & Vzorkovací frekvence v Hz. \\
 \label{tab:usb-aud-snd-fmt} 
 \end{table}
 
+\FloatBarrier
+
 V tabulce \ref{tab:usb-aud-snd-fmt-head} a \ref{tab:usb-aud-snd-fmt} jsou deskriptory popisující formátování a způsob přenosu zvukových dat. Formátování dat je specifikováno v \cite{usb-audio-formats}. Podle tohoto dokumentu se proud zvukových dat dělí do paketů, které se odesílají každou 1 ms. Paket je složen z rámců (frames), které reprezentují úrovně všech kanálů zachycených v jeden okamžik. Samotné úrovně jednotlivých kanálů se nazývají pod-rámce (subframes).
 
 Deskriptor třídně specifické hlavičky v tabulce \ref{tab:usb-aud-snd-fmt-head} nese kromě poli pro identifikaci sebe sama pouze tři zajímavá pole. 
@@ -509,7 +512,6 @@ Pole wMaxPacket size určuje největší možnou velikost paketu. V tomto příp
 
 Pole bInterval určuje periodu čtení dat z koncového bodu. Hodnota 1 znamená, že se bude hostitel pokoušet číst data z koncového bodu každou 1 ms. Zbývající dvě pole se vztahují k synchronizaci, která nebyla použita a tudíž jsou nastavena na hodnotu 0.
 
-
 \begin{table}[ht!]
 \begin{center}
 \begin{tabular}{|l|c|l|l|}
@@ -524,15 +526,25 @@ bDescriptorSubType & 1B & 1 & Podtyp deskriptoru. \\
 \hline
 bmAttributes & 1B & 0b00000000 & Bitová mapa s atributy.\\ %TODO
 \hline
-bLockDelayUnits & 1B & 0 & Jednotky prodlevy stabilizace vzorkovací frekvence. (Nepoužito).\\ %TODO 
+bLockDelayUnits & 1B & 0 & Jednotky prodlevy stabilizace synchronizace. (Nepoužito).\\ %TODO 
 \hline
-wLockDelay & 2B & 0 & Doba prodlevy stabilizace vzorkovací frekvence. (Nepoužito) \\ %TODO vysvětli 
+wLockDelay & 2B & 0 & Doba prodlevy stabilizace synchronizace. (Nepoužito) \\ %TODO vysvětli 
 \hline
 \end{tabular} 
 \end{center}
 \caption{Deskriptor koncového bodu odesílání zvuku specifický pro danou třídu.}
 \label{tab:usb-aud-snd-ep-spec} 
 \end{table}
+
+Posledním deskriptorem popisujícím přenos zvuku je třídně specifický deskriptor koncového bodu v tabulce \ref{tab:usb-aud-snd-ep-spec}. Za běžnými uvozujícími poli se nachází bitová mapa s atributy bmAttributes. Význam bitů je následující:
+\begin{itemize}
+\item Bit 0 - Koncový bod podporuje žádost o počáteční nastavení vzorkovacího frekvence.
+\item Bit 1 - Koncový bod podporuje dynamickou změnu vzorkovací frekvence za běhu.
+\item Bit 2-6 - Vyhrazeno - musí být nulové.
+\item Bit 7 - Pokud je nastaveno musí se přenášená data vždy doplnit nulami, tak aby měl každý paket velikost wMaxPacketSize.
+\end{itemize}
+
+Dvě pole na konci deskriptoru umožňují specifikovat dobu potřebnou pro stabilizaci synchronizace. Synchronizace koncového bodu není použita takže obě hodnoty jsou nulové.
 
 \clearpage
 
@@ -566,15 +578,41 @@ const static Usb_descriptor_device usb_desc_device =
 
 
 \subsection{Microchip Harmony framework}
-Nepoužitelnost Harmony frameworku\\
+
+TODO:
+\begin{itemize}
+\item Odkaz a bug se špatnou inicializací a následném dělení nulou.
+\item Popsat chybu kdy nedojde k povolení AS EP na žádost set alt setting 1
+\item Popsat žádost a potom iplementací přes vendor EP
+\item Zminit že jsem došel k té semé chybě když jsem s senaži povolovat EP sám.
+\item zmínit že s trvale povoleným EP to funguje ale přenese se pouze každý druhý paket. a doplnit screenchotem z analyzéru
+\end{itemize}
 
 \subsection{Vlastní implementace}
 
+TODO:
+\begin{itemize}
+\item Popsat žádosti nutné pro konfiguraci a běh
+\item zmínit ping-pong buffery a rozhraní MCU pro USB
+\item Popsat rozhraní vzniklého USB stacku ??
+\end{itemize}
+
 \subsection{USB \iic tunel}
-i2c -> usb\\
+
+TODO:
+\begin{itemize}
+\item základní filozofie - vendor interface, 2x bulk EP
+\item popsat formáty zpráv pro oba směry (zmínit endianitu)
+\item chyby v křemíku - problém možného dvojí zápisu po návratu z přerušení a nefunčnost dvou pinů při zapnutí \iic modulu.
+\end{itemize}
 
 % zmínit chyby v křemíku (nefunkčnost pinu, a problém dvojího zápisu po přerušení)
 
 \subsection{Omezení}
 
+TODO
+\begin{itemize}
+\item Nemožnost dostat se v suspendu do 0,5 mA
+\item Test mód neimplementován. Nutný pouze pro získání USB loga.
+\end{itemize}
 %suspend a test mod
