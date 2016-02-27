@@ -1,13 +1,74 @@
 \section{Tuner}
 \label{sec:tuner}
+Jak jsem zmínil v kapitole \ref{subsec:konstrukce}
+\begin{itemize}
+\item nepoužití přerušení a důsledky - nutnost polingu
+\item nějak vkusně s ohledem na předchozí kapitolu vyzdvnhnout použítí \iic - jendou větou na začátek
+\end{itemize}
 
 
-\subsection{I2S}
-	Popis\\
-	Problém synchronizace hodin
+\subsection{Zvukové rozhraní \iis}
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+MCU & Směr & Tuner & Význam \\ 
+\hline 
+SDI & $\Rightarrow$ & DOUT & Datový signál \\ 
+\hline 
+SCK & $\Rightarrow$ & DCLK & Hodiny \\ 
+\hline
+SS & $\Leftarrow$ & DFS & Signál určení kanálu \\ 
+\hline 
+\end{tabular}
+\end{center}
+\caption{Popis \iis signálů.}
+\label{tab:iis_signals} 
+\end{table}
+
+
+Rozhraní \iis je v případě jednosměrného přenosu v podstatě rozhraní SPI doplněné o další datový signál. Význam signálů včetně odpovídajících názvů pinů na MCU a tuneru shrnuje tabulka \ref{tab:iis_signals}. V případě \iis se nejedná o sběrnici. Vždy komunikují právě dvě zařízení kde jedno je master a druhé slave. Master vždy vysílá datový signál a signál přepínání kanálů. Datový signál vysílá samozřejmě zřízení, které je zdrojem zvuku. Je možný i obousměrný přenos, potom je nutné použití dvou datových linek.
+
+Tuner umí pracovat pouze v režimu slave, takže hodinový signál a signál přepínání kanálů je generován z MCU. Vzorkování zvuku v tuneru je řízeno jeho vlastním interním oscilátorem. Díky tomuto pravděpodobně občas dojde k zahození některého vzorku pokud MCU čte pomaleji než tuner provádí vzorkování, a nebo dojde k přečtení náhodných dat v opačném případě. Nicméně v praxi jsem s tímto nezaznamenal žádný problém.  
+
+\InsertFigure{figures/i2s_format.png}{\textwidth}{Časový diagram \iis přenosu. (Převzato z \cite{iis})}{fig:iis-diagram}
+
+Vyjma standardního formátu dat popsaného v \iis specifikace \cite{iis} vzniklo ještě několik dalších formátů. Použil jsem standardní formát, tak jak je zobrazen na obrázku \ref{fig:iis-diagram}.
+
+TODO:
+\begin{itemize}
+\item Umravnit pozicování obrázku
+\item Problém synchronizace hodin - presunout do USB jako samostatnou podkapitolu a nebo spáchat samostatnou kapitolu přeposílání zvuku
+\end{itemize}
+
+
+\subsection{Ovládací rozhraní \iic}
+Ovláddání tuneru se provádí přes rozhraní \iic. Toto rozhraní je součásti drtivé většiny mikrokontrolérů, není ho třeba blíže popisovat.
+
+Základní informací nezbytnou pro komunikace s tunerem je \iic adresa. Tuner umožňuje změnu adresy pomocí změny úrovně na pinu ??
+
+
+TODO:
+\begin{itemize}
+\item adresy a způsob jak se nastaví.
+\item čtení a zápis se nikdy neprolíná
+\end{itemize}
+
 	
 	
 \subsection{Ovládání tuneru}
+TODO:
+\begin{itemize}
+\item popsat že se ovládá pomocí příkazů a properties
+\item a přepsat sem použité příkazy ?
+\item možná přidat kapitolku se spuštěním tuneru - možná jenom flowchart a možná ho hodit do přílohy - nechme to na konec kdyby nevycházel rozsah tak se popíše textově
+\end{itemize}
+
+
 \subsubsection{RDS}
-		čtení z tuneru\\
-		dekódování základních informací
+TODO:
+\begin{itemize}
+\item vyčtení z tuneru
+\item dekódování základních informací- třeba radio text
+\end{itemize}

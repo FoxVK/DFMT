@@ -53,6 +53,7 @@ Tento 32 bitový MCU, taktéž od firmy Microchip, je vybaven všemi potřebným
 Pro modul jsem vybral právě tento MCU. Případně je možné něco málo ušetřit a použít PIC32MX220F032. Liší se pouze menšími velikostmi pamětí, konkrétně 32kB programové paměti místo 128kB a 8kB datové paměti namísto 32kB.
 
 \subsection{Výsledná konstrukce}
+\label{subsec:konstrukce}
 \InsertFigure{figures/tuner-block.eps}{100mm}{Blokové schéma zapojení.}{fig:tuner-block}
 
 Propojení jednotlivých komponent je naznačeno na obrázku \ref{fig:tuner-block}. Jak je patrné, zahrnul jsem i propojení tuneru B s MCU přes \iis a také vyvedení anténních AM vstupů tunerů (v obrázku čárkovaně). Aktuálně nejsou využity, ale v budoucnu bude možné zařízení rozšířit o podporu příjmu všech pásem, které tunery podporují a nebo přidat režim, kdy se modul bude chovat jako dvě nezávislé zvukové karty.\\
