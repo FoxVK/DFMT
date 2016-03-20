@@ -44,29 +44,40 @@ TODO:
 
 
 \subsection{Ovládací rozhraní \iic}
-Ovláddání tuneru se provádí přes rozhraní \iic. Toto rozhraní je součásti drtivé většiny mikrokontrolérů, není ho třeba blíže popisovat.
+Ovláddání tuneru se provádí přes rozhraní \iic. Toto rozhraní je součásti drtivé většiny mikrokontrolérů, není ho třeba blíže popisovat. Tuner se do režimu \iic přepne připojením pinů GPO1 na 1 GPO2 na 0.
 
-Základní informací nezbytnou pro komunikace s tunerem je \iic adresa. Tuner umožňuje změnu adresy pomocí změny úrovně na pinu ??
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline 
+SEN & Adresa čtení & Adresa zápisu  \\ 
+\hline 
+0 & 0x23 & 0x22 \\ 
+\hline 
+1 & 0xC7 & 0xC6 \\ 
+\hline 
+\end{tabular}
+\end{center}
+\caption{\iic adresy.}
+\label{tab:iic_addresses} 
+\end{table}
+
+Základní informací nezbytnou pro komunikace s tunerem je \iic adresa. Tuner umožňuje změnu adresy pomocí změny úrovně na pinu SEN. Adresy jsou v tabulce \ref{tab:iic_addresses}.
+
+Tuner se ovládá zapisováním příkazů a případným čtením odpovědí. Dále je zde dvojice příkazů pro čtení a zápis proměnných. (properties) tuneru. Popis všech příkazů a proměnných je v programovací příručce k tuneru \cite{tuner-programing}.
 
 
 TODO:
 \begin{itemize}
-\item adresy a způsob jak se nastaví.
+\item minmálně obecný formát příkazů
 \item čtení a zápis se nikdy neprolíná
-\end{itemize}
-
-	
-	
-\subsection{Ovládání tuneru}
-TODO:
-\begin{itemize}
 \item popsat že se ovládá pomocí příkazů a properties
 \item a přepsat sem použité příkazy ?
 \item možná přidat kapitolku se spuštěním tuneru - možná jenom flowchart a možná ho hodit do přílohy - nechme to na konec kdyby nevycházel rozsah tak se popíše textově
 \end{itemize}
 
 
-\subsubsection{RDS}
+\subsubsection{Čtení RDS z tuneru}
 TODO:
 \begin{itemize}
 \item vyčtení z tuneru

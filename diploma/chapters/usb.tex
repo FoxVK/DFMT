@@ -549,21 +549,26 @@ Dvě pole na konci deskriptoru umožňují specifikovat dobu potřebnou pro stab
 
 \subsubsection{Deskriptory konfigurace vztažené k USB \iic tunelu}
 
-
+TODO:
 
 \subsection{Microchip Harmony framework}
+Harmony framework obsahuje mimo jiné také ovladače pro USB včetně USB Audio 1.0. Součástí je i vzorový projekt pro USB reproduktor, ze kterého jsem původně vycházel. 
+
+Po té co jsem projekt upravil tak aby zvuková data nepřijímal ale odesílal se začal MCU restartovat. Z fóra firmy Microchip ( \url{http://www.microchip.com/forums/FindPost/827487}) jsem zjistil, že jde o již nahlášený problém chybné inicializace v důsledku které dochází k dělení nulou a k resetu MCU. Na fóru je také uveřejněno jak tuto chybu opravit.
+
+Opravením této chyby jsem se dostal k odesílání zvuku. I když modul správně prošel enumerací a konfigurací do hostitele se přenášelo ticho. Pomocí USB analyzátoru jsem zjistil, že modul od hostitele dostává IN tokeny, ale posílá pouze pakety nulové délky jako by neměl žádná data k odeslání. 
+
+Rozhodl jsem se implementovat ovladač USB Audia jako vendor endpoint (koncový bod specifikovaný výrobcem). Pro potřeby modulu stačí pouze zajistit odesílání zvuku přes izochronní koncový bod a reagovat na požadavek změny alternativního nastavení funkce povolením nebo zakázáním Izochronního koncového bodu. Došel jsem ke zcela totožnému chování modulu jako s původním ovladačem.
+
+Upravil jsem vlastní ovladač tak, aby izochronní koncový bod byl povolen neustále. Po této upravě se začal přenášet zvuk, ale implementace vendor endpointu je pravděpodobně příliš pomalá takže přibližně každý druhý paket byl následován paketem nulové délky.
 
 TODO:
 \begin{itemize}
-\item Odkaz a bug se špatnou inicializací a následném dělení nulou.
-\item Popsat chybu kdy nedojde k povolení AS EP na žádost set alt setting 1
-\item Popsat žádost a potom iplementací přes vendor EP
-\item Zminit že jsem došel k té semé chybě když jsem s senaži povolovat EP sám.
 \item zmínit že s trvale povoleným EP to funguje ale přenese se pouze každý druhý paket. a doplnit screenchotem z analyzéru
 \end{itemize}
 
-\subsection{Vlastní implementace}
-
+\subsection{Vlastní implementace USB}
+Kvůli zmíňovaným porblémům s Harmony frameworkem, které se mi nepodařilo vyřešit jsem se rozhodl napsatvovladač v MCU sám. Ke zprovoznění modulu je potřeba, aby MCU podporoval pouze několik požadavků z hosta a implementovat jednoduchý stavový stroj.
 TODO:
 \begin{itemize}
 \item Popsat žádosti nutné pro konfiguraci a běh
@@ -577,7 +582,7 @@ TODO:
 \begin{itemize}
 \item základní filozofie - vendor interface, 2x bulk EP
 \item popsat formáty zpráv pro oba směry (zmínit endianitu)
-\item chyby v křemíku - problém možného dvojí zápisu po návratu z přerušení a nefunčnost dvou pinů při zapnutí \iic modulu.
+\item chyby v křemíku - problém možného dvojí zápisu po návratu z přerušení a nefunkčnost dvou pinů při zapnutí \iic modulu.
 \end{itemize}
 
 % zmínit chyby v křemíku (nefunkčnost pinu, a problém dvojího zápisu po přerušení)
