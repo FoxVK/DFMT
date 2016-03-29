@@ -134,10 +134,8 @@ static void i2s_init()
     //IEC1bits.SPI1RXIE = 1; //enable Rx interrupt
 }
 
-static void i2s_b_init() //TODO vyhodit
+static void i2s_b_init() 
 {
-    //TODO make it slave
-//#warning "make a slave from I2S2"
     SPI2CONbits.ON = 0;
     _nop();
     SPI2CONbits.DISSDO = 1;     //disable output bit
@@ -153,7 +151,7 @@ static void i2s_b_init() //TODO vyhodit
     }
     SPI2STATbits.SPIROV = 0;    //no overflow
 
-    SPI2BRG = 12;       //clock,  32bit frame X 48khz sampling = 1536kHz - now we have 1?538?461,538461538
+    SPI2BRG = 12;       //clock,  32bit frame X 48khz sampling = 1536kHz - now we have 1 538 461,538461538
 
     IPC9bits.SPI2IP = 4; //prioriy 1-7 0=disabled
     IPC9bits.SPI2IS = 0; //subprio 0-3
