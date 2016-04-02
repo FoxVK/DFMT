@@ -549,7 +549,69 @@ Dvě pole na konci deskriptoru umožňují specifikovat dobu potřebnou pro stab
 
 \subsubsection{Deskriptory konfigurace vztažené k USB \iic tunelu}
 
-TODO:
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 9 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x04 & Typ deskriptoru. \\
+\hline
+bInterfaceNumber & 1B & 2 & Číslo rozhraní. \\
+\hline
+bAlternateSettngs & 1B & 0 & Identifikátor alternativního nastavení.\\
+\hline
+bNumEndpoints & 1B & 2 & Počet koncových bodů v tomto rozhraní.\\ 
+\hline
+bInterfaceClass & 1B & 255 & Třída rozhraní (Vendor specific). \\  
+\hline
+bInterfaceSubClass & 1B & 0 & Podtřída rozhraní. \\
+\hline 
+bInterfaceProtocol & 1B & 255 & Protokol rozhraní (Vendor specific). \\ %TODO uprav toto v deskriptru zařízení
+\hline 
+iInterface & 1B & 0 & Index řetězce s popisem rozhraní (Nepoužit). \\  
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor rozhraní USB - \iic tunelu.}
+\label{tab:usb-tun-iface} 
+\end{table}
+
+Deskriptor ozhraní USB - \iic tunelu v tabulce \ref{tab:usb-tun-iface} je podobný jako zvuková rozhraní. Liší se samozřejmě třídou zařízení, kde třída 255 určuje, že se nejedná o žádné ze standardizovaných rozhraní, ale je definováno výrobcem. Stejný význam má protokol číslo 255.
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka & Hodnota &  \\ 
+\hline
+bLength & 1B & 9 & Délka deskriptoru.\\
+\hline
+bDescriptorType & 1B & 0x05 & Typ deskriptoru. \\
+\hline
+bEndpointAddress & 1B & 0x82 / 0x02 & Číslo koncového bodu. \\
+\hline
+bmAttributes & 1B & 0b00000010 & Bitová mapa s atributy.\\
+\hline
+wMaxPacketSize & 2B & 32 & Maximální velikost paketu v bytech.\\ 
+\hline
+bInterval & 1B & 0 & Interval Odesílání. (Nemá význam) \\ 
+\hline
+bRefresh & 1B & 0 & Frekvence synchronizace. (Nemá význam) \\
+\hline 
+bSynchAddress & 1B & 0 & \makecell[l]{Adresa synchronizačního koncového\\ bodu. (Nemá význam)} \\ 
+\hline
+\end{tabular} 
+\end{center}
+\caption{Deskriptor koncových bodů USB - \iic tunelu.}
+\label{tab:usb-tun-ep} 
+\end{table}
+
+V tabulce \ref{tab:usb-tun-ep} jsou oba deskriptory koncových bodů pro USB \iic tunel. Liší se pouze v adrese. Pole bmAttributes obsahuje pouze informaci o tom že se jedná o koncový bod hromadného přenosu dat (bulk endpoint). Poslední tři pole mají v případě tohoto druhu koncového bodu vždy hodnotu 0. 
+
+Maximální velikost paketu wMaxPacketSize může být 8, 16, 32 nebo 64 B (viz. \cite{usb-spec} kap. 5.8.3). Vzhledem k velikosti nejdelší ho možného příkazu a odpovědi odesílaného přes \iic. Jsem zvolil velikost 32 B.
 
 \subsection{Microchip Harmony framework}
 Harmony framework obsahuje mimo jiné také ovladače pro USB včetně USB Audio 1.0. Součástí je i vzorový projekt pro USB reproduktor, ze kterého jsem původně vycházel. 
@@ -562,19 +624,164 @@ Rozhodl jsem se implementovat ovladač USB Audia jako vendor endpoint (koncový 
 
 Upravil jsem vlastní ovladač tak, aby izochronní koncový bod byl povolen neustále. Po této upravě se začal přenášet zvuk, ale implementace vendor endpointu je pravděpodobně příliš pomalá takže přibližně každý druhý paket byl následován paketem nulové délky.
 
-TODO:
-\begin{itemize}
-\item zmínit že s trvale povoleným EP to funguje ale přenese se pouze každý druhý paket. a doplnit screenchotem z analyzéru
-\end{itemize}
+TODO: Možná doplnit screenshotem
 
 \subsection{Vlastní implementace USB}
-Kvůli zmíňovaným porblémům s Harmony frameworkem, které se mi nepodařilo vyřešit jsem se rozhodl napsatvovladač v MCU sám. Ke zprovoznění modulu je potřeba, aby MCU podporoval pouze několik požadavků z hosta a implementovat jednoduchý stavový stroj.
-TODO:
+Kvůli zmiňovaným problémům s Harmony frameworkem, které se mi nepodařilo vyřešit, jsem se rozhodl napsat ovladač v MCU sám. Ke zprovoznění modulu je potřeba, aby MCU podporoval pouze několik požadavků z hosta a implementovat jednoduchý stavový stroj.
+
+\subsubsection{USB modul v MCU}
+Dokumentace USB v MCU se nachází v obecném manuálu \cite{pic-usb} pro celou řadu těchto 32 bitových mcu. Detaily pro konkrétní typ jsou v manuálu \cite{pic}. Pravděpodobně díky existenci Harmony frameworku je dokumentace relativně stručná.
+
+USB modul v MCU PIC32MX je velmi podobný USB modulu v 8 bitovém MCU PIC16F1454 na kterém jsem se snažil původně modul tuneru postavit. Podle USB specifikace nesmí být na sběrnici přivedeno žádné napětí pokud není sběrnice napájena z hostitele. U zařízení napájených z USB sběrnice toto není třeba řešit. MCU PIC32 má vyhrazený vstup VBUS právě pro snímání napětí na USB sběrnici. I když je ho možné pomocí konfiguračních slov deaktivovat je nutné jej použít. Pokud na tento vstup není přivedeno napětí, USB modul v MCU nepracuje.
+
+Vlastní konfigurace USB modulu je v případě USB zařízení v celku jednoduchá. Bitem USBPWR v registru U1PWRC se provede spuštění USB modulu. 
+
+Dále je potřeba do registrů U1BDTP1-3 nastavit dolní tři byty ukazatele na tabulku deskriptorů bufferů. Každému koncovému bodu pro každý směr jsou přiřazeny dva záznamy v této tabulce, lichý a sudý. Tvoří takto dvouprvkovou FIFO frontu.  Každý záznam v této tabulce nese ukazatel na buffer pro příjem nebo odesílání dat a další nezbytné informace. Tabulka může být umístěna kdekoliv v zapisovatelné paměti MCU, ale její adresa musí být zarovnaná na 512 B. Jádro MCU používá rozdílné adresy pro přístup k datům z programu (virtuální adresy) a přístup k datům z hardwarových modulů (fyzické adresy). Adresu ukládanou do registrů U1BDTP Je tudíž potřeba přeložit. To se provede logickým součinem s hodnotou 0x1FFFFFFF.
+
+\InsertFigure{figures/usb-bdt-swhw.png}{130mm}{Formát deskriptoru USB bufferu předaného do USB modulu. (Převzato z \cite{pic-usb}.)}{fig:usb-bdt-swhw}
+
+\InsertFigure{figures/usb-bdt-hwsw.png}{130mm}{Formát deskriptoru USB bufferu předaného do aplikace. (Převzato z \cite{pic-usb}.)}{fig:usb-bdt-hwsw}
+
+Dále je potřeba zinicializovat samotnou tabulku deskriptorů bufferů. Jak je patrné z obrázků \ref{fig:usb-bdt-swhw} a \ref{fig:usb-bdt-hwsw} význam dat v jednotlivých záznamech tabulky je mírně odlišný v případě že tabulku předáváme do USB modulu a v případě že USB modul zpracoval token pro daný koncový bod a tabulku vrátil aplikaci. Význam jednotlivých polí je následující:
 \begin{itemize}
-\item Popsat žádosti nutné pro konfiguraci a běh
-\item zmínit ping-pong buffery a rozhraní MCU pro USB
-\item Popsat rozhraní vzniklého USB stacku ??
+\item \textbf{BYTE\_COUNT} - Počet bytů k přijetí nebo odeslání.
+\item \textbf{UOWN} - Pokud je nastaven na 1, buffer patří USB modulu a nelze jej měnit. Po zpracování paketu bude tento bit nastaven USB module zpět na 0.
+\item \textbf{DATA0/1} - Určuje jestli se paket odešle s PID DATA0 nebo DATA1. V případě přijmu určí jestli se očekává paket s PID DATA0 nebo DATA1.
+\item \textbf{KEEP} - Pokud je nastaven na 1, USB modul si tento buffer ponechá napořád.
+\item \textbf{NINC} - Pokud je nastaven na adresa DMA nebude inkrementována.
+\item \textbf{DTS} - Pokud je nastaven na 1, USB modul bude při přijmu ignorovat pakety kde PID (DATA0/1) neodpovídá hodnotě pole DATA0/1. Pokud je nastaven na 0, přijme všechny pakety.
+\item \textbf{BSTALL} - Pokud je nastaven na 1, byl přijat nebo bude vyslán STALL. 
+\item \textbf{PID} - Druh přijatého tokenu.
+\item \textbf{BUFFER\_ADDRESS} - Fyzická adresa na buffer s data k odeslání nebo přijmu.
 \end{itemize}
+
+Jak je patrné z předchozího výčtu je nezbytné inicializovat přinejmenším bit UOWN na hodnotu 0. 
+
+Po tomto kroku je možné spustit USB modul nastavením bitu USBEN v registru U1CON na 1.
+
+Aplikace si musí udržovat informace o tom jestli má používat lichý nebo sudý buffer. USB modul umožňuje resetovat všechny koncové body v obou směrech tak, aby znova začaly sudým bufferem, nastavením bitu PBRST v registru U1CON na 1.
+
+Ještě je nutné nakonfigurovat používané koncové body v registrech U1EP0 - U1EP15. Nastavením bitů EPTXEN a nebo EPRXEN odesílání a nebo příjem, pokud se nejedna o koncový bod pro řídící přenosy je dobré zakázat příjem SETUP tokenů nastavením bitu EPCONDIS. A pokud se nejedná o koncový bod pro isochronní přenos dat povolit handshake nastavením bitu EPHSK. %TODO přeformuluj handshake
+
+Pro příjem a odesílání stačí nastavit příslušný záznam v tabulce deskriptorů bufferů s nastavením bitu UOWN jej předat do USB modulu. Po vyřízení přijmu nebo odesílání USB modul nastaví bit TRNIF v registru U1IR a současně nastaví v registru U1STAT tato pole:
+\begin{itemize}
+\item \textbf{ENDPT} - Číslo koncového bodu 0-15.
+\item \textbf{DIR} - Směr. Pokud má hodnotu 1 poslední transakce bylo odesílání (IN transakce), pokud 0 poslední transakce byla příjem (OUT transakce).
+\item \textbf{PPBI} - Pokud má hodnotu 1 byl vyřízen lichý buffer, pokud 0, byl vyřízen sudý buffer.
+\item \textbf{2 bity mezera.}
+\end{itemize}
+
+Pakliže je hodnota tohoto registru posunuta od dva bity doprava, je ji možné přímo použít jako index v tabulce deskriptorů bufferů.
+
+Při přijmu setup tokenu (zahájení řídící transakce) dojde k nastavení bitu PKTDIS registru U1CON. Dokud je tento bit nastaven je zastaveno zpracování všech tokenů. Po připravení odpovědi je nutné tento bit nastavit na hodnotu 0.
+%TODO po dobu pktdis je teoreticky možné manipulovat s BDT ??
+
+Aplikace by dále měla monitorovat v registru U1CON tyto bity: (Více v kapitole \ref{subsubsec:usb-states}.)
+
+\begin{itemize}
+\item \textbf{IDLEIF} - Zařízení bylo suspendováno.
+\item \textbf{URSTIF} - Zařízení bylo resetováno.
+\end{itemize}
+
+
+
+\subsubsection{Standardní USB požadavky}
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka &  \\ 
+\hline
+bmRequestType & 1B & Bitová mapa s obecným popisem požadavku.\\
+\hline
+bRequest & 1B & Specifikace požadavku. \\
+\hline
+wValue & 1B & Obecná hodnota. \\
+\hline
+wIndex & 1B & Obecný index.\\
+\hline
+wLength & 1B & Velikost dat, které je nutné dále přijmou nebo odeslat. \\ 
+\hline
+\end{tabular} 
+\end{center}
+\caption{Hlavička USB požadavků.}
+\label{tab:usb-stdreq-hdr} 
+\end{table}
+
+Standardní požadavky na zařízení jsou detailně popsány v \cite{usb-spec} v kapitole 9.3. Implementoval jsem pouze požadavky nutné k funkci modulu rádia.
+
+Standardní požadavky odesílané z hostitele mají vždy stejnou hlavičku popsanou v tabulce \ref{tab:usb-stdreq-hdr}. Význam polí wValue a wIndex je vždy specifický danému požadavek. Význam bitů pole bmRequestType je náledující:
+
+\begin{itemize}
+\item Bit 7: Směr případné datové části.
+	\begin{itemize}
+	\item 1 - Z hostitele do zařízení, 
+	\item 0 - Ze zařízení do hostitele.
+	\end{itemize}
+	
+\item Bity 6-5: Typ požadavku.
+	\begin{itemize}
+	\item 0 - Standardní požadavek.
+	\item 1 - Požadavek specifický pro danou třídu zařízení.
+	\item 2 - Výrobcem specifikovaný požadavek.
+	\item 3 - Vyhrazeno.
+	\end{itemize}
+	
+\item Bity 4-0: Příjemce požadavku.
+	\begin{itemize}
+	\item 0 - Zařízení.
+	\item 1 - Rozhraní.
+	\item 2 - Koncový bod.
+	\item 3 - Jiný.
+	\item 4-31 - Vyhrazeno.
+	\end{itemize}
+	
+\end{itemize}
+
+Byly implementovány následující požadavky: (V závorkách jsou uvedeny hodnoty bRequest)
+\begin{itemize}
+
+\item \textbf{GET\_STATUS} (0): Odpovědí na tento požadavek jsou dva byty. Předposlední bit určuje jestli se zařízení smí probudit když je suspendováno (remote wakeup). Toto není podporováno, bit je vždy nula. Poslední nejnižší bit určuje jestli mám zařízení vlastní napájení. Tento bit je taktéž vždy nula. Ostatní bity jsou rezervovány a jsou vždy nulové.
+
+\item \textbf{SET\_ADDRESS} (5): V poli wValue zařízení obdrží novou adresu.
+
+\item \textbf{GET\_DESCRIPTOR} (7): Hostitel žádá o deskriptor. V horním byte wValue je typ deskriptoru, v dolním byte index deskriptoru. wIndex je buď nula nebo specifikuje ID jazyka. wLength určuje maximální délku odpovědi. Hostitel může požadovat pouze začátek deskriptoru.
+
+\item \textbf{GET\_CONFIGURATION} (8): Hostitel žádá o index aktuálně používané konfigurace. Ta je odeslána jako jeden byte.
+
+\item \textbf{SET\_ADDRESS} (5): V poli wValue zařízení obdrží index nové konfigurace.
+
+\item \textbf{SET\_INTERFACE} (11): V poli wValue zařízení obdrží index nového alternativní nastavení pro rozhraní s indexem v poli wIndex. (Implementováno v ovladači USB audio.)
+
+\end{itemize}
+
+\subsubsection{Stavy USB zařízení}
+\label{subsubsec:usb-states}
+\InsertFigure{figures/usb-statechart.eps}{100mm}{Zjednodušený diagram stavů USB zařízení.}{fig:usb-states}
+
+Na obrázku \ref{fig:usb-states} je stavový diagram USB zařízení. Diagram je zjednodušen pouze na stavy důležité pro modul.
+\begin{itemize}
+\item \textbf{Výchozí:} Stav po zapnutí a inicilizaci zařízení. Při vstupu do tohoto stavu se nastaví adresa zařízení na výchozí hodnotu 0.
+\item \textbf{Adresován:} Do tohoto stavu se přejde po zpracování požadavku nastavení adresy. Veškerá další komunikace bude probíhat na této adrese. Ovšem adresu do registru MCU U1ADDR je nutné nastavit až po dokončení transakce - odeslání paketu nulové délky.
+\item \textbf{Konfigurován:} Do tohoto stavu se přejde na základě požadavku nastavení konfigurace. 
+\item \textbf{Suspendován:} K suspendování zařízení může dojít obecně kdykoliv. Do tohoto stavu se přejde pokud na sběrnici není zaznamenána aktivita po dobu 3 ms. Toto detekuje hardware MCU. V tomto stavu musí zařízení snížit svoji spotřebu na nejvýše 0,5 mA.
+\end{itemize}
+
+Dále je potřeba počítat s faktem, že zařízení může být kdykoliv resetováno a vrátí se tak do Výchozího stavu, není stanoveno pořadí v jakém budou žádosti přicházet a kterákoli transakce může být předčasně ukončena vysláním dalšího setup tokenu. 
+
+
+
+\subsubsection{Rozhraní implementace USB}
+Implementace se nachází v projektu firmware ve složce drv.
+
+
+V souboru config.h se nastaví počet konfigurací, celkový počet deskriptorů řetězců, nejvyšší použitý koncový bod a specifikuje se jestli má zařízení vlastní napájení.
+
+V souboru usb.h je vlastní rozhraní.
+
+
+
 
 \subsection{USB \iic tunel}
 
