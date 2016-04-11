@@ -85,7 +85,7 @@ static unsigned new_addr;
 
 static void reset()
 {
-    cur_cnf = -1;
+    cur_cnf = 0;
     U1ADDR = 0;
     new_addr = 0;
     ct_state = CT_IDLE;
@@ -322,6 +322,12 @@ static void control_transfer(void * buf, size_t size)
             case 0x07: //SET_DESCRIPTOR
                 break;
             case 0x08: //GET_CONFIGURATION
+            {
+                static uint8_t conf;
+                conf = cur_cnf;
+                usb_ct_reply(USB_CT_READ, &conf, sizeof(cur_cnf), NULL);
+                stall_it = false;  
+            }
                 break;
             case 0x09: //SET_CONFIGURATION
                 cur_cnf = req->wValue;

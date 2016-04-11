@@ -1,13 +1,283 @@
 \section{Tuner}
 \label{sec:tuner}
+Jak jsem zmínil v kapitole \ref{subsec:konstrukce}
+\begin{itemize}
+\item nepoužití přerušení a důsledky - nutnost polingu
+\item nějak vkusně s ohledem na předchozí kapitolu vyzdvnhnout použítí \iic - jendou větou na začátek
+\end{itemize}
 
 
-\subsection{I2S}
-	Popis\\
-	Problém synchronizace hodin
-	
-	
+\subsection{Zvukové rozhraní \iis}
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+MCU & Směr & Tuner & Význam \\ 
+\hline 
+SDI & $\Rightarrow$ & DOUT & Datový signál \\ 
+\hline 
+SCK & $\Rightarrow$ & DCLK & Hodiny \\ 
+\hline
+SS & $\Leftarrow$ & DFS & Signál určení kanálu \\ 
+\hline 
+\end{tabular}
+\end{center}
+\caption{Popis \iis signálů.}
+\label{tab:iis_signals} 
+\end{table}
+
+
+Rozhraní \iis je v případě jednosměrného přenosu v podstatě rozhraní SPI doplněné o další datový signál. Význam signálů včetně odpovídajících názvů pinů na MCU a tuneru shrnuje tabulka \ref{tab:iis_signals}. V případě \iis se nejedná o sběrnici. Vždy komunikují právě dvě zařízení kde jedno je master a druhé slave. Master vždy vysílá datový signál a signál přepínání kanálů. Datový signál vysílá samozřejmě zřízení, které je zdrojem zvuku. Je možný i obousměrný přenos, potom je nutné použití dvou datových linek.
+
+Tuner umí pracovat pouze v režimu slave, takže hodinový signál a signál přepínání kanálů je generován z MCU. Vzorkování zvuku v tuneru je řízeno jeho vlastním interním oscilátorem. Díky tomuto pravděpodobně občas dojde k zahození některého vzorku pokud MCU čte pomaleji než tuner provádí vzorkování, a nebo dojde k přečtení náhodných dat v opačném případě. Nicméně v praxi jsem s tímto nezaznamenal žádný problém.  
+
+\InsertFigure{figures/i2s_format.png}{120mm}{Časový diagram \iis přenosu. (Převzato z \cite{iis})}{fig:iis-diagram}
+
+Vyjma standardního formátu dat popsaného v \iis specifikace \cite{iis} vzniklo ještě několik dalších formátů. Použil jsem standardní formát, tak jak je zobrazen na obrázku \ref{fig:iis-diagram}.
+
+TODO:
+\begin{itemize}
+\item Umravnit pozicování obrázku
+\item Problém synchronizace hodin - presunout do USB jako samostatnou podkapitolu a nebo spáchat samostatnou kapitolu přeposílání zvuku
+\end{itemize}
+
+
+\subsection{Ovládací rozhraní \iic}
+Ovládání tuneru se provádí přes rozhraní \iic. Toto rozhraní je součásti drtivé většiny mikrokontrolérů, není ho třeba blíže popisovat. Tuner se do režimu \iic přepne připojením pinů GPO1 na 1 GPO2 na 0.
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline 
+SEN & Adresa čtení & Adresa zápisu  \\ 
+\hline 
+0 & 0x23 & 0x22 \\ 
+\hline 
+1 & 0xC7 & 0xC6 \\ 
+\hline 
+\end{tabular}
+\end{center}
+\caption{\iic adresy.}
+\label{tab:iic_addresses} 
+\end{table}
+
+Základní informací nezbytnou pro komunikace s tunerem je \iic adresa. Tuner umožňuje změnu adresy pomocí změny úrovně na pinu SEN. Adresy jsou v tabulce \ref{tab:iic_addresses}.
+
 \subsection{Ovládání tuneru}
-\subsubsection{RDS}
-		čtení z tuneru\\
-		dekódování základních informací
+\label{subsec:tuner-control}
+Tuner se ovládá zapisováním příkazů a případným čtením odpovědí. Dále je zde dvojice příkazů pro čtení a zápis proměnných. (properties) tuneru. Kompletní popis všech příkazů a proměnných je v programovací příručce k tuneru \cite{tuner-programing}.
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka &  \\ 
+\hline
+CMD & 1 B & Příkaz.\\
+\hline
+ARG1 - ARG7 & 0 - 7 B & Případný argument příkazu.\\
+\hline
+\end{tabular} 
+\end{center}
+\caption{Formát příkazu pro tuner.}
+\label{tab:tuner-cmd} 
+\end{table}
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka &  \\ 
+\hline
+STATUS & 1 B & Status tuneru.\\
+\hline
+RESP1 - RESP15 & 0 - 15 B & Případná další data odpovědi.\\
+\hline
+\end{tabular} 
+\end{center}
+\caption{Formát odpovědi tuneru.}
+\label{tab:tuner-rpl} 
+\end{table}
+
+Všechny příkazy mají jednotný formát vyobrazený v tabulce \ref{fig:tuner-cmd}. Každý příkaz je jednou transakcí zápisu na \iic sběrnici. Případnou odpověď na příkaz je možné získat následnou transakcí čtení z \iic sběrnice. Formát odpovědi je v tabulce \ref{tab:tuner-rpl}. Jak je patrné v odpověď na každý příkaz obsahuje vždy minimálně jeden byte se stavem zařízení (STATUS). Význam jednotlivých je následující:
+
+\begin{itemize}
+\item Bit 7 \textbf{CTS} - Pokud je v 1 je možné do tuneru odeslat další příkaz.
+\item Bit 6 \textbf{ERR} - Pokud je v 1 signalizuje chybu provádění příkazu.
+\item Bity 5 - 3 \textbf{Rezervováno} - Hodnoty těchto bitů se může měnit.
+\item Bit 2 \textbf{RDSINT} - Pokud je v 1 signalizuje vznik přerušení od přijmu RDS.
+\item Bit 1 \textbf{ASQINT} - Pokud je v 1 signalizuje dokončení měření parametrů přijmu.
+\item Bit 0 \textbf{STCINT} - Pokud je v 1 signalizuje dokončení ladění nebo vyhledávání stanice.
+\end{itemize}  
+
+Bity CTS a ERR se aktualizují vždy. Pro čtení nejnižších třech bitů je potřeba aktualizovat jejich hodnoty příkazem GET\_INT\_STATUS. Tento příkaz má číslo 0x14 a nemá žádné argumenty.
+
+Jak jsem zmínil výše, kromě příkazů se parametry tuneru nastavují a nebo čtou pomocí properties. jedná se vždy o 16-ti bitové hodnoty, které se identifikují taktéž 16-ti bitovým číslem. 
+
+Zápis hodnoty se provádí příkazem SET\_PROPERTY (0x12), za kterým následuje jeden nulový byte, za ním horní a poté dolní byte čísla property. Dále se vyšle horní byte a poté dolní byte vlastní hodnoty. 
+
+Čtení se provádí obdobně, příkazem GET\_PROPERTY (0x14) za kterým se vyšle nulový byte následovaný horním a dolním byte čísla zapisované property. Hodnota si získá následným čtením z \iic sběrnice. Horní byte hodnoty je až ve druhém bytu argumentu ARG-2 (viz. tab. \ref{tab:tuner-rpl}), dolní byte v je v ARG-3.
+
+%TODO přidat tabulky pro property ?
+
+\subsubsection{Inicializace tuneru}
+\InsertFigure{figures/tuner-init.eps}{111mm}{Diagram inicializace tuneru.}{fig:tuner-init}
+
+Po spuštění MCU vždy provádí inicializaci obou tunerů. Průběh inicializace shrnuje diagram \ref{fig:tuner-init}. Z důvodu zkrácení doby spuštění modulu probíhá inicializace formou jednoduchého "multitaskingu". Pokud je jeden tuner zaneprázdněn testuje se stav druhého tuneru a v případě, že není zaneprázdněn dojde k vyslání příkazu, pokud je zaneprázdněn testuje se znova první  tuner a tak dále. Ze stejného důvodu je v příkazu FM\_TUNE\_STATUS nastaven příznak zrychleného nepřesného ladění.
+
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline 
+Bit & 7. & 6. & 5. & 4. & 3. & 2. & 1. & 0. \\ 
+\hline 
+CMD & \multicolumn{8}{c|}{0x01} \\ 
+\hline 
+ARG1 & CTSIEN = 0 & GPO2OEN = 0 & PATCH = 0 & XOSCEN = 0 & \multicolumn{4}{c|}{FUNC = 0} \\ 
+\hline 
+ARG2 & \multicolumn{8}{c|}{OPMODE = 0b10110000} \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Příkaz spuštění tuneru POWER\_UP.}
+\label{tab:tuner-power-up} 
+\end{table}
+
+Inicializace začíná spuštěním tuneru příkazem POWER\_UP. Formát příkazu je v tabulce \ref{tab:tuner-power-up}. Součástí příkazu jsou tyto parametry:
+
+\begin{itemize}
+\item \textbf{CTSIEN} - Možnost hardwarové signalizace přerušení v okamžiku kdy je možné odeslat další příkaz. Hardwarové přerušení nepoužívám.
+\item \textbf{GPO2OEN} - Nastavení pinu GPO2 jako výstupu.
+\item \textbf{PATCH} - Umožňuje načtení novějšího firmware do integrovaného obvodu tuneru.
+\item \textbf{XOSCEN} - Použití krystalu jako zdroje hodinové frekvence. Místo krystalu používám přímo hodinový kmitočet rozhraní \iis.
+\item \textbf{FUNC} - Použitá hodnota nastaví režim přijmu FM rádia.
+\item \textbf{OPMODE} - Nastavení výstupu zvuku. Použitá hodnota znamená "pouze digitální výstup \iis".
+\end{itemize}
+
+Odpovědí na tento příkaz je pouze jeden byte se statusem tuneru.
+
+Dále je potřeba nastavit dvě property. REFCLK\_PRESCALE hodnotu děličky hodinového kmitočtu a do REFCLK\_FREQ výslednou frekvenci, která se musí pohybovat v rozsahu $ 31,130 - 34,406 Khz $. Jak už jsem zmínil jako zdroj hodinové frekvence je použita hodinová frekvence \iis rozhraní. Tato frekvence vyplývá ze součinu počtu kanálů, jejich rozlišení a vzorkovací frekvence. $ 2 \cdot 16 \cdot 48 = 1536 kHz $. Dělící poměr tedy vychází $ 1536 / 32 = 48 $ při frekvenci $ 32000 kHz $.
+
+Zatím co REFCLK\_FREQ obsahuje pouze 16-ti bitovou hodnotu frekvence v Hz v REFCLK\_PRESCALE jsou pro hodnotu dělícího poměru vyhrazeny bity 0-11. Bity 13-15 musí být nulové, bit 12 je nastaven na hodnotu 1, což znamená, že se jako zdroj hodinové frekvence použije \iis.
+
+Poslední property, kterou je potřeba nastavit, je DIGITAL\_OUTPUT\_SAMPLERATE. Obsahuje hodnotu vzorkovací frekvence. V tomto případě je to hodnota 48000.
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline 
+Název & Číslo & Hodnota \\ 
+\hline 
+REFCLK\_FREQ & 0x0201 & 0x7D00 \\ 
+\hline 
+REFCLK\_PRESCALE & 0x0202 & 0x102A \\ 
+\hline 
+DIGITAL\_OUTPUT\_SAMPLE\_RATE & 0x0104 & 0xBB80 \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Properties použité pro inicializaci tuneru.}
+\label{tab:tuner-init-prop} 
+\end{table}
+
+Properties se nastavují pomocí příkazu SET\_PROPERTY popsaného v kapitole \ref{subsec:tuner-control}. Výsledné hodnoty a čísla properties jsou shrnuty v tabulce \ref{tab:tuner-init-prop}.
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline 
+Bit & 7. & 6. & 5. & 4. & 3. & 2. & 1. & 0. \\ 
+\hline 
+CMD & \multicolumn{8}{c|}{0x20} \\ 
+\hline 
+ARG1 & \multicolumn{6}{c|}{0x00} & FREEZE = 0 & FAST = 1 \\ 
+\hline 
+ARG2 & \multicolumn{8}{c|}{FREQ$_{{H}}$ = 0x24} \\ 
+\hline 
+ARG3 & \multicolumn{8}{c|}{FREQ$_{{L}}$ = 0x94} \\ 
+\hline 
+ARG4 & \multicolumn{8}{c|}{ANTCAP = 0x00} \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Příkaz spuštění tuneru FM\_TUNE\_FREQ.}
+\label{tab:tuner-tune-freq} 
+\end{table}
+
+Poslední částí inicializace tuneru je naladění frekvence 93,7 MHz příkazem FM\_TUNE\_FREQ. Formát příkazu včetně použitých hodnot je v tabulce \ref{tab:tuner-tune-freq}. Význam parametrů je následující:
+
+\begin{itemize}
+\item \textbf{FREEZE} - Nastavení způsobí pozvolný přechod zvuku po přeladění.
+\item \textbf{FAST} - Nastavení způsobí rychlé ale nepřesné přeladění.
+\item \textbf{FREQ$_{{H}}$} - Horní byte frekvence v desetinách MHz.
+\item \textbf{FREQ$_{{L}}$} - Dolní byte frekvence v desetinách MHz.
+\item \textbf{ANTCAP} - Nastavení kapacity vstupního kondenzátoru antény. Hodnota 1-191 pF. Hodnota 0 znamená automatické nastavení.
+\end{itemize}
+
+Odpovědí na tento příkaz je pouze jeden byte obsahující status tuneru. Dokončení ladění je signalizováno nastavením bitu STCINT ve statusu. K aktualizaci hodnoty tohoto bytu je nutné vždy vyslat příkaz GET\_INT\_STATUS. Tento příkaz se skládá z jediného byte s číslem příkazu 0x14. Odpovědí na tento příkaz je rovněž jediný byte se statusem tuneru kde jsou aktualizovány hodnoty bitů signalizujících přerušení RDSINT, ASQINT a STCINT.
+
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline 
+Bit & 7. & 6. & 5. & 4. & 3. & 2. & 1. & 0. \\ 
+\hline 
+CMD & \multicolumn{8}{c|}{0x22} \\ 
+\hline 
+ARG1 & \multicolumn{6}{c|}{0x00} & CANCEL = 0 & INTACK = 1 \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Příkaz zjištění stavu ladění FM\_TUNE\_STATUS.}
+\label{tab:tuner-tune-status} 
+\end{table}
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline 
+Bit & 7. & 6. & 5. & 4. & 3. & 2. & 1. & 0. \\ 
+\hline 
+SATUS & CTS & ERR & X & X & RSQINT & RDSINT & X & STCINT \\ 
+\hline 
+RESP1 & BLTF & X & X & X & X & X & AFCRL & VALID \\ 
+\hline 
+RESP2 & \multicolumn{8}{c|}{READFREQ$_{{H}}$} \\ 
+\hline 
+RESP3 & \multicolumn{8}{c|}{READFREQ$_{{L}}$} \\ 
+\hline 
+RESP4 & \multicolumn{8}{c|}{RSSI} \\ 
+\hline 
+RESP5 & \multicolumn{8}{c|}{SNR} \\ 
+\hline 
+RESP6 & \multicolumn{8}{c|}{MULT} \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Odpověď na příkaz zjištění stavu ladění FM\_TUNE\_STATUS.}
+\label{tab:tuner-tune-status-resp} 
+\end{table}
+
+Ke smazání bitu STCINT je použit příkaz FM\_TUNE\_STATUS viz. tabulka \ref{tab:tuner-tune-status}. Kromě smazání tohoto bitu nastavením parametru INTACK je možné nastavením parametru INTACK zrušit probíhající ladění nebo vyhledávání stanice. Jak je vidět z tabulky \ref{tab:tuner-tune-status-resp}, odpověď na příkaz obsahuje kromě statusu tuneru následující informace:
+
+\begin{itemize}
+\item \textbf{BLTF} - Je nastaven pokud vyhledávání stanice přeteklo přes maximální nebo minimální frekvenci.
+\item \textbf{AFCRL} - Je nastaven pokud je automatické dolaďování aktivní.
+\item \textbf{VALID} - Naladěná frekvence byla vyhodnocena jako validní. 
+\item \textbf{READFREQ$_{{H}}$} - Horní byte naladěné frekvence v desetinách MHz.
+\item \textbf{READFREQ$_{{L}}$} - Dolní byte naladěné frekvence v desetinách MHz.
+\item \textbf{RSSI} - Indikátor síly přijímaného signálu v dBuV. %TODO přidej mikro
+\item \textbf{SNR} - Odstup signálu od šumu v dB.
+\item \textbf{MULT} - Indikátor míry odrazů v signálu.
+\end{itemize}
+
+
+\subsubsection{Čtení RDS z tuneru}
+TODO:
+\begin{itemize}
+\item vyčtení z tuneru
+\item dekódování základních informací- třeba radio text
+\end{itemize}

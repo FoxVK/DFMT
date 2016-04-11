@@ -93,7 +93,8 @@ const static struct
     sizeof(usb_desc_str001),
     USB_DSC_STRING,
     {
-        'V','S','B','-','T','U','O',' ','D','i','p','l','o','m','a'}
+        'V','S','B','-','T','U','O',' ','D','i','p','l','o','m','a'
+    }
 };
 
 /*******************************************
@@ -182,7 +183,7 @@ const uint8_t conf_desc[] =
     3,                              // Number of interfaces in this cfg
     1,                              // Index value of this configuration
     0,                              // Configuration string index
-    0b11000000,                     // Attributes
+    0b10000000,                     // Attributes
     50,                             // Max power consumption (2X mA) //FIXME
 
     /* USB Microphone Standard AC Interface Descriptor	*/
@@ -294,7 +295,7 @@ const uint8_t conf_desc[] =
     0x00,                           // Alternate Setting Number
     0x02,                           // Number of endpoints in this intf
     0xff,                           // Class code - VENDOR
-    0X00,                           // Subclass code - ANTHING
+    0Xff,                           // Subclass code - VENDOR
     0x00,                           // Protocol code
     0x00,                           // no string descriptor
 

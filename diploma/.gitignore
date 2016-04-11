@@ -5,3 +5,5 @@
 *.xmpi
 *.gz
 *.lol
+*.lot
+*-eps-converted-to.pdf

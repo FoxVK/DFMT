@@ -308,14 +308,14 @@ compiler_rcc_make_all: qrc_icons.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_icons.cpp
 qrc_icons.cpp: icons.qrc \
-		icons/radio.svg \
-		icons/media-record.svg \
 		icons/media-seek-backward.svg \
-		icons/media-seek-forward.svg \
-		icons/media-playback-pause.svg \
+		icons/media-playback-start.svg \
 		icons/media-playback-stop.svg \
+		icons/media-record.svg \
+		icons/media-playback-pause.svg \
+		icons/media-seek-forward.svg \
 		icons/readme \
-		icons/media-playback-start.svg
+		icons/radio.svg
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name icons icons.qrc -o qrc_icons.cpp
 
 compiler_moc_header_make_all: moc_mainwin.cpp moc_device.cpp moc_devices.cpp moc_deviceform.cpp
@@ -1359,8 +1359,7 @@ deviceform.o: deviceform.cpp deviceform.h \
 		/usr/include/qt5/QtWidgets/qtablewidget.h \
 		/usr/include/qt5/QtWidgets/qtableview.h \
 		/usr/include/qt5/QtWidgets/QVBoxLayout \
-		/usr/include/qt5/QtCore/QFile \
-		/usr/include/qt5/QtCore/QDebug
+		/usr/include/qt5/QtCore/QFile
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o deviceform.o deviceform.cpp
 
 qrc_icons.o: qrc_icons.cpp 
