@@ -784,15 +784,84 @@ V souboru usb.h je vlastní rozhraní.
 
 
 \subsection{USB \iic tunel}
+USB - \iic tunelu je zjednodušen tak aby vyhovoval potřebám ovládání tunerů. Není obecně použitelný pro jakoukoliv \iic komunikaci. Umožňuje pouze odeslání jedné ze čtyř pevně specifikovaných adres následované čtením nebo zápisem až 16-ti bytů.
 
-TODO:
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka &  \\ 
+\hline
+id & 1 B & Identifikátor požadavku.\\
+\hline
+tuner & 1 B & Číslo tuneru. \\
+\hline
+type & 1 B & Typ požadavku. \\
+\hline
+rw\_size & 1 B & Velikost pole cmd v bytech.\\
+\hline
+cmd & 0 - 16 B & Případná data odesílána po \iic vyjma adresy. \\ 
+\hline
+\end{tabular} 
+\end{center}
+\caption{Formát požadavku USB - \iic tunelu.}
+\label{tab:usb-iic-req} 
+\end{table}
+
+Tabulka \ref{tab:usb-iic-req} popisuje formát požadavku pro čtení nebo zápis dat na \iic sběrnici. Význam polí je následující:
 \begin{itemize}
-\item základní filozofie - vendor interface, 2x bulk EP
-\item popsat formáty zpráv pro oba směry (zmínit endianitu)
-\item chyby v křemíku - problém možného dvojí zápisu po návratu z přerušení a nefunkčnost dvou pinů při zapnutí \iic modulu.
+\item \textbf{id} - Hodnota 0-255, kterou je možné použít pro přiřazení odpovědi k požadavku.
+\item \textbf{tuner} - Výběr tuneru na modulu rádia. 0 pro hlavní tuner A ze kterého je přenášen zvuk, 1 pro tuner B.
+\item \textbf{type} - Typ požadavku. 0 Pro zápis na \iic sběrnice, 1 pro čtení z \iic sběrnice, 2 pro ping - modul v odpovědi pouze vrátí přijatá data.
+\item \textbf{rw\_size} - V případě zápisu velikost pole cmd v bytech, v případě čtení počet bytů které budou přečteny. Hodnota 0 - 16.
+\item \textbf{cmd} - V případě zápisu data vysílaná na \iic sběrnici. 
 \end{itemize}
 
-% zmínit chyby v křemíku (nefunkčnost pinu, a problém dvojího zápisu po přerušení)
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|l|c|l|l|}
+\hline 
+Název pole & Délka &  \\ 
+\hline
+id & 1 B & Identifikátor požadavku.\\
+\hline
+error & 1 B & Číslo tuneru. \\
+\hline
+reply & 0 - 16 B & Případná odpověď tuneru z \iic sběrnice. \\
+\hline
+\end{tabular} 
+\end{center}
+\caption{Formát odpovědi USB - \iic tunelu.}
+\label{tab:usb-iic-resp} 
+\end{table}
+
+\begin{itemize}
+\item \textbf{id} - Hodnota 0-255, kterou je možné použít pro přiřazení odpovědi k požadavku.
+\item {\textbf{error} - Vyjadřuje jestli při vyřizování požadavku došlo k chybě či nikoliv. 
+	\begin{itemize}
+	\item 0 - Nedošlo k chybě.
+	\item 1 - \iic sběrnice je zaneprázdněna, probíhá komunikace.
+	\item 2 - Nevalidní požadavek, neplatné číslo tuneru nebo příliš velká délka dat.
+	\item 3 - Tuner není spuštěn a inicializován.
+	\item 4 - Předchozí požadavek ještě nebyl vyřízen.
+	\item 5 - Neplatný typ požadavku.
+	\item 128 - Obecná chyba.
+	\end{itemize}
+}
+\item \textbf{reply} - V případě úspěšného požadavku čtení, odpověď tuneru.
+\end{itemize} 
+
+Komunikace z hostitele se provádí pomocí požadavků a odpovědí popsaných v tabulkách \ref{tab:usb-iic-req} a \ref{tab:usb-iic-resp}. Výjimku je požadavek s typem 2 (ping) kdy modul rádia odešle zpět stejná data která přijal. K práci s tunelem bych chtěl podotknout, že není možné odeslat další požadavek před vyřízením předchozího. Po spuštění modulu rádia dochází k počáteční inicializaci tunerů. Podobu inicializace modul odpovídá chybovým kódem 3.
+
+\subsubsection{\iic v MCU}
+\iic je jednou z nejpoužívanějších sběrnic mikrokontrolérů. \iic modul MCU je dobře zdokumentován, jednak obecně pro celou rodinu MCU v \cite{pic-iic}, detaily specifické pro mnou použitý typ MCU jsou potom v \cite{pic}.
+
+Je zbytečné popisovat zde konfiguraci \iic modulu. Na tomto místě bych chtěl upozornit na dvě hardwarové chyby, které se modulu týkají. Obě jsou popsané v \cite{pic-errata}.
+
+Při spuštěném modulu I2C1 nelze používat vývody RA0 a RA1, stejně tak při spuštěném modulu I2C2 nelze používat vývody RB5 a RB6. 
+Druhou chybou je možnost dvojitého zápisu v případě, že během zápisu došlo k přerušení. Toto chování ve většině případů není problém. V případě \iic modulu se se zápisem spouští jednotlivé akce, takže může dojít například k dvojímu zápisu bytu na sběrnici. Řešením je před zápisem do registrů náchylných na tuto chybu zakázat přerušení.
+
+
 
 \subsection{Omezení}
 
@@ -800,5 +869,6 @@ TODO
 \begin{itemize}
 \item Nemožnost dostat se v suspendu do 0,5 mA
 \item Test mód neimplementován. Nutný pouze pro získání USB loga.
+\item tuto podkapitoku asi uplně vyhoď a přesuň do závěru.
 \end{itemize}
 %suspend a test mod
