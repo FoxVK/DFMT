@@ -853,10 +853,9 @@ reply & 0 - 16 B & Případná odpověď tuneru z \iic sběrnice. \\
 
 Komunikace z hostitele se provádí pomocí požadavků a odpovědí popsaných v tabulkách \ref{tab:usb-iic-req} a \ref{tab:usb-iic-resp}. Výjimku je požadavek s typem 2 (ping) kdy modul rádia odešle zpět stejná data která přijal. K práci s tunelem bych chtěl podotknout, že není možné odeslat další požadavek před vyřízením předchozího. Po spuštění modulu rádia dochází k počáteční inicializaci tunerů. Podobu inicializace modul odpovídá chybovým kódem 3.
 
-\subsubsection{\iic v MCU}
-\iic je jednou z nejpoužívanějších sběrnic mikrokontrolérů. \iic modul MCU je dobře zdokumentován, jednak obecně pro celou rodinu MCU v \cite{pic-iic}, detaily specifické pro mnou použitý typ MCU jsou potom v \cite{pic}.
+Vlastní modul \iic v MCU je dobře zdokumentován, jednak obecně pro celou rodinu MCU v \cite{pic-iic}, detaily specifické pro mnou použitý typ MCU jsou potom v \cite{pic}.
 
-Je zbytečné popisovat zde konfiguraci \iic modulu. Na tomto místě bych chtěl upozornit na dvě hardwarové chyby, které se modulu týkají. Obě jsou popsané v \cite{pic-errata}.
+Je zbytečné popisovat zde konfiguraci \iic modulu. Chtěl bych ale upozornit na dvě hardwarové chyby, které se modulu týkají. Obě jsou popsané v \cite{pic-errata}.
 
 Při spuštěném modulu I2C1 nelze používat vývody RA0 a RA1, stejně tak při spuštěném modulu I2C2 nelze používat vývody RB5 a RB6. 
 Druhou chybou je možnost dvojitého zápisu v případě, že během zápisu došlo k přerušení. Toto chování ve většině případů není problém. V případě \iic modulu se se zápisem spouští jednotlivé akce, takže může dojít například k dvojímu zápisu bytu na sběrnici. Řešením je před zápisem do registrů náchylných na tuto chybu zakázat přerušení.

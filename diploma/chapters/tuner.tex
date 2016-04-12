@@ -1,11 +1,6 @@
 \section{Tuner}
 \label{sec:tuner}
-Jak jsem zmínil v kapitole \ref{subsec:konstrukce}
-\begin{itemize}
-\item nepoužití přerušení a důsledky - nutnost polingu
-\item nějak vkusně s ohledem na předchozí kapitolu vyzdvnhnout použítí \iic - jendou větou na začátek
-\end{itemize}
-
+Jak jsem zmínil v kapitole \ref{subsec:konstrukce} k přijmu rozhlasového je použit integrovaný obvod SI4735-D60. Zvuk je do MCU přenášen přes rozhraní \iis, samotné ovládání tuneru je realizováno přes sběrnici \iic.
 
 \subsection{Zvukové rozhraní \iis}
 
@@ -38,7 +33,6 @@ Vyjma standardního formátu dat popsaného v \iis specifikace \cite{iis} vznikl
 
 TODO:
 \begin{itemize}
-\item Umravnit pozicování obrázku
 \item Problém synchronizace hodin - presunout do USB jako samostatnou podkapitolu a nebo spáchat samostatnou kapitolu přeposílání zvuku
 \end{itemize}
 
@@ -100,7 +94,7 @@ RESP1 - RESP15 & 0 - 15 B & Případná další data odpovědi.\\
 \label{tab:tuner-rpl} 
 \end{table}
 
-Všechny příkazy mají jednotný formát vyobrazený v tabulce \ref{fig:tuner-cmd}. Každý příkaz je jednou transakcí zápisu na \iic sběrnici. Případnou odpověď na příkaz je možné získat následnou transakcí čtení z \iic sběrnice. Formát odpovědi je v tabulce \ref{tab:tuner-rpl}. Jak je patrné v odpověď na každý příkaz obsahuje vždy minimálně jeden byte se stavem zařízení (STATUS). Význam jednotlivých je následující:
+Všechny příkazy mají jednotný formát vyobrazený v tabulce \ref{tab:tuner-cmd}. Každý příkaz je jednou transakcí zápisu na \iic sběrnici. Případnou odpověď na příkaz je možné získat následnou transakcí čtení z \iic sběrnice. Formát odpovědi je v tabulce \ref{tab:tuner-rpl}. Jak je patrné v odpověď na každý příkaz obsahuje vždy minimálně jeden byte se stavem zařízení (STATUS). Význam jednotlivých je následující:
 
 \begin{itemize}
 \item Bit 7 \textbf{CTS} - Pokud je v 1 je možné do tuneru odeslat další příkaz.
@@ -111,13 +105,13 @@ Všechny příkazy mají jednotný formát vyobrazený v tabulce \ref{fig:tuner-
 \item Bit 0 \textbf{STCINT} - Pokud je v 1 signalizuje dokončení ladění nebo vyhledávání stanice.
 \end{itemize}  
 
-Bity CTS a ERR se aktualizují vždy. Pro čtení nejnižších třech bitů je potřeba aktualizovat jejich hodnoty příkazem GET\_INT\_STATUS. Tento příkaz má číslo 0x14 a nemá žádné argumenty.
+Bity CTS a ERR se aktualizují vždy. Pro čtení nejnižších třech bitů je potřeba aktualizovat jejich hodnoty příkazem GET\_INT\_STATUS. Tento příkaz má číslo 0x14 a nemá žádné argumenty. Tuner umožňuje nakonfigurovat signalizaci změny některého z těchto bitů změnou úrovně na výstupu GPO2/INT. Této možnosti jsem se ale rozhodl nevyužít.
 
-Jak jsem zmínil výše, kromě příkazů se parametry tuneru nastavují a nebo čtou pomocí properties. jedná se vždy o 16-ti bitové hodnoty, které se identifikují taktéž 16-ti bitovým číslem. 
+Jak jsem zmínil výše, kromě příkazů se parametry tuneru nastavují a nebo čtou pomocí proměnných. jedná se vždy o 16-ti bitové hodnoty, které se identifikují taktéž 16-ti bitovým číslem. 
 
-Zápis hodnoty se provádí příkazem SET\_PROPERTY (0x12), za kterým následuje jeden nulový byte, za ním horní a poté dolní byte čísla property. Dále se vyšle horní byte a poté dolní byte vlastní hodnoty. 
+Zápis hodnoty se provádí příkazem SET\_PROPERTY (0x12), za kterým následuje jeden nulový byte, za ním horní a poté dolní byte čísla proměnné. Dále se vyšle horní byte a poté dolní byte vlastní hodnoty. 
 
-Čtení se provádí obdobně, příkazem GET\_PROPERTY (0x14) za kterým se vyšle nulový byte následovaný horním a dolním byte čísla zapisované property. Hodnota si získá následným čtením z \iic sběrnice. Horní byte hodnoty je až ve druhém bytu argumentu ARG-2 (viz. tab. \ref{tab:tuner-rpl}), dolní byte v je v ARG-3.
+Čtení se provádí obdobně, příkazem GET\_PROPERTY (0x14) za kterým se vyšle nulový byte následovaný horním a dolním byte čísla zapisované proměnné. Hodnota se získá následným čtením z \iic sběrnice. Horní byte hodnoty je až ve druhém bytu argumentu ARG-2 (viz. tab. \ref{tab:tuner-rpl}), dolní byte v je v ARG-3.
 
 %TODO přidat tabulky pro property ?
 
@@ -158,11 +152,11 @@ Inicializace začíná spuštěním tuneru příkazem POWER\_UP. Formát příka
 
 Odpovědí na tento příkaz je pouze jeden byte se statusem tuneru.
 
-Dále je potřeba nastavit dvě property. REFCLK\_PRESCALE hodnotu děličky hodinového kmitočtu a do REFCLK\_FREQ výslednou frekvenci, která se musí pohybovat v rozsahu $ 31,130 - 34,406 Khz $. Jak už jsem zmínil jako zdroj hodinové frekvence je použita hodinová frekvence \iis rozhraní. Tato frekvence vyplývá ze součinu počtu kanálů, jejich rozlišení a vzorkovací frekvence. $ 2 \cdot 16 \cdot 48 = 1536 kHz $. Dělící poměr tedy vychází $ 1536 / 32 = 48 $ při frekvenci $ 32000 kHz $.
+Dále je potřeba nastavit dvě proměnné. REFCLK\_PRESCALE hodnotu děličky hodinového kmitočtu a do REFCLK\_FREQ výslednou frekvenci, která se musí pohybovat v rozsahu $ 31,130 - 34,406 Khz $. Jak už jsem zmínil jako zdroj hodinové frekvence je použita hodinová frekvence \iis rozhraní. Tato frekvence vyplývá ze součinu počtu kanálů, jejich rozlišení a vzorkovací frekvence. $ 2 \cdot 16 \cdot 48 = 1536 kHz $. Dělící poměr tedy vychází $ 1536 / 32 = 48 $ při frekvenci $ 32000 kHz $.
 
 Zatím co REFCLK\_FREQ obsahuje pouze 16-ti bitovou hodnotu frekvence v Hz v REFCLK\_PRESCALE jsou pro hodnotu dělícího poměru vyhrazeny bity 0-11. Bity 13-15 musí být nulové, bit 12 je nastaven na hodnotu 1, což znamená, že se jako zdroj hodinové frekvence použije \iis.
 
-Poslední property, kterou je potřeba nastavit, je DIGITAL\_OUTPUT\_SAMPLERATE. Obsahuje hodnotu vzorkovací frekvence. V tomto případě je to hodnota 48000.
+Poslední proměnná, kterou je potřeba nastavit, je DIGITAL\_OUTPUT\_SAMPLERATE. Obsahuje hodnotu vzorkovací frekvence. V tomto případě je to hodnota 48000.
 
 \begin{table}[ht!]
 \begin{center}
@@ -178,11 +172,11 @@ DIGITAL\_OUTPUT\_SAMPLE\_RATE & 0x0104 & 0xBB80 \\
 \hline 
 \end{tabular} 
 \end{center}
-\caption{Properties použité pro inicializaci tuneru.}
+\caption{Proměnné použité pro inicializaci tuneru.}
 \label{tab:tuner-init-prop} 
 \end{table}
 
-Properties se nastavují pomocí příkazu SET\_PROPERTY popsaného v kapitole \ref{subsec:tuner-control}. Výsledné hodnoty a čísla properties jsou shrnuty v tabulce \ref{tab:tuner-init-prop}.
+Proměnné se nastavují pomocí příkazu SET\_PROPERTY popsaného v kapitole \ref{subsec:tuner-control}. Výsledné hodnoty a čísla proměnné jsou shrnuty v tabulce \ref{tab:tuner-init-prop}.
 
 \begin{table}[ht!]
 \begin{center}
@@ -274,10 +268,12 @@ Ke smazání bitu STCINT je použit příkaz FM\_TUNE\_STATUS viz. tabulka \ref{
 \item \textbf{MULT} - Indikátor míry odrazů v signálu.
 \end{itemize}
 
-
 \subsubsection{Čtení RDS z tuneru}
 TODO:
 \begin{itemize}
 \item vyčtení z tuneru
 \item dekódování základních informací- třeba radio text
 \end{itemize}
+
+\subsubsection{Další použité příkazy a proměnné}
+TODO:
