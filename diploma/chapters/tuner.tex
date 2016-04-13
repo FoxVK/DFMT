@@ -1,6 +1,6 @@
 \section{Tuner}
 \label{sec:tuner}
-Jak jsem zmínil v kapitole \ref{subsec:konstrukce} k přijmu rozhlasového je použit integrovaný obvod SI4735-D60. Zvuk je do MCU přenášen přes rozhraní \iis, samotné ovládání tuneru je realizováno přes sběrnici \iic.
+Jak jsem zmínil v kapitole \ref{subsec:konstrukce} k přijmu rozhlasového vysílání je použit integrovaný obvod SI4735-D60. Zvuk je do MCU přenášen přes rozhraní \iis, samotné ovládání tuneru je realizováno přes sběrnici \iic.
 
 \subsection{Zvukové rozhraní \iis}
 
@@ -31,14 +31,9 @@ Tuner umí pracovat pouze v režimu slave, takže hodinový signál a signál p�
 
 Vyjma standardního formátu dat popsaného v \iis specifikace \cite{iis} vzniklo ještě několik dalších formátů. Použil jsem standardní formát, tak jak je zobrazen na obrázku \ref{fig:iis-diagram}.
 
-TODO:
-\begin{itemize}
-\item Problém synchronizace hodin - presunout do USB jako samostatnou podkapitolu a nebo spáchat samostatnou kapitolu přeposílání zvuku
-\end{itemize}
-
 
 \subsection{Ovládací rozhraní \iic}
-Ovládání tuneru se provádí přes rozhraní \iic. Toto rozhraní je součásti drtivé většiny mikrokontrolérů, není ho třeba blíže popisovat. Tuner se do režimu \iic přepne připojením pinů GPO1 na 1 GPO2 na 0.
+Ovládání tuneru se provádí přes rozhraní \iic. Toto rozhraní je součástí drtivé většiny mikrokontrolérů, není ho třeba blíže popisovat. Tuner se do režimu \iic přepne připojením pinů GPO1 na napájecí napětí a GPO2 k zemi.
 
 \begin{table}[ht!]
 \begin{center}
@@ -94,12 +89,12 @@ RESP1 - RESP15 & 0 - 15 B & Případná další data odpovědi.\\
 \label{tab:tuner-rpl} 
 \end{table}
 
-Všechny příkazy mají jednotný formát vyobrazený v tabulce \ref{tab:tuner-cmd}. Každý příkaz je jednou transakcí zápisu na \iic sběrnici. Případnou odpověď na příkaz je možné získat následnou transakcí čtení z \iic sběrnice. Formát odpovědi je v tabulce \ref{tab:tuner-rpl}. Jak je patrné v odpověď na každý příkaz obsahuje vždy minimálně jeden byte se stavem zařízení (STATUS). Význam jednotlivých je následující:
+Všechny příkazy mají jednotný formát vyobrazený v tabulce \ref{tab:tuner-cmd}. Každý příkaz je jednou transakcí zápisu na \iic sběrnici. Případnou odpověď na příkaz je možné získat následnou transakcí čtení z \iic sběrnice. Formát odpovědi je v tabulce \ref{tab:tuner-rpl}. Jak je patrné odpověď na každý příkaz obsahuje vždy minimálně jeden byte se stavem zařízení (STATUS). Význam jednotlivých bitů v tomto byte je následující:
 
 \begin{itemize}
 \item Bit 7 \textbf{CTS} - Pokud je v 1 je možné do tuneru odeslat další příkaz.
 \item Bit 6 \textbf{ERR} - Pokud je v 1 signalizuje chybu provádění příkazu.
-\item Bity 5 - 3 \textbf{Rezervováno} - Hodnoty těchto bitů se může měnit.
+\item Bity 5 - 3 \textbf{Rezervováno} - Hodnoty těchto bitů nejsou specifikovány.
 \item Bit 2 \textbf{RDSINT} - Pokud je v 1 signalizuje vznik přerušení od přijmu RDS.
 \item Bit 1 \textbf{ASQINT} - Pokud je v 1 signalizuje dokončení měření parametrů přijmu.
 \item Bit 0 \textbf{STCINT} - Pokud je v 1 signalizuje dokončení ladění nebo vyhledávání stanice.
@@ -154,7 +149,7 @@ Odpovědí na tento příkaz je pouze jeden byte se statusem tuneru.
 
 Dále je potřeba nastavit dvě proměnné. REFCLK\_PRESCALE hodnotu děličky hodinového kmitočtu a do REFCLK\_FREQ výslednou frekvenci, která se musí pohybovat v rozsahu $ 31,130 - 34,406 Khz $. Jak už jsem zmínil jako zdroj hodinové frekvence je použita hodinová frekvence \iis rozhraní. Tato frekvence vyplývá ze součinu počtu kanálů, jejich rozlišení a vzorkovací frekvence. $ 2 \cdot 16 \cdot 48 = 1536 kHz $. Dělící poměr tedy vychází $ 1536 / 32 = 48 $ při frekvenci $ 32000 kHz $.
 
-Zatím co REFCLK\_FREQ obsahuje pouze 16-ti bitovou hodnotu frekvence v Hz v REFCLK\_PRESCALE jsou pro hodnotu dělícího poměru vyhrazeny bity 0-11. Bity 13-15 musí být nulové, bit 12 je nastaven na hodnotu 1, což znamená, že se jako zdroj hodinové frekvence použije \iis.
+Zatímco REFCLK\_FREQ obsahuje pouze 16-ti bitovou hodnotu frekvence v Hz v REFCLK\_PRESCALE jsou pro hodnotu dělícího poměru vyhrazeny bity 0-11. Bity 13-15 musí být nulové, bit 12 je nastaven na hodnotu 1, což znamená, že se jako zdroj hodinové frekvence použije \iis.
 
 Poslední proměnná, kterou je potřeba nastavit, je DIGITAL\_OUTPUT\_SAMPLERATE. Obsahuje hodnotu vzorkovací frekvence. V tomto případě je to hodnota 48000.
 
@@ -255,20 +250,21 @@ RESP6 & \multicolumn{8}{c|}{MULT} \\
 \label{tab:tuner-tune-status-resp} 
 \end{table}
 
-Ke smazání bitu STCINT je použit příkaz FM\_TUNE\_STATUS viz. tabulka \ref{tab:tuner-tune-status}. Kromě smazání tohoto bitu nastavením parametru INTACK je možné nastavením parametru INTACK zrušit probíhající ladění nebo vyhledávání stanice. Jak je vidět z tabulky \ref{tab:tuner-tune-status-resp}, odpověď na příkaz obsahuje kromě statusu tuneru následující informace:
+Ke smazání bitu STCINT je použit příkaz FM\_TUNE\_STATUS viz. tabulka \ref{tab:tuner-tune-status}. Kromě smazání tohoto bitu nastavením parametru INTACK je možné nastavením tohoto parametru zrušit probíhající ladění nebo vyhledávání stanice. Jak je vidět z tabulky \ref{tab:tuner-tune-status-resp}, odpověď na příkaz obsahuje kromě statusu tuneru následující informace:
 
 \begin{itemize}
-\item \textbf{BLTF} - Je nastaven pokud vyhledávání stanice přeteklo přes maximální nebo minimální frekvenci.
+\item \textbf{BLTF} - Je nastaven pokud vyhledávání stanice přeteklo přes hodnotu maximální nebo podteklo hodnotu minimální laditelné frekvence.
 \item \textbf{AFCRL} - Je nastaven pokud je automatické dolaďování aktivní.
 \item \textbf{VALID} - Naladěná frekvence byla vyhodnocena jako validní. 
 \item \textbf{READFREQ$_{{H}}$} - Horní byte naladěné frekvence v desetinách MHz.
 \item \textbf{READFREQ$_{{L}}$} - Dolní byte naladěné frekvence v desetinách MHz.
-\item \textbf{RSSI} - Indikátor síly přijímaného signálu v dBuV. %TODO přidej mikro
+\item \textbf{RSSI} - Indikátor síly přijímaného signálu v dB$\mu$V.
 \item \textbf{SNR} - Odstup signálu od šumu v dB.
 \item \textbf{MULT} - Indikátor míry odrazů v signálu.
 \end{itemize}
 
 \subsubsection{Čtení RDS z tuneru}
+RDS je rozšíření pozemního rozhlasového vysílání o souběžné vysílání různých digitálních informací. 
 TODO:
 \begin{itemize}
 \item vyčtení z tuneru
