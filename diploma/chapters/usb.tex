@@ -8,7 +8,7 @@ S vydáním specifikace USB 2.0 byly předchozí specifikace označeny jako zast
 
 \subsection{Stručný úvod do full-speed USB 2.0}
 \subsubsection{Topologie}
-\InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-functions}
+\InsertFigure{figures/usb-functions.eps}{100mm}{USB koncové body a funkce.}{fig:usb-functions}
 
 TODO Obrázek s pyramidou topologie
 
@@ -775,7 +775,7 @@ Dále je potřeba počítat s faktem, že zařízení může být kdykoliv reset
 
 
 \subsubsection{Rozhraní implementace USB}
-Dodělat...
+Zkonzultovat a dodělat t...
 
 Implementace se nachází v projektu firmware ve složce drv.
 
@@ -863,15 +863,3 @@ Je zbytečné popisovat zde konfiguraci \iic modulu. Chtěl bych ale upozornit n
 
 Při spuštěném modulu I2C1 nelze používat vývody RA0 a RA1, stejně tak při spuštěném modulu I2C2 nelze používat vývody RB5 a RB6. 
 Druhou chybou je možnost dvojitého zápisu v případě, že během zápisu došlo k přerušení. Toto chování ve většině případů není problém. V případě \iic modulu se se zápisem spouští jednotlivé akce, takže může dojít například k dvojímu zápisu bytu na sběrnici. Řešením je před zápisem do registrů náchylných na tuto chybu zakázat přerušení.
-
-
-
-\subsection{Omezení}
-
-TODO
-\begin{itemize}
-\item Nemožnost dostat se v suspendu do 0,5 mA
-\item Test mód neimplementován. Nutný pouze pro získání USB loga.
-\item tuto podkapitoku asi uplně vyhoď a přesuň do závěru.
-\end{itemize}
-%suspend a test mod

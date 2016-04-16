@@ -111,6 +111,7 @@ Zápis hodnoty se provádí příkazem SET\_PROPERTY (0x12), za kterým následu
 %TODO přidat tabulky pro property ?
 
 \subsubsection{Inicializace tuneru}
+\label{subsubsec:tun-init}
 \InsertFigure{figures/tuner-init.eps}{111mm}{Diagram inicializace tuneru.}{fig:tuner-init}
 
 Po spuštění MCU vždy provádí inicializaci obou tunerů. Průběh inicializace shrnuje diagram \ref{fig:tuner-init}. Z důvodu zkrácení doby spuštění modulu probíhá inicializace formou jednoduchého "multitaskingu". Pokud je jeden tuner zaneprázdněn testuje se stav druhého tuneru a v případě, že není zaneprázdněn dojde k vyslání příkazu, pokud je zaneprázdněn testuje se znova první  tuner a tak dále. Ze stejného důvodu je v příkazu FM\_TUNE\_STATUS nastaven příznak zrychleného nepřesného ladění.
@@ -263,11 +264,33 @@ Ke smazání bitu STCINT je použit příkaz FM\_TUNE\_STATUS viz. tabulka \ref{
 \item \textbf{MULT} - Indikátor míry odrazů v signálu.
 \end{itemize}
 
+\subsubsection{Vyhledávání stanic}
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline 
+Bit & 7. & 6. & 5. & 4. & 3. & 2. & 1. & 0. \\ 
+\hline 
+CMD & \multicolumn{8}{c|}{0x22} \\ 
+\hline 
+ARG1 & \multicolumn{4}{c|}{0x00} & SEEKUP & WRAP & \multicolumn{2}{c|}{0x00} \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Příkaz zjištění stavu ladění FM\_TUNE\_STATUS.}
+\label{tab:tuner-seek} 
+\end{table}
+
+Vyhledávání stanic se provádí pomocí příkazu FM\_SEEK\_START popsaném v tabulce \ref{tab:tuner-seek}. Příkaz lze parametrizovat pouze pomocí dvou bitů. Nastavením bitu SEEKUP se bude vyhledávat směrem k vyšším frekvencím. Nastavením bitu WRAP bude při dosažení nejvyšší frekvence vyhledávání pokračovat znova od nejnižší frekvence, v případě sestupného vyhledávání se bude po dosažení nejnižší frekvence pokračovat od horní frekvence. Pokud bit WRAP není nastaven, při dosažení nejnižší nebo nejvyšší frekvence dojde k zastavení vyhledávání.
+
+Ukončení vyhledávání je signalizováno nastavením bitu STCINT ve statusu odpovědi tuneru. Detekce ukončení vyhledávání se provádí shodně jako detekce ukončení ladění popsaná v kap. \ref{subsubsec:tun-init}. Naladěnou frekvenci a informace o kvalitě signálu je možné přečíst příkazem FM\_TUNE\_STATUS, který byl taktéž popsán v kapitole \ref{subsubsec:tun-init}. Tyto informace se vždy aktualizují po naladění, opětovné volání příkazu FM\_TUNE\_STATUS vrací vždy stejné hodnoty. 
+
+
 \subsubsection{Čtení RDS z tuneru}
 %TODO možná obrázek
 RDS je rozšíření pozemního rozhlasového vysílání o souběžné vysílání různých digitálních informací. Z nejznámějších informací je to RT (Radio Text) - přenos až 64 znaků textu, typicky s názvem právě přehrávané skladby a nebo názvem rádiové stanice. Potom AF  (Alternative frequency) seznam dalších frekvencí, na kterých je možné stanici naladit, což lze s využitím informace PI (Programme Identification), který stanici jednoznačně identifikuje k automatickému přelaďování na frekvenci s lepším příjmem. Kompletní popis je v \cite{rds}.
 
-Proud přenášených dat se dělí do třiceti skupin označených 1A, 1B, 2A ... 15A, 15B. Každá skupina má pevně danou velikost 104 bitů a skládá se z bloků 1-4, které jsou taktéž stejně dlouhé. Jeden blok nese 16 bitů užitečných dat a 10-ti bitové kontrolní slovo. Vyhodnocování chyb v přijatých datech a jejich případnou korekci zajišťuje tuner. Pro příjem je v tuneru k dispozici fronta na 14 skupin.
+Proud přenášených dat se dělí do třiceti skupin označených 1A, 1B, 2A ... 15A, 15B. Každá skupina má pevně danou velikost 104 bitů a skládá se ze čtyř stejně dlouhých bloků. Chtěl bych upozornit, že v normě \cite{rds} jsou tyto bloky označeny čísly 1 až 4, kdežto v programovací příručce tuneru \cite{tuner-programing} jsou označeny písmeny A až D. Každý blok nese 16~bitů užitečných dat a 10-ti bitové kontrolní slovo. Vyhodnocování chyb v přijatých datech a jejich případnou korekci zajišťuje tuner. Pro příjem je v tuneru k dispozici fronta na 14 skupin.
 
 \begin{table}[ht!]
 \begin{center}
@@ -292,7 +315,7 @@ Příjem RDS v tuneru je potřeba nejprve nakonfigurovat a povolit. Díky nepou�
 \begin{itemize}
 \item 0 - Pokud je v bloku jakákoliv chyba celá skupiny bude zahozena.
 \item 1 - Skupina bude přijata, pokud v bloku došlo k opravě nejvýše dvou bitů. 
-\item 2 - Skupina bude přijat,a pokud v bloku došlo k opravě nejvýše pěti bitů.
+\item 2 - Skupina bude přijata, pokud v bloku došlo k opravě nejvýše pěti bitů.
 \item 3 - Jakékoliv, i neopravitelné, množství chyb v bloku nezpůsobí zahození skupiny.
 \end{itemize}
 
@@ -312,7 +335,7 @@ ARG1 & \multicolumn{5}{c|}{0x00} & STATUSONLY = 0 & 0x00 & INTACK = 1 \\
 \label{tab:tuner-rds-get} 
 \end{table}
 
-Vyčítání přijatých skupin se potom provádí příkazem FM\_RDS\_STATUS, uvedeným v tabulce \ref{tab:tuner-rds-get}. Nastavením bitu STATUSONLY v argumentu tohoto příkazu, je možné pouze vyčíst informace o stavu příjmu RDS bez odebrání nejstarší přijaté skupiny z fronty. Nastavením druhého bitu INTACK dojde ke smazání příznaku přerušení RDSINT ve statusu tuneru. Vzhledem k nepoužití přerušení nastavení bitu INTACK nemá význam.
+Vyčítání přijatých skupin se potom provádí příkazem FM\_RDS\_STATUS, uvedeným v tabulce \ref{tab:tuner-rds-get}. Nastavením bitu STATUSONLY v argumentu tohoto příkazu je možné pouze vyčíst informace o stavu příjmu RDS bez odebrání nejstarší přijaté skupiny z fronty. Nastavením druhého bitu INTACK dojde ke smazání příznaku přerušení RDSINT ve statusu tuneru. Vzhledem k nepoužití přerušení nastavení bitu INTACK nemá význam.
 
 \begin{table}[ht!]
 \footnotesize 
@@ -359,7 +382,7 @@ Odpověď na tento příkaz v tabulce \ref{tab:tuner-rds-get-resp} je podle oče
 \item \textbf{RDSNEWBLOCKB, RDSNEWBLOCKA} - Byl přijat validní blok B nebo A.
 \item \textbf{RDSSYNCFOUND} - Příjem RDS je synchronizován.
 \item \textbf{RDSSYNCLOST} - Ztracena synchronizace příjmu RDS, např. z důvodu špatného signálu.
-\item \textbf{RDSRECV} - Nastaven pokud je ve frontě počet skupin větší nebo roven hodnotě proměnné FM\_RDS\_INT\_FIFO\_COUNT. Tato proměnná byla ponechána ve výchozím nastavení na hodnotě 0 takže tento bit bude nastaven pokud je ve frontě alespoň jedna skupina.
+\item \textbf{RDSRECV} - Nastaven pokud je ve frontě počet skupin větší nebo roven hodnotě proměnné FM\_RDS\_INT\_FIFO\_COUNT. Tato proměnná byla ponechána ve výchozím nastavení na hodnotě 0, takže tento bit bude nastaven vždy.
 \item \textbf{GRPLOST} - Přetečení fronty přijatých skupin.
 \item \textbf{RDSSYNC} - Příjem RDS je synchronizován. (Aktuální stav.)
 \end{itemize}
@@ -373,8 +396,4 @@ V bytu RDSFIFOUSED je počet skupin ve frontě. Pokud je tato hodnota větší n
 \item 3 - Blok nebylo možné opravit. Neobsahuje platná data.
 \end{itemize} 
 
-Aby nedoházelo k přetečení fronty přijatých skupin, je potřeba frontu vyčítat v dostatečně krátkých intervalech. Zde je možné využít z pevné délky skupiny 104 b a rychlosti přenosu 1187,5 kHz. Přenos skupiny tedy trvá 87,5 ms. K naplnění 14-ti prvkové fronty tedy dojde nejdříve za 1,2 S. Pokud bude interval vyčítání vždy kratší, k přetečení fronty fronty nedojde.
-
-\subsubsection{Další použité příkazy a proměnné}
-TODO:
-seek, metriky - upozornit že se změří jenom po naladění
+Aby nedoházelo k přetečení fronty přijatých skupin, je potřeba frontu vyčítat v dostatečně krátkých intervalech. Zde je možné využít z pevné délky skupiny 104 b a rychlosti přenosu 1187,5 kHz. Přenos skupiny tedy trvá 87,5 ms. K naplnění 14-ti prvkové fronty tedy dojde nejdříve za 1,2 s. Pokud bude interval vyčítání vždy kratší, k přetečení fronty nedojde.
