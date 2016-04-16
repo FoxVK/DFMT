@@ -770,11 +770,13 @@ Na obrázku \ref{fig:usb-states} je stavový diagram USB zařízení. Diagram je
 \item \textbf{Suspendován:} K suspendování zařízení může dojít obecně kdykoliv. Do tohoto stavu se přejde pokud na sběrnici není zaznamenána aktivita po dobu 3 ms. Toto detekuje hardware MCU. V tomto stavu musí zařízení snížit svoji spotřebu na nejvýše 0,5 mA.
 \end{itemize}
 
-Dále je potřeba počítat s faktem, že zařízení může být kdykoliv resetováno a vrátí se tak do Výchozího stavu, není stanoveno pořadí v jakém budou žádosti přicházet a kterákoli transakce může být předčasně ukončena vysláním dalšího setup tokenu. 
+Dále je potřeba počítat s faktem, že zařízení může být kdykoliv resetováno a vrátí se tak do výchozího stavu, není stanoveno pořadí, v jakém budou žádosti přicházet a kterákoli transakce může být předčasně ukončena vysláním dalšího setup tokenu. 
 
 
 
 \subsubsection{Rozhraní implementace USB}
+Dodělat...
+
 Implementace se nachází v projektu firmware ve složce drv.
 
 
@@ -786,7 +788,7 @@ V souboru usb.h je vlastní rozhraní.
 
 
 \subsection{USB \iic tunel}
-USB - \iic tunelu je zjednodušen tak aby vyhovoval potřebám ovládání tunerů. Není obecně použitelný pro jakoukoliv \iic komunikaci. Umožňuje pouze odeslání jedné ze čtyř pevně specifikovaných adres následované čtením nebo zápisem až 16-ti bytů.
+USB - \iic tunelu je zjednodušen tak, aby vyhovoval potřebám ovládání tunerů. Není obecně použitelný pro jakoukoliv \iic komunikaci. Umožňuje pouze odeslání jedné ze čtyř pevně specifikovaných adres, následované čtením nebo zápisem až 16-ti bytů.
 
 \begin{table}[ht!]
 \begin{center}
@@ -813,9 +815,9 @@ cmd & 0 - 16 B & Případná data odesílána po \iic vyjma adresy. \\
 Tabulka \ref{tab:usb-iic-req} popisuje formát požadavku pro čtení nebo zápis dat na \iic sběrnici. Význam polí je následující:
 \begin{itemize}
 \item \textbf{id} - Hodnota 0-255, kterou je možné použít pro přiřazení odpovědi k požadavku.
-\item \textbf{tuner} - Výběr tuneru na modulu rádia. 0 pro hlavní tuner A ze kterého je přenášen zvuk, 1 pro tuner B.
+\item \textbf{tuner} - Výběr tuneru na modulu rádia. 0 pro hlavní tuner A, ze kterého je přenášen zvuk, 1 pro tuner B.
 \item \textbf{type} - Typ požadavku. 0 Pro zápis na \iic sběrnice, 1 pro čtení z \iic sběrnice, 2 pro ping - modul v odpovědi pouze vrátí přijatá data.
-\item \textbf{rw\_size} - V případě zápisu velikost pole cmd v bytech, v případě čtení počet bytů které budou přečteny. Hodnota 0 - 16.
+\item \textbf{rw\_size} - V případě zápisu velikost pole cmd v bytech, v případě čtení počet bytů, které budou přečteny. Hodnota 0 - 16.
 \item \textbf{cmd} - V případě zápisu data vysílaná na \iic sběrnici. 
 \end{itemize}
 
@@ -839,11 +841,11 @@ reply & 0 - 16 B & Případná odpověď tuneru z \iic sběrnice. \\
 
 \begin{itemize}
 \item \textbf{id} - Hodnota 0-255, kterou je možné použít pro přiřazení odpovědi k požadavku.
-\item {\textbf{error} - Vyjadřuje jestli při vyřizování požadavku došlo k chybě či nikoliv. 
+\item {\textbf{error} - Vyjadřuje, jestli při vyřizování požadavku došlo k chybě či nikoliv. 
 	\begin{itemize}
 	\item 0 - Nedošlo k chybě.
 	\item 1 - \iic sběrnice je zaneprázdněna, probíhá komunikace.
-	\item 2 - Nevalidní požadavek, neplatné číslo tuneru nebo příliš velká délka dat.
+	\item 2 - Nevalidní požadavek, neplatné číslo tuneru nebo příliš velké množství dat.
 	\item 3 - Tuner není spuštěn a inicializován.
 	\item 4 - Předchozí požadavek ještě nebyl vyřízen.
 	\item 5 - Neplatný typ požadavku.
@@ -853,7 +855,7 @@ reply & 0 - 16 B & Případná odpověď tuneru z \iic sběrnice. \\
 \item \textbf{reply} - V případě úspěšného požadavku čtení, odpověď tuneru.
 \end{itemize} 
 
-Komunikace z hostitele se provádí pomocí požadavků a odpovědí popsaných v tabulkách \ref{tab:usb-iic-req} a \ref{tab:usb-iic-resp}. Výjimku je požadavek s typem 2 (ping) kdy modul rádia odešle zpět stejná data která přijal. K práci s tunelem bych chtěl podotknout, že není možné odeslat další požadavek před vyřízením předchozího. Po spuštění modulu rádia dochází k počáteční inicializaci tunerů. Podobu inicializace modul odpovídá chybovým kódem 3.
+Komunikace z hostitele se provádí pomocí požadavků a odpovědí popsaných v tabulkách \ref{tab:usb-iic-req} a \ref{tab:usb-iic-resp}. Výjimkou je požadavek s typem 2 (ping), kdy modul rádia odešle zpět stejná data, která přijal. K práci s USB - \iic tunelem bych chtěl podotknout, že není možné odeslat další požadavek před vyřízením předchozího. Po spuštění modulu rádia dochází k počáteční inicializaci tunerů. Podobu inicializace modul odpovídá chybovým kódem 3.
 
 Vlastní modul \iic v MCU je dobře zdokumentován, jednak obecně pro celou rodinu MCU v \cite{pic-iic}, detaily specifické pro mnou použitý typ MCU jsou potom v \cite{pic}.
 

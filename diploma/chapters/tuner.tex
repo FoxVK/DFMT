@@ -264,12 +264,117 @@ Ke smazání bitu STCINT je použit příkaz FM\_TUNE\_STATUS viz. tabulka \ref{
 \end{itemize}
 
 \subsubsection{Čtení RDS z tuneru}
-RDS je rozšíření pozemního rozhlasového vysílání o souběžné vysílání různých digitálních informací. 
-TODO:
+%TODO možná obrázek
+RDS je rozšíření pozemního rozhlasového vysílání o souběžné vysílání různých digitálních informací. Z nejznámějších informací je to RT (Radio Text) - přenos až 64 znaků textu, typicky s názvem právě přehrávané skladby a nebo názvem rádiové stanice. Potom AF  (Alternative frequency) seznam dalších frekvencí, na kterých je možné stanici naladit, což lze s využitím informace PI (Programme Identification), který stanici jednoznačně identifikuje k automatickému přelaďování na frekvenci s lepším příjmem. Kompletní popis je v \cite{rds}.
+
+Proud přenášených dat se dělí do třiceti skupin označených 1A, 1B, 2A ... 15A, 15B. Každá skupina má pevně danou velikost 104 bitů a skládá se z bloků 1-4, které jsou taktéž stejně dlouhé. Jeden blok nese 16 bitů užitečných dat a 10-ti bitové kontrolní slovo. Vyhodnocování chyb v přijatých datech a jejich případnou korekci zajišťuje tuner. Pro příjem je v tuneru k dispozici fronta na 14 skupin.
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline 
+Bit & 15. & 14. & 13. & 12. & 11. & 10. & 9. & 8. \\  
+\hline 
+Horní byte & \multicolumn{2}{c|}{BLETHA = 2} & \multicolumn{2}{c|}{BLETHB = 2} & \multicolumn{2}{c|}{BLETHC = 2} & \multicolumn{2}{c|}{BLETHD = 2} \\ 
+\hline 
+Bit & 7. & 6. & 5. & 4. & 3. & 2. & 1. & 0. \\
+\hline 
+Dolní byte & \multicolumn{7}{c|}{0x00} & RDSEN = 1 \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Proměnná konfigurace příjmu RDS FM\_RDS\_CONFIG.}
+\label{tab:tuner-rds-config} 
+\end{table}
+
+Příjem RDS v tuneru je potřeba nejprve nakonfigurovat a povolit. Díky nepoužití hardwarového přerušení, je možné konfiguraci přerušení přeskočit. Konfigurace přijmu RDS se zjednoduší na nastavení jediné proměnné FM\_RDS\_CONFIG, jejíž formát se nachází v tabulce \ref{tab:tuner-rds-config}. Nastavením bitu RDSEN této proměnné dojde k povolení přijmu RDS. Pole BLETHA až BLETHD specifikují dovolenou míru chybovosti bloků A až D přijímaných skupin a to takto:
+
 \begin{itemize}
-\item vyčtení z tuneru
-\item dekódování základních informací- třeba radio text
+\item 0 - Pokud je v bloku jakákoliv chyba celá skupiny bude zahozena.
+\item 1 - Skupina bude přijata, pokud v bloku došlo k opravě nejvýše dvou bitů. 
+\item 2 - Skupina bude přijat,a pokud v bloku došlo k opravě nejvýše pěti bitů.
+\item 3 - Jakékoliv, i neopravitelné, množství chyb v bloku nezpůsobí zahození skupiny.
 \end{itemize}
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline 
+Bit & 7. & 6. & 5. & 4. & 3. & 2. & 1. & 0. \\ 
+\hline 
+CMD & \multicolumn{8}{c|}{0x24} \\ 
+\hline 
+ARG1 & \multicolumn{5}{c|}{0x00} & STATUSONLY = 0 & 0x00 & INTACK = 1 \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Příkaz přečtení přijaté RDS skupiny FM\_RDS\_STATUS.}
+\label{tab:tuner-rds-get} 
+\end{table}
+
+Vyčítání přijatých skupin se potom provádí příkazem FM\_RDS\_STATUS, uvedeným v tabulce \ref{tab:tuner-rds-get}. Nastavením bitu STATUSONLY v argumentu tohoto příkazu, je možné pouze vyčíst informace o stavu příjmu RDS bez odebrání nejstarší přijaté skupiny z fronty. Nastavením druhého bitu INTACK dojde ke smazání příznaku přerušení RDSINT ve statusu tuneru. Vzhledem k nepoužití přerušení nastavení bitu INTACK nemá význam.
+
+\begin{table}[ht!]
+\footnotesize 
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline 
+Bit & 7. & 6. & 5. & 4. & 3. & 2. & 1. & 0. \\ 
+\hline 
+SATUS & CTS & ERR & X & X & RSQINT & RDSINT & X & STCINT \\ 
+\hline 
+RESP1 & X & X & \makecell{RDSNEW\\BLOCKB} & \makecell{RDSSYNC\\BLOCKA} & X & \makecell{RDSSYNC\\FOUND} & \makecell{RDSSYNC\\LOST} & RDSRECV \\ 
+\hline
+RESP2 & X & X & X & X & X & GRPLOST & X & RDSSYNC \\
+\hline 
+RESP3 & \multicolumn{8}{c|}{RDSFIFOUSED} \\ 
+\hline 
+RESP4 & \multicolumn{8}{c|}{BLOCKA$_{{H}}$} \\ 
+\hline 
+RESP5 & \multicolumn{8}{c|}{BLOCKA$_{{L}}$} \\
+\hline 
+RESP6 & \multicolumn{8}{c|}{BLOCKB$_{{H}}$} \\ 
+\hline 
+RESP7 & \multicolumn{8}{c|}{BLOCKB$_{{L}}$} \\ 
+\hline 
+RESP8 & \multicolumn{8}{c|}{BLOCKC$_{{H}}$} \\ 
+\hline 
+RESP9 & \multicolumn{8}{c|}{BLOCKC$_{{L}}$} \\ 
+\hline 
+RESP10 & \multicolumn{8}{c|}{BLOCKD$_{{H}}$} \\ 
+\hline 
+RESP11 & \multicolumn{8}{c|}{BLOCKD$_{{L}}$} \\ 
+\hline 
+RESP12 & \multicolumn{2}{c|}{BLEA} & \multicolumn{2}{c|}{BLEB} & \multicolumn{2}{c|}{BLEC} & \multicolumn{2}{c|}{BLED} \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Odpověď na příkaz přečtení přijaté RDS skupiny FM\_RDS\_STATUS.}
+\label{tab:tuner-rds-get-resp} 
+\end{table}
+
+Odpověď na tento příkaz v tabulce \ref{tab:tuner-rds-get-resp} je podle očekávání poněkud obsáhlejší. První byte obstahuje jako vždy status tuneru. V následujících dvou bytech za statusem jsou bity jejihž LOG 1 má následující význam:
+
+\begin{itemize}
+\item \textbf{RDSNEWBLOCKB, RDSNEWBLOCKA} - Byl přijat validní blok B nebo A.
+\item \textbf{RDSSYNCFOUND} - Příjem RDS je synchronizován.
+\item \textbf{RDSSYNCLOST} - Ztracena synchronizace příjmu RDS, např. z důvodu špatného signálu.
+\item \textbf{RDSRECV} - Nastaven pokud je ve frontě počet skupin větší nebo roven hodnotě proměnné FM\_RDS\_INT\_FIFO\_COUNT. Tato proměnná byla ponechána ve výchozím nastavení na hodnotě 0 takže tento bit bude nastaven pokud je ve frontě alespoň jedna skupina.
+\item \textbf{GRPLOST} - Přetečení fronty přijatých skupin.
+\item \textbf{RDSSYNC} - Příjem RDS je synchronizován. (Aktuální stav.)
+\end{itemize}
+
+V bytu RDSFIFOUSED je počet skupin ve frontě. Pokud je tato hodnota větší než nula, v následujících osmi bytech se nachází data nejstarší přijaté skupiny. V posledním byte odpovědi jsou informace o chybovosti přijmu jednotlivých bloků skupiny BLEA až BLED. Význam hodnot chybovosti je tento:
+
+\begin{itemize}
+\item 0 - Blok přijat bez chyby.
+\item 1 - V bloku došlo k opravě jednoho až dvou bitů. 
+\item 2 - V bloku došlo k opravě tří až pěti bitů.
+\item 3 - Blok nebylo možné opravit. Neobsahuje platná data.
+\end{itemize} 
+
+Aby nedoházelo k přetečení fronty přijatých skupin, je potřeba frontu vyčítat v dostatečně krátkých intervalech. Zde je možné využít z pevné délky skupiny 104 b a rychlosti přenosu 1187,5 kHz. Přenos skupiny tedy trvá 87,5 ms. K naplnění 14-ti prvkové fronty tedy dojde nejdříve za 1,2 S. Pokud bude interval vyčítání vždy kratší, k přetečení fronty fronty nedojde.
 
 \subsubsection{Další použité příkazy a proměnné}
 TODO:
+seek, metriky - upozornit že se změří jenom po naladění
