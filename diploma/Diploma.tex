@@ -1,9 +1,12 @@
 % Nejprve uvedeme tridu dokumentu s volbami
-\documentclass[bc,male,c,dept460]{diploma}						% jednostranny dokument
+\documentclass[czech,master,public,dept460,male,cpdeclaration]{diploma}						% jednostranny dokument
 %\documentclass[bc,male,java,dept460,twoside]{diploma}		% oboustranny dokument
 \usepackage[utf8]{inputenc}
 \inputencoding{utf8}
 \usepackage[czech]{babel}
+
+\usepackage{subfig}		% makra pro "podobrazky" a "podtabulky"
+\usepackage{tikz}		% makra pro kresleni
 
 \usepackage{makecell}
 
@@ -27,14 +30,14 @@
 \ThesisAuthor{Bc. Pavel Kovář}
 
 % U bakalarske praxe neni nutne nazev zadavat
-\ThesisTitle{Modul USB FM rádia}
+\CzechThesisTitle{Modul USB FM rádia}
 
 % U bakalarske praxe neni nutne anglicky nazev zadavat
 \EnglishThesisTitle{USB FM Radio Modul}
 
 \SubmissionDate{27. dubna 2016}
 
-\PrintPublicationAgreement{true}
+%\PrintPublicationAgreement{true}
 
 \Thanks{Rád bych na tomto místě poděkoval zejména mému vedoucímu cenné rady a trpělivost.}
 
@@ -92,25 +95,6 @@ All works under Linux and Windows.}
 
 % Nechame vysazet titulni strany.
 \MakeTitlePages
-
-% Asi urcite budeme potrebovat obsah prace.
-\tableofcontents
-\cleardoublepage	% odstrankujeme, u jednostranneho dokumentu o jednu stranku, u oboustrenneho o dve
-
-% Jsou v praci tabulky? Pokud ano vysazime jejich seznam.
-% Pokud ne smazeme nasledujici makro.
-\listoftables
-\cleardoublepage	% odstrankujeme, u jednostranneho dokumentu o jednu stranku, u oboustrenneho o dve
-
-% Jsou v praci obrazky? Pokud ano vysazime jejich seznam.
-\listoffigures
-\cleardoublepage	% odstrankujeme, u jednostranneho dokumentu o jednu stranku, u oboustrenneho o dve
-
-
-% Jsou v praci vypisy programu? Pokud ano vysazime jejich seznam.
-\lstlistoflistings
-\cleardoublepage	% odstrankujeme, u jednostranneho dokumentu o jednu stranku, u oboustrenneho o dve
-
 
 
 \input{chapters/uvod.tex}
