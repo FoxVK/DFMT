@@ -41,7 +41,7 @@ Libdfmt_error libdfmt_check_bussy(Libdfmt_tuner *tuner)
 Libdfmt_error libdfmt_cmd_send_nocheck(Libdfmt_tuner *tuner, char cmd,
                                        char *arg, size_t size)
 {
-    int i;
+    unsigned i;
     Libdfmt_error err;
     char cmd_buf[size+1];
 

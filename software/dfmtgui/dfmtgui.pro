@@ -26,11 +26,32 @@ HEADERS  += mainwin.h \
 FORMS    += mainwin.ui \
     deviceform.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libdfmt -ldfmtwin32 -L$$PWD/../libdfmt/lusb-win -lusb-1.0
-else:unix: LIBS += -L$$PWD/../libdfmt -ldfmt -lusb-1.0
+RESOURCES += \
+    icons.qrc
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/release/ -llibdfmt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/debug/ -llibdfmt
+else:unix:!macx: LIBS += -L$$OUT_PWD/../libdfmt/ -llibdfmt
+
+unix: CONFIG += link_pkgconfig
+unix: PKGCONFIG += libusb-1.0
 
 INCLUDEPATH += $$PWD/../libdfmt
 DEPENDPATH += $$PWD/../libdfmt
 
-RESOURCES += \
-    icons.qrc
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libdfmt/release/libdfmt.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libdfmt/debug/libdfmt.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libdfmt/release/libdfmt.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../libdfmt/debug/libdfmt.lib
+else:unix:!macx: PRE_TARGETDEPS += $$OUT_PWD/../libdfmt/libdfmt.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../lusb-win/release/ -lusb-1.0
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../lusb-win/debug/ -lusb-1.0
+
+win32:INCLUDEPATH += $$PWD/../lusb-win/
+win32:DEPENDPATH += $$PWD/../lusb-win/
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lusb-win/release/libusb-1.0.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lusb-win/debug/libusb-1.0.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lusb-win/release/usb-1.0.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lusb-win/debug/usb-1.0.lib

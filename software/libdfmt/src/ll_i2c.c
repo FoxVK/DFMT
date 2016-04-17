@@ -61,7 +61,7 @@ Libdfmt_error  libdfmt_i2c_com(Libdfmt_tuner *tuner, char *buf, size_t *size,
 {
     Tunnel_msg msg;
     Libdfmt_error err;
-    int i;
+    unsigned i;
     size_t sz = *size;
 
     if(!buf || *size < 1)
