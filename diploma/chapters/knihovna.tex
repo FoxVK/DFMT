@@ -1,9 +1,14 @@
-\section{Knihovna}
+\section{Knihovna a demonstrační aplikace}
 \label{sec:knihovna}
 DFD diagram asi není rozumný, ale určitě sem minimálně nakreslit rozvrstvení včetně vrstev v tuneru.
 
-Dotaz asi na vedoucího - Přepisovat dokumentaci do češtiny a nebo se na ni jenom odkázat a omezit se na souhrn funkcí s vhodnými příklady.
+Knihovna pro ovládání tuneru je napsána v jazyce C. Pro přístup k USB rozhraní jsem využil knihovnu libusb 1.0, jejíž použití je výhodné protože je multiplatformní, je široce využívaná jak pod OS Windows tak pod OS Linux a je velmi dobře zdokumentovaná.
 
+\begin{itemize}
+\item rozdělení do vrstev
+\item podpora ovládání více tunerů
+\item podpora callbacků
+\end{itemize}
 
 \subsection{Nízko úrovňové funkce}
 
@@ -13,3 +18,4 @@ Dotaz asi na vedoucího - Přepisovat dokumentaci do češtiny a nebo se na ni j
 \subsubsection{RDS dekodér}
 
 \subsection{Překlad}
+TODO
