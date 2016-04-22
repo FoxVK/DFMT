@@ -323,12 +323,46 @@ const uint8_t conf_desc[] =
 // </editor-fold>
 
 
+//<editor-fold defaultstate="collapsed" desc="WCID - descriptors for automatic win driver instalation.">
+
+//https://github.com/pbatard/libwdi/wiki/WCID-Devices#What_is_WCID
+
+const uint8_t wcid_string_desc[] = {
+    0x12,                   //BYTE 	Descriptor length (18 bytes)
+    USB_DSC_STRING,         //BYTE 	Descriptor type (3 = String)
+    0x4D, 0x00, 0x53, 0x00,
+    0x46, 0x00, 0x54, 0x00,
+    0x31, 0x00, 0x30, 0x00,
+    0x30, 0x00,             //7 WORDS Unicode String (LE) 	Signature: "MSFT100"
+    0x06,                   //BYTE 	Vendor Code
+    0x00,                   //BYTE 	Padding 
+};
+
+const uint8_t wcid_feature_desc[] = {
+    0x28, 0x00, 0x00, 0x00, ///DWORD (LE) 	Descriptor length (40 bytes)
+    0x00, 0x01,             //BCD WORD (LE) 	Version ('1.0')
+    0x04, 0x00,             //WORD (LE) 	Compatibility ID Descriptor index (0x0004)
+    0x01,                   //BYTE 	Number of sections (1)
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00,       //7 BYTES 	Reserved
+    TUNNEL_INTERFACE_ID,    //BYTE 	Interface Number 
+    0x01,                   //BYTE 	Reserved
+    0x57, 0x49, 0x4E, 0x55, //8 BYTES (NUL-terminated?) ASCII String 	Compatible ID ("WINUSB\0\0")
+    0x53, 0x42, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, //8 BYTES (NUL-terminated?) ASCII String 	Sub-Compatible ID (unused)
+    0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, //6 BYTES 	Reserved
+    0x00, 0x00,                  
+};
+// </editor-fold>
 
 
 Usb_config config =
 {
   .configuration_desc[0] = (const void*)conf_desc,
   .device_desc           = &usb_desc_device,
+  .wcid_feature_desc     = (const void*)wcid_feature_desc,
+  .wcid_string_desc      = (const void*)wcid_string_desc,
   .string_descs          = {
                             (void*) &usb_desc_str000,
                             (void*) &usb_desc_str001,

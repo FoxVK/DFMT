@@ -28,7 +28,8 @@
 
 typedef enum
 {
-    USB_EV_POWERED, USB_EV_UNPOWERED, USB_EV_CONFIGURED, USB_EV_DECONFIGURED, USB_EV_RESET, USB_EV_SUSPENDED, USB_EV_RESUMED
+    USB_EV_POWERED, USB_EV_UNPOWERED, USB_EV_CONFIGURED, USB_EV_DECONFIGURED, 
+    USB_EV_RESET, USB_EV_SUSPENDED, USB_EV_RESUMED, USB_EV_SOF
 }Usb_event;
 
 typedef struct{
@@ -80,6 +81,8 @@ typedef struct{
     const Usb_descriptor_device* device_desc;
     const void* configuration_desc[USB_CONFIGURATION_COUNT];
     const void* string_descs[USB_STRING_COUNT];
+    const void* wcid_string_desc;
+    const void* wcid_feature_desc;
           void (*event_callback)(Usb_event);
           bool (*ct_request_callback)(Usb_ct_request*);
 }Usb_config;

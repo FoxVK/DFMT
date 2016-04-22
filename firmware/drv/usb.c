@@ -253,14 +253,8 @@ static void set_adress_callback()
 
 static void control_transfer(void * buf, size_t size)
 {
-    /*static char* dbg = "Setup ";
-    static char dbg_type[] = "0000\r\n";
-    debug_uart_write(dbg);*/
-
     Usb_ct_request * req = (Usb_ct_request*)buf;
 
-    /*uint2hex(req->request, dbg_type, 4);
-    debug_uart_write(dbg_type);*/
     bool stall_it = true;
 
     if(req->ReqType_bits.recipient == 0 && req->ReqType_bits.type == 0)
@@ -298,14 +292,19 @@ static void control_transfer(void * buf, size_t size)
                     case 0x02:
                         if(req->desc_index < USB_CONFIGURATION_COUNT)
                         {
-                            desc = settings->configuration_desc[req->desc_index]; //TODO check it
+                            desc = settings->configuration_desc[req->desc_index]; 
                             dsize = ((uint16_t*)desc)[1];
                         }
                         break;
                     case 0x03:
                         if(req->desc_index < USB_STRING_COUNT)
                         {
-                            desc = settings->string_descs[req->desc_index]; //TODO check it
+                            desc = settings->string_descs[req->desc_index]; 
+                            dsize = *(uint8_t*)desc;
+                        }
+                        else if(settings->wcid_string_desc && req->desc_index == 0xEE) //WCID
+                        {
+                            desc = settings->wcid_string_desc;
                             dsize = *(uint8_t*)desc;
                         }
                         break;
@@ -339,6 +338,18 @@ static void control_transfer(void * buf, size_t size)
                 break;
         }
     }
+    //WCID
+    else if(req->bmRequestType == 0xc0 && 
+            settings->wcid_feature_desc &&
+            req->bRequest == ((uint8_t*)settings->wcid_string_desc)[16]&&
+            req->wIndex == 0x0004 )
+    {
+        size_t dlen =  ((uint8_t*)settings->wcid_feature_desc)[0];
+        size_t rlen = req->wLength;
+
+        usb_ct_reply(USB_CT_READ, (void*)settings->wcid_feature_desc, ( rlen < dlen) ? rlen : dlen, NULL);
+        stall_it = false; 
+    }
     else
     {
         if(settings->ct_request_callback)
@@ -359,23 +370,15 @@ static void token(__U1STATbits_t stat)
 {
    volatile BDT *bt = &bdt[stat.ENDPT][stat.DIR][stat.PPBI];
 
-   //static char *in = "TOK IN\r\n", *out = "TOK OUT\r\n", *setup = "TOK SETUP\r\n";
-
     if(stat.ENDPT == USB_EP00)
     {
         if(bt->r.PID == TOKEN_SETUP)
         {
-            //debug_uart_write(setup);
             control_transfer(phy2virt(bt->r.buf_ptr), bt->r.bytecount);
             U1CONbits.PKTDIS = 0;
         }
         else
-        {
-            /*if(bt->r.PID == TOKEN_IN)
-                debug_uart_write(in);
-            else
-                debug_uart_write(out);*/
-            
+        {            
             ct_task(stat.DIR);
         }
     }
@@ -393,17 +396,7 @@ static void token(__U1STATbits_t stat)
 
 void usb_task()
 {
-    
-    /*int eps = bdt[USB_EP00][USB_EP_OUT][EP_EVEN].r.UOWN + bdt[USB_EP00][USB_EP_OUT][EP_ODD].r.UOWN;
-    static int leps = 0;
-    if(leps != eps)
-    {
-        leps = eps;
-        static char* str[] = {"0/2\r\n","1/2\r\n","2/2\r\n"};
-        debug_uart_write(str[eps]);
-    }*/ //TODO: vyhodit
-
-    
+       
     if(U1IRbits.RESUMEIF)
     {
         U1IRbits.RESUMEIF = 1;
@@ -441,6 +434,12 @@ void usb_task()
         __U1STATbits_t stat = U1STATbits;
         U1IRbits.TRNIF = 1;
         token(stat);
+    }
+    
+    if(U1IRbits.SOFIF)
+    {      
+        U1IRbits.SOFIF = 1;
+        settings->event_callback(USB_EV_SOF);
     }
 }
 
