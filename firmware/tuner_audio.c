@@ -45,25 +45,15 @@ static void arm_dma(int dma)
     static char *title[] = {"AD0\r\n","AD1\r\n","AD2\r\n","AD3\r\n"};
     static char *num[] = {"0 ","1 ","2 ","3 ","4 ", "5 ", "6 ", "7 ", "8 ", "9 ", "10 "};
     
-    //if(DCHxCONbits[dma]->CHBUSY)
-        //debughalt();
     
     int tuner = (dma>1) ? 1 : 0 ;
-    //todo je treab resit jeslti je kam armovart ? NE
-    //debug_uart_write(num[queue_count(&aud_data[tuner].free)]);
-    //debug_uart_write(num[queue_count(&aud_data[tuner].filled)]);
-    //debug_uart_write(title[dma]);
     
     void *buf = queue_pop(&aud_data[tuner].free);
     if(!buf)
     {
-        //static char *ov = "!\r\n";
-        //debug_uart_write(ov);
         buf = queue_pop(&aud_data[tuner].filled);
     }
-    
-    //if(!buf) debughalt(); //TODO: toto by se nemelo nikdy stat
-    
+        
     *DCHxDSA[dma]  = virt2phy(buf);
     *DCHxDSIZ[dma] = sizeof(AudioFrame);
 }
@@ -91,17 +81,11 @@ static void dma_init()
     
     
     DCH0INT = DCH1INT = DCH2INT = DCH3INT = 0;
-    //allow interupts on transfer done;
-    //DCH0INTbits.CHDDIE = DCH1INTbits.CHDDIE = 1;
-    //DCH2INTbits.CHDDIE = DCH3INTbits.CHDDIE = 1;
     
     
     int i;
     for(i=0; i<4; i++)
-        arm_dma(i);
-    //arm_dma(0);
-    //arm_dma(2);
-    
+        arm_dma(i);    
     
     DCH0INTbits.CHDDIF = DCH1INTbits.CHDDIF = 0;
     DCH2INTbits.CHDDIF = DCH3INTbits.CHDDIF = 0;
@@ -126,12 +110,6 @@ static void i2s_init()
     
     IFS1bits.SPI1RXIF = 0;
     IFS1bits.SPI2RXIF = 0;
-
-    //TODO vyhodit
-    //IPC7bits.SPI1IP = 5; //prioriy 1-7 0=disabled
-    //IPC7bits.SPI1IS = 0; //subprio 0-3
-    
-    //IEC1bits.SPI1RXIE = 1; //enable Rx interrupt
 }
 
 static void i2s_b_init() 
@@ -163,8 +141,6 @@ void* tuner_audio_get_buf(int tuner)
 {
     if (queue_count(&aud_data[tuner].filled) <= 1)
     {
-        //static char *und = "Underrun!\r\n";
-        //debug_uart_write(und);
         return NULL;
     }
     else
@@ -217,9 +193,4 @@ void tuner_audio_task()
             arm_dma(i);
         }
     }
-}
-
-void tuner_audio_split(int tuner)
-{
-    
 }

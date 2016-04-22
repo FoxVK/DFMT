@@ -31,15 +31,6 @@ extern Usb_config config;
 
 static Usb_audio_iface *audio_if;
 
-static int16_t test_audio_buf[48][2];
-
-void init_test_audio() //TODO vyhodit
-{
-    int t;
-    for(t=0; t<48; t++)
-        test_audio_buf[t][0] = test_audio_buf[t][1] = (t>48/2) ? 32000:-32000;
-}
-
 void usb_event(Usb_event ev)
 {
     switch(ev)
@@ -119,10 +110,7 @@ inline void app_init()
 }
 
 inline void app_task()
-{
-    //unsigned i = 0;
-    //for (;i<50;i++)Nop();
-    
+{    
     debug_uart_task();
     usb_task();
     tuner_audio_task();

@@ -40,8 +40,6 @@ void tuner_audio_init();
 void* tuner_audio_get_buf(int tuner); 
 bool  tuner_audio_put_buf(int tuner, void* buf); 
 
-void tuner_audio_split(int tuner);
-
 void tuner_audio_task();
 
 #endif	/* TUNER_AUDIO_H */
