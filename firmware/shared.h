@@ -22,8 +22,8 @@
 
 #include <inttypes.h>
 
-#define USB_VID 0x00a6
-#define USB_PID 0xff01
+#define USB_VID 0x04D8
+#define USB_PID 0xF32C
 
 #define TUNNEL_INTERFACE_ID 2
 
