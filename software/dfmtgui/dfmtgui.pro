@@ -31,7 +31,7 @@ RESOURCES += \
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/release/ -llibdfmt
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/debug/ -llibdfmt
-else:unix:!macx: LIBS += -L$$OUT_PWD/../libdfmt/ -llibdfmt
+else:unix:!macx: LIBS += -L$$OUT_PWD/../libdfmt/ -ldfmt
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += libusb-1.0
