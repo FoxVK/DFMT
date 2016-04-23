@@ -4,7 +4,7 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-unix: TARGET = dfmt #avoid use liblib in ouput file
+TARGET = dfmt #avoid use liblib in ouput file
 
 
 SOURCES += main.c \
@@ -38,3 +38,9 @@ HEADERS += \
 
 INCLUDEPATH += $$PWD/include/
 
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../lusb-win/ -llibusb-1.0
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../lusb-win/ -llibusb-1.0
+
+INCLUDEPATH += $$PWD/../lusb-win
+DEPENDPATH += $$PWD/../lusb-win
