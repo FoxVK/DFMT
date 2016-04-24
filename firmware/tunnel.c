@@ -24,7 +24,7 @@
 #include "drv/debug_uart.h"
 #include "tunnel.h"
 
-#define MSG_COUNT 6
+#define MSG_COUNT 1
 
 #define RPL_HDR_SIZE 2
 
@@ -43,10 +43,41 @@ void tunnel_reset_data01()
     data01 = 0;
 }
 
+int armed_rx = 0;
+int armed_tx = 0;
+
 static inline void send(Tunnel_msg *msg, size_t size)
 {
-    usb_arm_ep(TUNNEL_EP, USB_EP_IN, (void*)msg, size, data01);
-    data01 ^= 1;
+    if(usb_arm_ep(TUNNEL_EP, USB_EP_IN, (void*)msg, size, data01) == USB_RW_REQ_OK)
+    {
+        data01 ^= 1;
+        armed_tx++;
+    }
+    else
+        queue_push(&msg_queue, msg);
+    
+}
+
+static void arm_rx()
+{
+    while(1)
+    {
+        void * new_buf = queue_pop(&msg_queue);
+        
+        if(!new_buf)
+        {                  
+            //debughalt();
+            break;
+        }
+        
+        if( usb_arm_ep(TUNNEL_EP, USB_EP_OUT, new_buf, sizeof(Tunnel_msg), 1) != USB_RW_REQ_OK)
+        {
+            queue_push(&msg_queue, new_buf);
+            break;
+        }
+        else
+            armed_rx++;
+    }
 }
 
 static void callback_in(void *buf, size_t size, void * usrptr)
@@ -55,8 +86,7 @@ static void callback_in(void *buf, size_t size, void * usrptr)
     (void) size;
     queue_push(&msg_queue, buf);
     
-    static char *t = "reply sent\r\n";
-    debug_uart_write(t);
+    armed_tx--;
 }
 
 static void callback_out(void *buf, size_t size, void * usrptr)
@@ -64,27 +94,21 @@ static void callback_out(void *buf, size_t size, void * usrptr)
     (void) usrptr;
     (void) size;
     
-    static char *t = "req comes\r\n";
-    debug_uart_write(t);
-    
-    if(state = ST_READY)
+    armed_rx--;
+        
+    if(state != ST_READY)
     {
         ((Tunnel_msg*)buf)->in.error = TUNNEL_ERROR_REQINPORGRESS;
         send(buf, RPL_HDR_SIZE);
-        static char *s = "REQINPORGRESS sent\r\n";
-        debug_uart_write(s);
     }
-    request = buf;
-    request_size = size;
-    state = ST_REQUEST_COMES;
-    
-    void * new_buf = queue_pop(&msg_queue);
-    if(!new_buf)
+    else
     {
-        static char *s = "TUNNEL OUT OF BUFFERS\r\n";
-        debug_uart_write(s);
+        request = buf;
+        request_size = size;
+        state = ST_REQUEST_COMES;
     }
-    usb_arm_ep(TUNNEL_EP, USB_EP_OUT, new_buf, sizeof(Tunnel_msg), 1);
+  
+    arm_rx();
 }
 
 void tunnel_init()
@@ -106,16 +130,11 @@ void tunnel_init()
     usb_enable_ep(TUNNEL_EP, USB_EP_IN,  true, false);
     usb_enable_ep(TUNNEL_EP, USB_EP_OUT, true, false);
     
-    usb_arm_ep(TUNNEL_EP, USB_EP_OUT, queue_pop(&msg_queue), sizeof(Tunnel_msg), 1);
-    usb_arm_ep(TUNNEL_EP, USB_EP_OUT, queue_pop(&msg_queue), sizeof(Tunnel_msg), 1);  
+    arm_rx();
 }
 
 void tunnel_task()
 {
-    static char *req_w = "tunnel write\n\r";
-    static char *req_r = "tunnel read\n\r";
-    static char *req_rw_bus = "tunnel rw i2c bussy\n\r";
-    
     switch(state)
     {
         case ST_READY:
@@ -123,9 +142,14 @@ void tunnel_task()
             {
                 queue_push(&msg_queue, request);
                 request = NULL;
-                static char *s = "We have to never get here\n\r";
-                debug_uart_write(s);
             }
+            
+            arm_rx();            
+            if ( usb_queued_bufs(TUNNEL_EP, USB_EP_OUT) == 0 &&
+                 usb_queued_bufs(TUNNEL_EP, USB_EP_IN)  == 0 &&
+                 queue_count(&msg_queue) == 0)
+                queue_push(&msg_queue, &msg[0]);
+                
             break;
         case ST_REQUEST_COMES:
             
@@ -140,7 +164,6 @@ void tunnel_task()
                 case TUNNEL_REQ_WRITE:
                     if(tuner_com_state()==TUNER_COM_BUSY)
                     {
-                        debug_uart_write(req_rw_bus);
                         request->in.error=TUNNEL_ERROR_I2CBUSY;
                         send(request, RPL_HDR_SIZE);
                         request = NULL;
@@ -149,7 +172,7 @@ void tunnel_task()
                     else
                     {
                         if(request->out.type == TUNNEL_REQ_READ)
-                        {   debug_uart_write(req_r);
+                        {  
                         
                             int tuner = request->out.tuner;
                             size_t read_size = request->out.rw_size;
@@ -160,22 +183,16 @@ void tunnel_task()
                                 send(request, RPL_HDR_SIZE);
                                 request = NULL;
                                 state = ST_READY;
-                                static char *s = "read bad arg\r\n";
-                                debug_uart_write(s);
                             }
                             else
                             {                                
                                 tuner_read(tuner, &request->in.reply, read_size);
                                 state = ST_WAITNG_I2C_READ;
-                                static char *s = "read waiting\r\n";
-                                debug_uart_write(s);
                                 request_size = RPL_HDR_SIZE + read_size;
                             }
                         }
                         else
                         {
-                            debug_uart_write(req_w);
-                            
                             int tuner = request->out.tuner;
                             size_t write_size = request->out.rw_size;
                             
@@ -185,16 +202,11 @@ void tunnel_task()
                                 send(request, RPL_HDR_SIZE);
                                 request = NULL;
                                 state = ST_READY;
-                                static char *s = "write bad arg\r\n";
-                                debug_uart_write(s);
                             }
                             else
                             {                           
                                 tuner_write(tuner, request->out.cmd, write_size);
                                 state = ST_WAITNG_I2C_WRITE;
-                                static char *s = "write waiting\r\n";
-                                debug_uart_write(s);
-                                request_size = RPL_HDR_SIZE;
                             }
                         }
                     }
@@ -202,7 +214,6 @@ void tunnel_task()
                 default:
                     request->in.error = TUNNEL_ERROR_BADTYPE;
                     send(request, RPL_HDR_SIZE);
-                    {static char *s = "Bad request type\r\n"; debug_uart_write(s);}
                     state = ST_READY;
                     request = NULL;
             }
@@ -220,7 +231,6 @@ void tunnel_task()
                     send(request, request_size);
                     request = NULL;
                     state = ST_READY;
-                    {static char *s = "i2c done\r\n"; debug_uart_write(s);}
                     break;
                     
                 default:
@@ -228,7 +238,6 @@ void tunnel_task()
                     send(request, RPL_HDR_SIZE);
                     request = NULL;
                     state = ST_READY;
-                    {static char *s = "i2c done with error\r\n"; debug_uart_write(s);}
                     break;
             }
             break;

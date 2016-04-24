@@ -22,6 +22,8 @@
 
 #define AUDIO_SAMPLE_CHAN_BYTES 2
 #define AUDIO_PACKET_BUFS 5
+#define AUDIO_SAMPLE_RATE 48  ///< Sample rate in [kHz]
+#define AUDIO_SR_SOFS_INTERVAL 9600///< how often update samplerate corections
 
 #include <inttypes.h>
 
@@ -32,7 +34,8 @@ typedef struct {
             int16_t right;
         };
         uint32_t both;
-    }sample[48];
+    }sample[AUDIO_SAMPLE_RATE+1];
+    size_t size;
 }AudioFrame;
 
 void tuner_audio_init(); 
@@ -41,6 +44,9 @@ void* tuner_audio_get_buf(int tuner);
 bool  tuner_audio_put_buf(int tuner, void* buf); 
 
 void tuner_audio_task();
+
+void tuner_audio_sof();
+void tuner_audio_sr_cor_on(bool state);
 
 #endif	/* TUNER_AUDIO_H */
 

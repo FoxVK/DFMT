@@ -46,12 +46,14 @@ void usb_event(Usb_event ev)
                 usb_audio_release(audio_if);
             
             tunnel_reset_data01();
+            tuner_audio_sr_cor_on(true);
         }
             break;
         case USB_EV_RESET:
         {
             static char* line = "usb reset\r\n";
             debug_uart_write(line);
+            tuner_audio_sr_cor_on(false);
         }
             break;
         case USB_EV_SUSPENDED:
@@ -64,6 +66,12 @@ void usb_event(Usb_event ev)
         {
             static char* line = "RESUMED\r\n";
             debug_uart_write(line);
+            tuner_audio_sr_cor_on(true);
+        }
+            break;
+        case USB_EV_SOF:
+        {
+            tuner_audio_sof();
         }
             break;
         default:
@@ -120,15 +128,18 @@ inline void app_task()
     
     if(usb_audio_can_play(audio_if))
     {
-        static void *to_send = NULL;
+        static AudioFrame *to_send = NULL;
         
         if(to_send == NULL)
             to_send = tuner_audio_get_buf(0);
     
         if(to_send)
         { 
-            if(Usb_audio_send(audio_if, USB_EP01, to_send, sizeof(AudioFrame))==USB_RW_REQ_OK)
+            if(Usb_audio_send(audio_if, USB_EP01, to_send, to_send->size)==USB_RW_REQ_OK)
+            {
+                //debughalt();
                 to_send = NULL;
+            }
         }
     }
 }
