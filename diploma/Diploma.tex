@@ -41,11 +41,11 @@
 
 \Thanks{Rád bych na tomto místě poděkoval zejména mému vedoucímu cenné rady a trpělivost.}
 
-\CzechAbstract{Tato práce popisuje návrh USB FM přijímače se dvěma tunery. Jeden tuner slouží pro přehrávání zvuku a druhý pro vyhledávání dalších stanic. přijímač je v systému reprezentován jako USB zvuková karta.\\ 
-Příjem je realizován dvojicí integrovaných obvodů Si4735-DU. Tyto jsou přes \iis a \iic  spojeny s MCU PIC32MX250F128B, který přes USB zajišťuje komunikaci s počítačem. V rámci firmware MCU je, po neúspěchu s Microchip harmony frameworkem, napsán vlastní USB stack.\\
-Knihovna je napsána v jazyku C s využitím knihovny libusb. Poskytuje funkce pro tři úrovně přístupu k tunerům.\\
-Demonstrační aplikace je ve formě grafického uživatelského rozhraní, napsaná  v C++ s využitím QT frameworku.\\
-Vše je funkční pod OS Linux i Windows.}
+\CzechAbstract{Tato práce popisuje návrh USB FM přijímače se dvěma tunery. Jeden tuner slouží pro přehrávání zvuku a~druhý pro vyhledávání dalších stanic. přijímač je v~systému reprezentován jako USB zvuková karta.\\ 
+Příjem je realizován dvojicí integrovaných obvodů Si4735-DU. Tyto jsou přes \iis a \iic  spojeny s~MCU PIC32MX250F128B, který přes USB zajišťuje komunikaci s počítačem. V rámci firmware MCU je, po neúspěchu s Microchip harmony frameworkem, napsán vlastní USB stack.\\
+Knihovna je napsána v jazyku~C s~využitím knihovny libusb. Poskytuje funkce pro tři úrovně přístupu k~tunerům.\\
+Demonstrační aplikace je ve formě grafického uživatelského rozhraní, napsaná  v~C++ s využitím QT frameworku.\\
+Vše je funkční pod OS Linux i~Windows.}
 
 \CzechKeywords{FM rádio, USB, RDS, QT, libusb, PIC}
 
@@ -63,6 +63,7 @@ All works under Linux and Windows.}
 \AddAcronym{DAB}{Digital Audio Broadcasting (Digitální pozemní rozhlasové vysílání)}
 \AddAcronym{DIP}{Dual Inline Package}
 \AddAcronym{FM}{Rozhlasové vysílání v pásmu velmi krátkých vln}
+\AddAcronym{HTML}{Hypertext Markup Language}
 \AddAcronym{\iic}{Inter-Integrated Circuit}
 \AddAcronym{\iis}{Integrated Interchip Sound}
 \AddAcronym{LW}{Long Waves (Rozhlasové vysílání v pásmu dlouhých vln)}
@@ -189,11 +190,23 @@ All works under Linux and Windows.}
 \url{http://www.usb.org/developers/vendor/}
 
 \bibitem{iis} Philips Semiconductors
-\textit{\iis bus specification} [online] 05-06-1996 [2016-02-27]
+\textit{\iis bus specification} [online] 1996-06-05 [2016-02-27]
 \url{http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/CD00000545.pdf}
 
 \bibitem{rds} EN 50067
 \textit{Specification of the radio data system (RDS) for VHF/FM sound broadcasting in the frequency range from 87,5 to 108,0 MHz} CELNEC 04-1998 [2016-04-01]
+
+\bibitem{libwdi} Pete Batard
+\textit{libwdi: A Windows Driver Installation library for USB devices} [online] 2016-01-22 [2016-04-25]
+\url{https://github.com/pbatard/libwdi#libwdi-a-windows-driver-installation-library-for-usb-devices}
+
+\bibitem{zadig} Pete Batard
+\textit{Zadig} [online] 2014-11-21 [2016-04-25]
+\url{https://github.com/pbatard/libwdi/wiki/Zadig}
+
+\bibitem{wcid} Pete Batard
+\textit{WCID Devices} [online] 2014-11-21 [2016-04-25]
+\url{https://github.com/pbatard/libwdi/wiki/WCID-Devices}
 
 \end{thebibliography}
 
@@ -210,7 +223,7 @@ All works under Linux and Windows.}
 
 
 \begin{center}
- \includegraphics[scale=0.78]{figures/dfmt.eps}
+ \includegraphics[scale=0.72]{figures/dfmt.eps}
 \end{center}
  
 \section{Rozpiska součástek}

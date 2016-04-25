@@ -1,6 +1,6 @@
 \section{Výběr součástek}
 \label{sec:Vyber}
-Vzhledem k tomu, že není možné se cenou zařízení přiblížit zavedeným výrobcům elektroniky, rozhodl jsme se výběr součástek a konstrukci modulu přizpůsobit tak, aby bylo možné modul vyrobit v domácích podmínkách.
+Vzhledem k tomu, že není možné se cenou zařízení přiblížit zavedeným výrobcům elektroniky, rozhodl jsme se výběr součástek a~konstrukci modulu přizpůsobit tak, aby bylo možné modul vyrobit v domácích podmínkách.
 
 %mužeš přidat zmínku o snaze mít možnost rozšiřování funkcionality po strance FW a SW
 %možná by stáo za to popsat i2s
@@ -44,7 +44,7 @@ Požadavky:
 \InsertFigure{figures/tas-block.png}{\textwidth}{Blokové schéma TAS1020b. (Převzato z \cite{tas})}{fig:tas-block}
 
 Jak je patrné z obrázku \ref{fig:tas-block}, jedná se o USB \iis zvukovou kartu a MCU v jednom. Na rozdíl od většiny MCU nemá interní paměť programu. Program se načítá při spuštění buď z E\textsuperscript{2}PROM  paměti připojené přes \iic a nebo přes USB ze zařízení, ke kterému je obvod připojen.\\
-Obvod podle specifikace \cite{tas} podporuje všechno potřebné. Full speed USB 1.1 včetně USB audio 1.0, 14 endpointů z toho až dva mohou být isochronní. Dále nabízí až dvě vstupní \iis rozhraní a jednu \iic sběrnici. Nevýhodou je absence programové paměti, kusová dostupnost obvodu pouze ve formě vzorků a v~mém případě také fakt, že s tímto druhem obvodů nemám žádné zkušenosti.
+Obvod podle specifikace \cite{tas} podporuje všechno potřebné. Full speed USB 1.1 včetně USB audio 1.0, 14 endpointů z toho až dva mohou být isochronní. Dále nabízí až dvě vstupní \iis rozhraní a~jednu \iic sběrnici. Nevýhodou je absence programové paměti, kusová dostupnost obvodu pouze ve formě vzorků a v~mém případě také fakt, že s tímto druhem obvodů nemám žádné zkušenosti.
 
 \subsubsection{PIC16F1454}
 PIC16F1454 je osmi bitový MCU od firmy Microchip s podporou full speed USB 2.0. Obvod obsahuje továrně kalibrovaný oscilátor a umí pracovat při napájecím napětí 2,3-5,5V. Díky tomu obvod nepotřebuje prakticky žádné externí součástky. V podstatě k~němu stačí připojit pouze USB kabel.\\
@@ -59,10 +59,10 @@ Pro modul jsem vybral právě tento MCU. Případně je možné něco málo uše
 \label{subsec:konstrukce}
 \InsertFigure{figures/tuner-block.eps}{100mm}{Blokové schéma zapojení.}{fig:tuner-block}
 
-Propojení jednotlivých komponent je naznačeno na obrázku \ref{fig:tuner-block}. Jak je patrné, zahrnul jsem i propojení tuneru B s MCU přes \iis a také vyvedení anténních AM vstupů tunerů (v obrázku čárkovaně). Aktuálně nejsou využity, ale v budoucnu bude možné zařízení rozšířit o podporu příjmu všech pásem, které tunery podporují a nebo přidat režim, kdy se modul bude chovat jako dvě nezávislé zvukové karty.
+Propojení jednotlivých komponent je naznačeno na obrázku \ref{fig:tuner-block}. Jak je patrné, zahrnul jsem i~propojení tuneru B s MCU přes \iis a také vyvedení anténních AM vstupů tunerů (v obrázku čárkovaně). Aktuálně nejsou využity, ale v budoucnu bude možné zařízení rozšířit o podporu příjmu všech pásem, které tunery podporují a nebo přidat režim, kdy se modul bude chovat jako dvě nezávislé zvukové karty.
 
 Celé zařízení je napájeno z USB přes jediný lineární stabilizátor LE33CD, který snižuje napájecí napětí na~3,3V. Dokáže poskytnout až 100mA a~je odolný proti nadproudu a přehřátí \cite{le}. MCU je zapojen podle doporučení v~katalogovém listu \cite{pic} kapitola 2.1. Stejně tak tunery jsou zapojeny podle doporučení v katalogovém listu \cite{tuner-datasheet} kapitola 2.2.
 
- Tady bych chtěl zmínit vstup RCLK. Tuner potřebuje v době ladění hodinový signál. V katalogovém listu je několikrát zmíněno, že tento signál je nutné buď přivést přímo na vstup RCLK a nebo se získá zapojením 32,768 kHz krystalu. Až v programovací příručce \cite{tuner-programing} v popisu parametru REFCLK\_PRESCALE je možnost odvodit hodinový signál od vstupu hodinového signálu \iis DCLK. Této možnosti jsem samozřejmě využil.
+ Tady bych chtěl zmínit vstup RCLK. Tuner potřebuje v době ladění hodinový signál. V~katalogovém listu je několikrát zmíněno, že tento signál je nutné buď přivést přímo na vstup RCLK a nebo se získá zapojením 32,768 kHz krystalu. Až v programovací příručce \cite{tuner-programing} v popisu parametru REFCLK\_PRESCALE je možnost odvodit hodinový signál od vstupu hodinového signálu \iis DCLK. Této možnosti jsem samozřejmě využil.
  
 Kompletní schéma zapojení je součástí příloh.

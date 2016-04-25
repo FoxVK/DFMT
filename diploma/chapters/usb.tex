@@ -1,20 +1,18 @@
 \section{USB}
 \label{sec:USB}
+\InsertFigure{figures/usb-topo.eps}{160mm}{Příklad topologie USB sběrnice.}{fig:usb-topo}
+
 Na rozdíl od například populárního rozhraní UART je USB podstatně komplikovanější. Je to určitou daní za jeho univerzálnost. Vzhledem k velkému rozsahu specifikace USB \cite{usb-spec} se omezím pouze na popis částí nezbytných pro implementaci modulu.\\
 S vydáním specifikace USB 2.0 byly předchozí specifikace označeny jako zastaralé a neměly by se používat pro nové konstrukce. Následující text se tedy týká USB 2.0 a~rychlosti full-speed.
 
 %minimální zařízení\\
 
-
 \subsection{Stručný úvod do full-speed USB 2.0}
 \subsubsection{Topologie}
-\InsertFigure{figures/usb-functions.eps}{100mm}{USB koncové body a funkce.}{fig:usb-functions}
 
-TODO Obrázek s pyramidou topologie
+Ačkoliv název rozhraní (Univerzální Sériová Sběrnice) napovídá, že jde o sběrnici, jedná se o zapojení typu hvězda. Přesněji, jak je vidět z obrázku \ref{fig:usb-topo}, připojená zařízení a rozbočovače tvoří strom jehož kořenem je hostitel. Tento implementuje tzv. kořenový rozbočovač (root hub), ke kterému je možné buď přímo připojit jedno zařízení a nebo rozbočovač a do něj dalších až osm zařízení/rozbočovačů. Je možné takto za sebe zřetězit až pět rozbočovačů. Celkově je možné na jeden kořenový rozbočovač připojit až 127 zařízení (včetně rozbočovačů).
 
-%TODO obrázek topologie \InsertFigure{figures/usb-functions.eps}{100mm}{USB endpointy a funkce.}{fig:usb-topo}
-Ačkoliv název rozhraní (Univerzální Sériová Sběrnice) napovídá, že jde o sběrnici, jedná se o zapojení typu hvězda. Přesněji, jak je vidět z obrázku \ref{fig:usb-topo}, připojená zařízení a rozbočovače tvoří strom jehož kořenem je hostitel. Tento implementuje tzv. kořenový rozbočovač (root hub), ke kterému je možné buď přímo připojit jedno zařízení a nebo rozbočovač a do něj dalších až osm zařízení/rozbočovačů. Je možné takto za sebe zřetězit až pět rozbočovačů. Celkově je možné na jeden kořenový rozbočovač připojit až 127 zařízení (včetně rozbočovačů).\\
-Velkou výhodou je, že zařízení je od topologie odstíněno. Vždy se z jeho pohledu komunikuje přímo s hostem.\\
+Velkou výhodou je, že zařízení je od topologie odstíněno. Vždy se z jeho pohledu komunikuje přímo s hostem.
 Ve specifikaci je také zohledněn fakt, že zařízení zpravidla nezastává pouze jedinou funkci. To je konec konců případ i tohoto modulu. Obsahuje dvě funkce - zvukovou kartu a \iic tunel pro komunikaci s tunery.
 
 \subsubsection{Komunikace}
@@ -40,15 +38,21 @@ Přenos přerušení & Minimální & až 90\% & Ano & Proud \\
 \end{table}
 
 Aby bylo možné uspokojit nároky na přenos (transfer) dat rozdílné povahy různými funkcemi, zavádí specifikace koncové body (endpoint). Osm výstupních (OUT) pro směr z hostitele do zařízení a osm pro směr opačný (IN). Směr je vždy určován právě z pohledu hostitele. Každému bodu je možné přiřadit jeden ze čtyř druhů přenosu podle tabulky \ref{tab:usb-transfer-types}. Výjimkou je  vstupní a výstupní koncový bod nula. Tyto vždy slouží pro řídící přenosy a na rozdíl od ostatních bodů je musí podporovat všechna zařízení.
-Full-speed USB podporuje čtyři druhy komunikace uvedené v tabulce \ref{tab:usb-transfer-types}.\\ 
+
+Full-speed USB podporuje čtyři druhy komunikace uvedené v tabulce \ref{tab:usb-transfer-types}.
+
+\InsertFigure{figures/usb-functions.eps}{85mm}{USB koncové body a funkce.}{fig:usb-functions}
+
 Body nula jsou využívány jednak k inicializaci a správě vlastního zařízení, ale také můžou být využívány zároveň i funkcemi. Například popisovaný modul jej využívá pro ovládání audio funkce.
-Modul dále využívá vstupní koncový bod 1 pro přenos zvuku do hostitele a potom dvojici koncových bodů 2 v obou směrech pro komunikaci s tunery viz. obrázek \ref{fig:usb-functions}.\\
+Modul dále využívá vstupní koncový bod 1 pro přenos zvuku do hostitele a potom dvojici koncových bodů 2 v obou směrech pro komunikaci s tunery viz. obrázek \ref{fig:usb-functions}.
+
 Přenos vždy sestává z alespoň jedné transakce (transaction), která se dále dělí na pakety (packets). Transakce je z pohledu zařízení vždy vyřizována od počátku do konce bez přerušení jinou transakcí. Je vždy iniciována vysláním token paketu hostitelem, který takto může řídit šířku pásma přidělovanou jednotlivým zařízením na sběrnici. Token pakety mohou být podle druhu transakce následujících třech druhů:
 \begin{itemize}
 \item \textbf{IN} (Vstupní) - Následuje přenos ze zařízení do hostitele.
 \item \textbf{OUT} (Výstupní) - Následuje přenos z hostitele do zařízení.
 \item \textbf{SETUP} - Následuje řídící přenos. %TODO ověř i a doplň překlad
 \end{itemize}
+
 Za tímto paketem následuje nula nebo více paketů s daty. Aby bylo možné detekovat výpadek nebo duplikaci některého z~paketů jsou specifikovány hned dva typy paketů. A~to DATA0 a~DATA1. U izochronních transakcí se vždy posílají pakety DATA0. U ostatních transakcí se vyšle nejprve DATA0 a~poté se~tyto druhy paketů střídají nezávisle na transakcích. Znovu se~od~DATA0 začne pouze v~následujících případech:
 \begin{itemize}
 \item Na začátku každé řídící transakce.
@@ -127,10 +131,23 @@ V tabulce \ref{tab:usb-device-descriptor} je uveden deskriptor zařízení tak, 
 Pole iManufacturer, iProduct a iSerialNumber nesou indexy na deskriptory textových řetězců. Všechna pole jsou nepovinná. V případě jejich vynechání se použije index s~hodnotou 0. Jak napovídají názvy jednotlivých polí, je možné takto přidat popisek výrobce a zařízení ve formě lidsky čitelného textu a~sériové číslo daného kusu zařízení, které může využít ovladač v hostiteli například pro načtení posledního nastavení po opětovném připojení zařízení.
 
 \subsubsection{Deskriptory řetězců}
-TODO:Tabulka se zkrácenými string deskriptory.
-
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\hline 
+Byte & \makecell{1.\\bLength} & \makecell{ 2.\\bDescriptorType} & 3. & 4. & 5. & 6. & 2N+1 & 2N+2 \\ 
+\hline 
+Index 0 & 2N+2 & 0x03 & \multicolumn{2}{c|}{wLANGID[0]} & \multicolumn{2}{c|}{wLANGID[1]} & \multicolumn{2}{c|}{wLANGID[N]}\\ 
+\hline 
+Index 1 & 2N+2 & 0x03 & \multicolumn{2}{c|}{Znak 0} & \multicolumn{2}{c|}{Znak 1} & \multicolumn{2}{c|}{Znak N} \\ 
+\hline 
+\end{tabular} 
+\end{center}
+\caption{Obecný formát deskriptorů řetězců.}
+\label{tab:usb-str-desc} 
+\end{table}
 Deskriptory řetězců jsou organizovány jako pole indexované od nuly. Každý jeden řetězec začíná hlavičkou deskriptoru, ve které je určen typ deskriptoru a jeho celková délka v bytech. Poté následuje samotný text zakódovaný podle normy unicode, konkrétně UTF-16. Je tedy možné použití i národních znaků.\\
-Jedinou výjimkou je deskriptor s indexem 0. V zařízení je možné mít více sad textů v různých jazycích. Seznam dostupných jazyků (jazykových kódů) je právě v tomto deskriptoru. Seznam těchto kódů popisuje \cite{usb-lang}. V modulu jsem se omezil pouze na angličtinu (kód 0x0409).
+Jedinou výjimkou je deskriptor s indexem 0. V zařízení je možné mít více sad textů v různých jazycích. Seznam dostupných jazyků (jazykových kódů) je právě v tomto deskriptoru. Seznam těchto kódů popisuje \cite{usb-lang}. V modulu jsem se omezil pouze na angličtinu (kód 0x0409). Obecný formát těchto deskriptorů je naznačen v tabulce \ref{tab:usb-str-desc}.
 
 \subsubsection{Konfigurace zařízení}
 Konfigurace zařízení je soubor deskriptorů, který popisuje schopnosti zařízení a také jeho nároky na přenos, popřípadě definují sady parametrů z nichž si může hostitel vybrat tu, která mu v daný okamžik nejvíce vyhovuje. Zařízení musí specifikovat minimálně jednu konfiguraci, ale také více. Hostitel potom zařízení jednu přidělí, případně ji může kdykoliv změnit za jinou.\\
@@ -788,6 +805,7 @@ V souboru usb.h je vlastní rozhraní.
 
 
 \subsection{USB \iic tunel}
+\label{subsec:tunel}
 USB - \iic tunelu je zjednodušen tak, aby vyhovoval potřebám ovládání tunerů. Není obecně použitelný pro jakoukoliv \iic komunikaci. Umožňuje pouze odeslání jedné ze čtyř pevně specifikovaných adres, následované čtením nebo zápisem až 16-ti bytů.
 
 \begin{table}[ht!]

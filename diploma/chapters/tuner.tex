@@ -89,7 +89,7 @@ RESP1 - RESP15 & 0 - 15 B & Případná další data odpovědi.\\
 \label{tab:tuner-rpl} 
 \end{table}
 
-Všechny příkazy mají jednotný formát vyobrazený v tabulce \ref{tab:tuner-cmd}. Každý příkaz je jednou transakcí zápisu na \iic sběrnici. Případnou odpověď na příkaz je možné získat následnou transakcí čtení z \iic sběrnice. Formát odpovědi je v tabulce \ref{tab:tuner-rpl}. Jak je patrné odpověď na každý příkaz obsahuje vždy minimálně jeden byte se stavem zařízení (STATUS). Význam jednotlivých bitů v tomto byte je následující:
+Všechny příkazy mají jednotný formát vyobrazený v~tabulce \ref{tab:tuner-cmd}. Každý příkaz je jednou transakcí zápisu na \iic sběrnici. Případnou odpověď na příkaz je možné získat následnou transakcí čtení z \iic sběrnice. Formát odpovědi je v tabulce \ref{tab:tuner-rpl}. Jak je patrné odpověď na každý příkaz obsahuje vždy minimálně jeden byte se stavem zařízení (STATUS). Význam jednotlivých bitů v~tomto byte je následující:
 
 \begin{itemize}
 \item Bit 7 \textbf{CTS} - Pokud je v 1 je možné do tuneru odeslat další příkaz.
@@ -106,7 +106,7 @@ Jak jsem zmínil výše, kromě příkazů se parametry tuneru nastavují a nebo
 
 Zápis hodnoty se provádí příkazem SET\_PROPERTY (0x12), za kterým následuje jeden nulový byte, za ním horní a poté dolní byte čísla proměnné. Dále se vyšle horní byte a poté dolní byte vlastní hodnoty. 
 
-Čtení se provádí obdobně, příkazem GET\_PROPERTY (0x14) za kterým se vyšle nulový byte následovaný horním a dolním byte čísla zapisované proměnné. Hodnota se získá následným čtením z \iic sběrnice. Horní byte hodnoty je až ve druhém bytu argumentu ARG-2 (viz. tab. \ref{tab:tuner-rpl}), dolní byte v je v ARG-3.
+Čtení se provádí obdobně, příkazem GET\_PROPERTY (0x14) za kterým se vyšle nulový byte následovaný horním a dolním byte čísla zapisované proměnné. Hodnota se získá následným čtením z \iic sběrnice. Horní byte hodnoty je až ve druhém bytu argumentu ARG-2 (viz. tab.~\ref{tab:tuner-rpl}), dolní byte v je v ARG-3.
 
 %TODO přidat tabulky pro property ?
 
@@ -114,7 +114,7 @@ Zápis hodnoty se provádí příkazem SET\_PROPERTY (0x12), za kterým následu
 \label{subsubsec:tun-init}
 \InsertFigure{figures/tuner-init.eps}{111mm}{Diagram inicializace tuneru.}{fig:tuner-init}
 
-Po spuštění MCU vždy provádí inicializaci obou tunerů. Průběh inicializace shrnuje diagram \ref{fig:tuner-init}. Z důvodu zkrácení doby spuštění modulu probíhá inicializace formou jednoduchého "multitaskingu". Pokud je jeden tuner zaneprázdněn testuje se stav druhého tuneru a v případě, že není zaneprázdněn dojde k vyslání příkazu, pokud je zaneprázdněn testuje se znova první  tuner a tak dále. Ze stejného důvodu je v příkazu FM\_TUNE\_STATUS nastaven příznak zrychleného nepřesného ladění.
+Po spuštění MCU vždy provádí inicializaci obou tunerů. Průběh inicializace shrnuje diagram~\ref{fig:tuner-init}. Z důvodu zkrácení doby spuštění modulu probíhá inicializace formou jednoduchého "multitaskingu". Pokud je jeden tuner zaneprázdněn testuje se stav druhého tuneru a v případě, že není zaneprázdněn dojde k vyslání příkazu, pokud je zaneprázdněn testuje se znova první  tuner a tak dále. Ze stejného důvodu je v příkazu FM\_TUNE\_STATUS nastaven příznak zrychleného nepřesného ladění.
 
 
 \begin{table}[ht!]
@@ -143,7 +143,7 @@ Inicializace začíná spuštěním tuneru příkazem POWER\_UP. Formát příka
 \item \textbf{PATCH} - Umožňuje načtení novějšího firmware do integrovaného obvodu tuneru.
 \item \textbf{XOSCEN} - Použití krystalu jako zdroje hodinové frekvence. Místo krystalu používám přímo hodinový kmitočet rozhraní \iis.
 \item \textbf{FUNC} - Použitá hodnota nastaví režim přijmu FM rádia.
-\item \textbf{OPMODE} - Nastavení výstupu zvuku. Použitá hodnota znamená "pouze digitální výstup \iis".
+\item \textbf{OPMODE} - Nastavení výstupu zvuku. Význam hodnoty v tabulce určuje, že bude použit pouze digitální výstup zvuku \iis.
 \end{itemize}
 
 Odpovědí na tento příkaz je pouze jeden byte se statusem tuneru.
