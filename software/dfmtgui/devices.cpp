@@ -37,7 +37,6 @@ void Devices::dev_removed(Libdfmt_device *ld)
 
 void Devices::dev_removed(Device *dev)
 {
-    qDebug() << Q_FUNC_INFO << "DELETE !";
     lib2dev.remove(dev->dev);
     emit this->dev_diconnected(dev);
     //delete dev;

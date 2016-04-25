@@ -19,7 +19,6 @@ public:
     ~MainWin();
 
 public slots:
-    void test();
 
 private:
     Ui::MainWin *ui;

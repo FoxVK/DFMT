@@ -171,7 +171,6 @@ static void remove_not_present()
 
 void libdfmt_scan_devs()
 {
-    //FIXME: this is robably wrong
     const unsigned vid=libusb_cpu_to_le16(USB_VID);
     const unsigned pid=libusb_cpu_to_le16(USB_PID);
 

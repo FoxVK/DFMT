@@ -33,12 +33,16 @@ signals:
     void tunA_metrics(unsigned rssi, unsigned snr, unsigned multipath, bool is_valid, int freq_offset, unsigned stereo);
     void tunB_metrics(unsigned rssi, unsigned snr, unsigned multipath, bool is_valid, int freq_offset, unsigned stereo);
 
+    void radioText(const QString s);
 
 public slots:
     void tune(Tuner tuner, double freq_mhz);
     void seek(Tuner tuner, bool up);
     void check_metrics(Tuner tuner=Device::TUNER_A);
     void check_freq(Tuner tuner=Device::TUNER_A);
+    void check_rds(Tuner tuner=Device::TUNER_A);
+    bool receive_rds(bool receive ,Tuner tuner=Device::TUNER_A);
+
 
 private:
     Libdfmt_device * dev;
@@ -51,6 +55,9 @@ private:
     Libdfmt_tuner *tuner[2];
 
     Libdfmt_tuner *get_tuner(Tuner tuner);
+
+    QString radio_text;
+    bool radio_text_ABflag;
 };
 
 #endif // DEVICE_H

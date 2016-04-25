@@ -25,12 +25,15 @@ private:
     bool sound_on;
 
     struct TaskA{
-        TaskA(){state=S_METRICS; tmr.setSingleShot(true); tune=false; seek=SEEK_NO;}
+        TaskA(){state=S_METRICS; tmr.setSingleShot(true); tune=false; seek=SEEK_NO; st_tout=0;  metrics_tmr = 0;}
 
-        enum{S_TUNE, S_TUNING, S_SEEK, S_SEEKING, S_CHECK_FREQ, S_METRICS}state;
+        enum{S_TUNE, S_TUNING, S_SEEK, S_SEEKING, S_CHECK_FREQ, S_METRICS, S_RDS_ON, S_RDS_RCV}state;
         bool tune;
         enum{SEEK_NO=0, SEEK_UP=1, SEEK_DOWN=2}seek;
         QTimer tmr;
+        int st_tout;
+       int metrics_tmr;
+
     }taskA;
 
     struct TaskB{
@@ -43,6 +46,7 @@ private:
             table_ptr = metrics_table_ptr = 0;
             super_state_tmr.setSingleShot(true);
             switch_ss = false;
+            st_tout = 0;
         }
 
         enum{SS_SEEK, SS_UPDATE}super_state;
@@ -52,6 +56,7 @@ private:
         QList<double> freq;
         int table_ptr, metrics_table_ptr;
         bool switch_ss;
+        int st_tout;
 
     }taskB;
 

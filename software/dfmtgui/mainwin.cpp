@@ -17,6 +17,8 @@ MainWin::MainWin(QWidget *parent) :
 
 MainWin::~MainWin()
 {
+    disconnect(&devices, SIGNAL(dev_connected(Device*)), this, SLOT(dev_connected(Device*)));
+    disconnect(&devices, SIGNAL(dev_diconnected(Device*)), this, SLOT(dev_removed(Device*)));
 
     for (int i = 0; i < ui->Tabs->count(); i++)
     {
@@ -24,32 +26,12 @@ MainWin::~MainWin()
         if(form)
         {
             ui->Tabs->removeTab(i);
-            delete form;
         }
     }
 
     delete ui;
 }
 
-void MainWin::test()
-{
-    qDebug() << Q_FUNC_INFO;
-
-    libdfmt_init(2);
-    libdfmt_scan_devs();
-    Libdfmt_device *devs = libdfmt_get_all_devs();
-
-    while(devs)
-    {
-        qDebug("Found tuner %d", libdfmt_get_dev_address(devs));
-        devs = libdfmt_next(devs);
-    }
-
-    libdfmt_exit();
-
-
-    qDebug() << Q_FUNC_INFO << "Done...";
-}
 
 
 void MainWin::dev_connected(Device *dev)
@@ -61,17 +43,6 @@ void MainWin::dev_connected(Device *dev)
     tab_name.sprintf("Tuner");
 
     ui->Tabs->addTab(form, tab_name);
-
-    /*if(!ui->centralWidget->layout())
-    {
-        ui->centralWidget->setLayout(new QVBoxLayout(this));
-    }*/
-
-    //this->setCentralWidget(form);
-    //ui->centralWidget->layout()->addWidget(form);
-
-
-    //form->show();
 }
 
 void MainWin::dev_removed(Device *dev)
@@ -84,9 +55,7 @@ void MainWin::dev_removed(Device *dev)
             if(form->get_dev() == dev)
             {
                 ui->Tabs->removeTab(i);
-                //delete form;
             }
         }
-
     }
 }

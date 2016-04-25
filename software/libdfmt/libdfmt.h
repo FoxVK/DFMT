@@ -398,6 +398,10 @@ typedef struct{
     uint16_t blockB;
     uint16_t blockC;
     uint16_t blockD;
+    int blockAvalid;
+    int blockBvalid;
+    int blockCvalid;
+    int blockDvalid;
 }Libdfmt_rds_group;
 
 
@@ -405,13 +409,16 @@ typedef struct{
  * @brief libdfmt_rds_read Reads one group from tuner's FIFO and/or returns how many groups are stored in tuner.
  *
  * Tuner's FIFO is discarded on every call of libdfmt_seek() or libdfmt_tune().
+ *
+ * Filling bufer in tuner takes at least 1.2 second.
  * @param tuner Tuner to read from.
- * @param group @ref pointer to Libdfmt_rds_group were received blocks of one group will be stored,
+ * @param group Pointer to @ref Libdfmt_rds_group were received group will be stored.
  * or NULL to get only information (without touching FIFO) how many groups are received in tuner's FIFO.
  * Data is only valid when grps_received is greater than zero.
- * @param grps_received Returns how many groups are stored in tuner.
+ * @param groups_cnt Count of grous stored in tuner, before read was called. If this value is zero data in groups are not vaild.
  */
-Libdfmt_error libdfmt_rds_read(Libdfmt_tuner *tuner, Libdfmt_rds_group *group, int *grps_received);
+
+Libdfmt_error libdfmt_rds_read(Libdfmt_tuner *tuner, Libdfmt_rds_group *group, int *groups_cnt);
 
 /** @} */ // end of hl group
 

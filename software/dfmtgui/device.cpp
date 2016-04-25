@@ -12,6 +12,7 @@ Device::Device(Libdfmt_device * dev, Devices *parrent) :
 
     this->freq[0] = this->freq[1] = -1;
     this->tun_done[0] = this->tun_done[1] = true;
+    this->radio_text_ABflag = true;
 }
 
 Device::~Device()
@@ -72,12 +73,22 @@ void Device::tune(Tuner tuner, double freq_mhz)
         return;
 
     if(tuner == Device::TUNER_A)
+    {
         freq_changed(tuner, (double)freq_mhz);
+        radio_text = "";
+        emit radioText(this->radio_text);
+    }
 }
 
 void Device::seek(Tuner tuner, bool up)
 {
     libdfmt_seek(get_tuner(tuner), (up)?1:0);
+
+    if(tuner == Device::TUNER_A)
+    {
+        radio_text = "";
+        emit radioText(this->radio_text);
+    }
 }
 
 void Device::check_freq(Tuner tuner)
@@ -93,6 +104,96 @@ void Device::check_freq(Tuner tuner)
             emit freq_tunA_changed(*f);
         else
             emit freq_tunB_changed(*f, rssi, snr, valid);
+    }
+}
+
+bool Device::receive_rds(bool receive, Tuner tuner)
+{
+    if(libdfmt_rds_receiving(get_tuner(tuner), receive) == LIBDFMT_OK)
+        return true;
+    return false;
+}
+
+void Device::check_rds(Tuner tuner)
+{
+    if(tuner == TUNER_A)
+    {
+        Libdfmt_rds_group g;
+        int cnt;
+        for(int i=0; i<10; i++)
+        {
+            cnt = 0;
+            if(libdfmt_rds_read(get_tuner(tuner), &g, &cnt)!=LIBDFMT_OK)
+                return;
+            if(cnt == 0)
+                return;
+
+            if(!g.blockBvalid)
+                continue;
+
+            int grptype = g.blockB>>11;
+
+            if(grptype != 4 && grptype != 5)
+                continue;
+
+            int segment = g.blockB & 0x000F;
+
+            bool ab = (g.blockB & 1<<4) ? true : false;
+
+            if( (!ab & radio_text_ABflag) || (ab && !radio_text_ABflag) )
+                radio_text = "";
+
+            radio_text_ABflag = ab;
+
+            //if(segment == 0)
+                //emit radioText(this->radio_text);
+
+            int offset;
+            QString piece;
+            if(grptype == 4)
+            {
+                offset = segment*4;
+
+                if(g.blockCvalid)
+                {
+                    piece.append( (QChar((g.blockC>>8) & 0x00ff)));
+                    piece.append( (QChar((g.blockC   ) & 0x00ff)));
+                }
+                else
+                {
+                    piece.append("**");
+                }
+            }
+            else
+            {
+                offset = segment * 2;
+            }
+
+            if(g.blockDvalid)
+            {
+                piece.append( (QChar((g.blockD>>8) & 0x00ff)));
+                piece.append( (QChar((g.blockD   ) & 0x00ff)));
+            }
+            else
+            {
+                piece.append("**");
+            }
+
+            this->radio_text.remove(offset, piece.size());
+            this->radio_text.insert(offset, piece);
+            /*qDebug() <<g.blockA << ab << segment <<"|"
+                    << (char)((g.blockC>>8) & 0x00ff)
+                       << (char)((g.blockC) & 0x00ff)
+                          << (char)((g.blockD>>8) & 0x00ff)
+                             << (char)((g.blockD) & 0x00ff);
+            */
+            //qDebug("%x  %x %x %x %x  %c %c %c",g.blockA,   (char)((g.blockC>>8) & 0x00ff), (char)((g.blockC) & 0x00ff), (char)((g.blockD>>8) & 0x00ff), (char)((g.blockD) & 0x00ff),        (char)((g.blockC) & 0x00ff), (char)((g.blockD>>8) & 0x00ff), (char)((g.blockD) & 0x00ff));
+            emit radioText(this->radio_text);
+
+            if(cnt == 1)
+                return;
+        }
+        qDebug() << "cnt =" << cnt;
     }
 }
 

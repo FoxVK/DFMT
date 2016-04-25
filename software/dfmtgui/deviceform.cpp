@@ -20,6 +20,8 @@ DeviceForm::DeviceForm(Device *dev, QWidget *parent) :
     this->dev = dev;
     dev->open();
 
+    connect(dev, SIGNAL(radioText(QString)), this->ui->rtLabel, SLOT(setText(QString)));
+
     connect(dev, SIGNAL(freq_tunA_changed(double)), this, SLOT(freq_changed(double)));
 
     connect(dev, SIGNAL(tunA_metrics(uint,uint,uint,bool,int,uint)), this, SLOT(metrics_changed(uint,uint,uint,bool,int,uint)));
@@ -74,13 +76,6 @@ void DeviceForm::sound(bool on)
 {
     if(on == sound_on)
         return;
-
-   /* if(!sound_on)
-    {
-        QString path;
-        path.sprintf("")
-        QFile()
-    }*/
 }
 
 void DeviceForm::freq_chk_trm_fired()
@@ -121,11 +116,9 @@ void DeviceForm::metrics_changed(unsigned rssi, unsigned snr, unsigned multipath
 
 void DeviceForm::task_A()
 {
-    static int metrics_tmr = 0;
     int time = 100;
     TaskA *t = &taskA;
     Device::Tuner tuner = Device::TUNER_A;
-    static int st_tout = 0;
 
     switch(t->state)
     {
@@ -133,15 +126,15 @@ void DeviceForm::task_A()
             dev->tune(tuner, ui->freqSpinBox->value());
             t->state = TaskA::S_TUNING;
             t->tune = false;
-            st_tout = 0;
+            t->st_tout = 0;
             break;
 
         case TaskA::S_TUNING:
             if(dev->tunning_done(tuner))
                 t->state = TaskA::S_METRICS;
 
-            st_tout+=t->tmr.interval();
-            if(st_tout>TUNE_TOUT_A)
+            t->st_tout+=t->tmr.interval();
+            if(t->st_tout>TUNE_TOUT_A)
                 t->state = TaskA::S_TUNE;
 
             break;
@@ -151,15 +144,15 @@ void DeviceForm::task_A()
             t->seek = TaskA::SEEK_NO;
             t->state = TaskA::S_SEEKING;
             time = 900;
-            st_tout = 0;
+            t->st_tout = 0;
             break;
 
         case TaskA::S_SEEKING:
             if(dev->tunning_done(tuner))
                 t->state = TaskA::S_CHECK_FREQ;
 
-            st_tout+=t->tmr.interval();
-            if(st_tout>SEEK_TOUT_A)
+            t->st_tout+=t->tmr.interval();
+            if(t->st_tout>SEEK_TOUT_A)
                 t->state = TaskA::S_TUNE;
 
             break;
@@ -180,12 +173,46 @@ void DeviceForm::task_A()
             }
             else
             {
-                metrics_tmr++;
-                if(metrics_tmr>=7)
+                t->metrics_tmr++;
+                if(t->metrics_tmr>=7)
                 {
-                    dev->check_metrics(tuner);
-                    metrics_tmr = 0;
+                   dev->check_metrics(tuner);
+                   t-> metrics_tmr = 0;
+                   t->state = TaskA::S_RDS_ON;
                 }
+            }
+            break;
+
+        case TaskA::S_RDS_ON:
+            if(t->tune)
+            {
+                t->state = TaskA::S_TUNE;
+            }
+            else if(t->seek)
+            {
+                t->state = TaskA::S_SEEK;
+            }
+            else
+            {
+                if(dev->receive_rds(true))
+                    t->state = TaskA::S_RDS_RCV;
+            }
+            break;
+
+
+
+        case TaskA::S_RDS_RCV:
+            if(t->tune)
+            {
+                t->state = TaskA::S_TUNE;
+            }
+            else if(t->seek)
+            {
+                t->state = TaskA::S_SEEK;
+            }
+            else
+            {
+                dev->check_rds();
             }
             break;
 
@@ -197,7 +224,6 @@ void DeviceForm::task_A()
 void DeviceForm::task_B()
 {
     int time = 200;
-    static int st_tout = 0;
     TaskB *t = &taskB;
     Device::Tuner tuner = Device::TUNER_B;
 
@@ -224,13 +250,13 @@ void DeviceForm::task_B()
                     {
                         dev->seek(tuner, true);
                         t->ss_seek = TaskB::SS_S_SEEKING;
-                        st_tout = 0;
+                        t->st_tout = 0;
                     }
                     break;
 
                 case TaskB::SS_S_SEEKING:
-                    st_tout+= t->tmr.interval();
-                    if(st_tout>SEEK_TOUT_B)
+                    t->st_tout+= t->tmr.interval();
+                    if(t->st_tout>SEEK_TOUT_B)
                         t->ss_seek = TaskB::SS_S_SEEK;
 
                     if(dev->tunning_done(tuner))
@@ -271,8 +297,8 @@ void DeviceForm::task_B()
                     if(dev->tunning_done(tuner))
                         t->ss_update = TaskB::SS_U_METRICS;
 
-                    st_tout+= t->tmr.interval();
-                    if(st_tout>SEEK_TOUT_B)
+                    t->st_tout+= t->tmr.interval();
+                    if(t->st_tout>SEEK_TOUT_B)
                         t->ss_update = TaskB::SS_U_TUNE;
 
                     break;

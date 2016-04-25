@@ -20,26 +20,28 @@
 
 Libdfmt_error libdfmt_rds_receiving(Libdfmt_tuner *tuner, int receive)
 {
-    const char BLETHA_SFT = 14, BLETHB_SFT = 12, BLETHC_SFT = 10, BLETHD_SFT = 8;
-    const char RDSEN = 1<<0;
-    const char CORRECTED = 2;
+    const uint16_t BLETHA_SFT = 14, BLETHB_SFT = 12, BLETHC_SFT = 10, BLETHD_SFT = 8;
+    const uint16_t RDSEN = 1<<0;
+    const uint16_t CORRECTED = 2;
     //const char NO_ERROR = 0;
 
-    unsigned fm_rds_config = CORRECTED<<BLETHA_SFT || CORRECTED<<BLETHB_SFT ||
-                             CORRECTED<<BLETHC_SFT || CORRECTED<<BLETHD_SFT ||
-                             (receive) ? RDSEN : 0;
+    unsigned fm_rds_config = (CORRECTED<<BLETHA_SFT) | (CORRECTED<<BLETHB_SFT) |
+                             (CORRECTED<<BLETHC_SFT) | (CORRECTED<<BLETHD_SFT) |
+                             ((receive) ? RDSEN : 0);
 
     return libdfmt_prop_set(tuner, LIBDFMT_PROP_FM_RDS_CONFIG, fm_rds_config);
 }
 
-Libdfmt_error libdfmt_rds_read(Libdfmt_tuner *tuner, Libdfmt_rds_group *group, int *grps_received)
+Libdfmt_error libdfmt_rds_read(Libdfmt_tuner *tuner, Libdfmt_rds_group *group, int *groups_cnt)
 {
     const char INTACK       = 1<<0;
     //const char MTFIFO     = 1<<1;
     const char STATUSONLY   = 1<<2;
-    char arg = INTACK || (!group) ? STATUSONLY : 0;
+    char arg  = INTACK ;
+         arg |= ((!group) ? STATUSONLY : 0);
 
     char reply[13];
+    unsigned cnt;
     Libdfmt_error err;
 
     err = libdfmt_cmd_send(tuner, LIBDFMT_CMD_FM_RDS_STATUS, &arg, sizeof(arg));
@@ -48,15 +50,23 @@ Libdfmt_error libdfmt_rds_read(Libdfmt_tuner *tuner, Libdfmt_rds_group *group, i
     err = libdfmt_cmd_recv_reply(tuner, reply, sizeof(reply));
     if(err != LIBDFMT_OK) return err;
 
-    if(group)
+    cnt = reply[3];
+
+    if(group && cnt != 0)
     {
-        group->blockA = reply[ 4]<<8 | reply[ 5];
-        group->blockB = reply[ 6]<<8 | reply[ 6];
-        group->blockC = reply[ 8]<<8 | reply[ 8];
-        group->blockD = reply[10]<<8 | reply[11];
+        group->blockA = ((reply[ 4]<<8) & 0xFF00) | (reply[ 5] & 0x00FF );
+        group->blockB = ((reply[ 6]<<8) & 0xFF00) | (reply[ 7] & 0x00FF );
+        group->blockC = ((reply[ 8]<<8) & 0xFF00) | (reply[ 9] & 0x00FF );
+        group->blockD = ((reply[10]<<8) & 0xFF00) | (reply[11] & 0x00FF );
+
+        group->blockAvalid = (((reply[12]>>6) & 0x03) < 3) ? 1 : 0;
+        group->blockBvalid = (((reply[12]>>4) & 0x03) < 3) ? 1 : 0;
+        group->blockCvalid = (((reply[12]>>2) & 0x03) < 3) ? 1 : 0;
+        group->blockDvalid = (((reply[12]   ) & 0x03) < 3) ? 1 : 0;
     }
 
-    *grps_received = reply[3];
+    if(groups_cnt)
+        *groups_cnt = cnt;
 
     return err;
 }
