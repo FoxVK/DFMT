@@ -50,7 +50,7 @@ Přenos vždy sestává z alespoň jedné transakce (transaction), která se dá
 \begin{itemize}
 \item \textbf{IN} (Vstupní) - Následuje přenos ze zařízení do hostitele.
 \item \textbf{OUT} (Výstupní) - Následuje přenos z hostitele do zařízení.
-\item \textbf{SETUP} - Následuje řídící přenos. %TODO ověř i a doplň překlad
+\item \textbf{SETUP} - Následuje řídící přenos. 
 \end{itemize}
 
 Za tímto paketem následuje nula nebo více paketů s daty. Aby bylo možné detekovat výpadek nebo duplikaci některého z~paketů jsou specifikovány hned dva typy paketů. A~to DATA0 a~DATA1. U izochronních transakcí se vždy posílají pakety DATA0. U ostatních transakcí se vyšle nejprve DATA0 a~poté se~tyto druhy paketů střídají nezávisle na transakcích. Znovu se~od~DATA0 začne pouze v~následujících případech:
@@ -409,7 +409,7 @@ iInterface & 1B & 0 & Index na textový řetězec.\\
 
 Dále následuje sada deskriptorů popisující rozhraní pro odesílání zvuku (audio streaming interface). Stejně jako řídící rozhraní zde se začíná standardním  deskriptorem rozhraní, který nese základní informace o rozhraní.
 
-V tomto případě jsou použity hned dva deskriptory (tabulka \ref{tab:usb-aud-snd-0} a \ref{tab:usb-aud-snd}). Liší se pouze ve~dvou polích a~to   bAlternateSetting a bNumEndpoints. Druhé z těchto polí určuje počet koncových bodů použitých v rozhraní. Díky tomu, že je v prvním deskriptoru tento počet nulový, má host možnost zvolit toto alternativní nastavení vždy, když nemá zájem o~zvuková data. K identifikaci tohoto nastavení slouží hodnota v~prvním ze zmíněných polí bAlternateSettings.
+V tomto případě jsou použity hned dva deskriptory (tabulka \ref{tab:usb-aud-snd-0} a \ref{tab:usb-aud-snd}). Liší se pouze ve~dvou polích a~to   bAlternateSetting a bNumEndpoints. Druhé z těchto polí určuje počet koncových bodů použitých v rozhraní. Díky tomu, že je v prvním deskriptoru tento počet nulový, má hostitel možnost zvolit toto alternativní nastavení vždy, když nemá zájem o~zvuková data. K~identifikaci tohoto nastavení slouží hodnota v~prvním ze zmíněných polí bAlternateSettings.
 
 \begin{table}[ht!]
 \begin{center}
@@ -803,7 +803,6 @@ V souboru usb.h je vlastní rozhraní.
 
 
 
-
 \subsection{USB \iic tunel}
 \label{subsec:tunel}
 USB - \iic tunelu je zjednodušen tak, aby vyhovoval potřebám ovládání tunerů. Není obecně použitelný pro jakoukoliv \iic komunikaci. Umožňuje pouze odeslání jedné ze čtyř pevně specifikovaných adres, následované čtením nebo zápisem až 16-ti bytů.
@@ -881,3 +880,20 @@ Je zbytečné popisovat zde konfiguraci \iic modulu. Chtěl bych ale upozornit n
 
 Při spuštěném modulu I2C1 nelze používat vývody RA0 a RA1, stejně tak při spuštěném modulu I2C2 nelze používat vývody RB5 a RB6. 
 Druhou chybou je možnost dvojitého zápisu v případě, že během zápisu došlo k přerušení. Toto chování ve většině případů není problém. V případě \iic modulu se se zápisem spouští jednotlivé akce, takže může dojít například k dvojímu zápisu bytu na sběrnici. Řešením je před zápisem do registrů náchylných na tuto chybu zakázat přerušení.
+
+
+\subsection{Přenos zvuku z \iis do USB}
+
+Jak už bylo zmíněno, přenos zvuku přes USB probíhá po paketech dlouhých 1 ms, které jsou složeny z rámců. V případě použité vzorkovací frekvence 48 kHz bude v každém paketu 48 rámců.  \iis modul generuje přerušení bohužel nikoliv jednotlivé rámce, ale pro každý podrámec (vzorek jednoho kanálu). Na tato přerušení je napojen vždy DMA kanál, který je postupně ukládá do paketů. MCU  navíc umožňuje řetězení DMA kanálů. To znamená, že zatím co první kanál je spuštěn je možné druhý nakonfigurovat tak, že bude hardwarově spuštěn hned po ukončení předchozího kanálu. Díky tomu má firmware dost času na zpracování jednotlivých paketů.
+
+Nevýhodou tohoto řešení je, že pokud časování odesílání paketů (řízené hostitelem) a časování čtení paketů (řízeno \iis modulem MCU) není naprosto shodné, bude docházet k občasným výpadkům celých paketů. V praxi je nemožné, aby tyto dva nezávisle zdroje času byly zcela synchronizovány. Frekvence krystalu MCU má výrobní tolerance a určitou teplotní závislost. Navíc odchylka frekvence vzniká už při generování hodinového signálu \iis rozhraní. Frekvence tohoto signálu by měla být při 2 kanálech, 16-ti bitech na kanál a vzorkovací frekvenci 48000 Hz $ 2 \cdot 16 \cdot 48000 = 1536000 $. Nejbližší frekvence, kterou je možné do MCU nastavit je 1538462 kHz, což odpovídá vzorkovací frekvenci 48076 Hz. I když je tento rozdíl jenom +0,160\%, k výpadkům rámců bude docházet poměrně často. Konkrétně bude perioda výpadků:
+
+$$ \frac{\mbox{reálná frekvence} - \mbox{požadovaná frekvence}}{\mbox{počet vzorků}} = \frac{48076 - 48000}{48} =  1,58 s^{-1} $$
+
+Řešením je rozmělnit výpadky paketů, které jsou zřetelné hlavně u mluveného slova, na výpadky jednotlivých rámců, které jsou vhledem ke vzorkovací frekvenci na hranici slyšitelnosti. 
+
+Implementoval jsem korekční algoritmus, který srovnává rychlost USB s počtem přečtených paketů z \iis a počítá periodu s jakou bude do paketu přečteno o jeden vzorek více popřípadě méně. Rychlost USB je možné zjistit z události SOF (start of frame), kterou dostávají hromadně všechna zařízení připojená na sběrnici s periodou 1ms. Algoritmus pracuje s periodou 9600 těchto událostí. V každé iteraci spočítá rozdíl $d = \mbox {počet paketů} - \mbox {počet SOF} + d'$, kde $d'$ je rozdíl z předešlé iterace. V případě kladného výsledku bude do každého N-tého paketu přečteno o jeden vzorek více a ten bude zahozen, v přídě záporného výsledku bude do každého N-tého paketu přečteno o jeden vzorek méně a případě, že d = 0 se korekce neprovádí. Hodnota N se spočítá takto:
+
+$$ N = \frac{\frac{\mbox{počet SOF}}{\mbox{vzorkovací frekvence}}}{d} $$
+
+Po nasazení tohoto algoritmu jsem při poslechu žádné periodické výpadky nezaznamenal.
