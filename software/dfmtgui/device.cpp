@@ -16,6 +16,7 @@ Device::Device(Libdfmt_device * dev, Devices *parrent) :
 
 Device::~Device()
 {
+    qDebug() << Q_FUNC_INFO;
     this->close();
 }
 
@@ -43,6 +44,7 @@ bool Device::open()
 
 void Device::close()
 {
+    qDebug() << Q_FUNC_INFO;
     libdfmt_dev_close(this->dev);
     this->dev = NULL;
 }

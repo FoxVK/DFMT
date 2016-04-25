@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>273</width>
-    <height>129</height>
+    <height>256</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,32 +20,9 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QTabWidget" name="Tabs"/>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>273</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuAbout">
-    <property name="title">
-     <string>About</string>
-    </property>
-   </widget>
-   <addaction name="menuAbout"/>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

@@ -42,6 +42,7 @@ DeviceForm::DeviceForm(Device *dev, QWidget *parent) :
 
 DeviceForm::~DeviceForm()
 {
+    //qDebug() << Q_FUNC_INFO;
     taskA.tmr.stop();
     taskB.tmr.stop();
     delete ui;
@@ -292,7 +293,7 @@ void DeviceForm::task_B()
 
 void DeviceForm::freq_cangedB(double freq, unsigned rssi, unsigned snr, bool valid)
 {
-    qDebug("%s f=%f snr=%d valid=%d rssi=%d", Q_FUNC_INFO, freq, snr, valid, rssi);
+    //qDebug("%s f=%f snr=%d valid=%d rssi=%d", Q_FUNC_INFO, freq, snr, valid, rssi);
 
     int i;
     QTableWidget *t = ui->stationsTable;
@@ -323,7 +324,7 @@ void DeviceForm::freq_cangedB(double freq, unsigned rssi, unsigned snr, bool val
             }
             else
             { //delete
-                qDebug("delete");
+                //qDebug("delete");
                 taskB.freq.removeAt(i);
                 t->removeRow(i);
             }
@@ -339,7 +340,7 @@ void DeviceForm::freq_cangedB(double freq, unsigned rssi, unsigned snr, bool val
     //insert
     if(valid)
     {
-        qDebug("insert");
+        //qDebug("insert");
         taskB.freq.insert(i, freq);
         t->insertRow(i);
         t->setItem(i, 0, new QTableWidgetItem(freqS));
