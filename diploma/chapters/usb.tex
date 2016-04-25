@@ -41,7 +41,7 @@ Aby bylo možné uspokojit nároky na přenos (transfer) dat rozdílné povahy r
 
 Full-speed USB podporuje čtyři druhy komunikace uvedené v tabulce \ref{tab:usb-transfer-types}.
 
-\InsertFigure{figures/usb-functions.eps}{85mm}{USB koncové body a funkce.}{fig:usb-functions}
+\InsertFigure{figures/usb-functions.eps}{80mm}{USB koncové body a funkce.}{fig:usb-functions}
 
 Body nula jsou využívány jednak k inicializaci a správě vlastního zařízení, ale také můžou být využívány zároveň i funkcemi. Například popisovaný modul jej využívá pro ovládání audio funkce.
 Modul dále využívá vstupní koncový bod 1 pro přenos zvuku do hostitele a potom dvojici koncových bodů 2 v obou směrech pro komunikaci s tunery viz. obrázek \ref{fig:usb-functions}.
@@ -730,7 +730,7 @@ wLength & 1B & Velikost dat, které je nutné dále přijmou nebo odeslat. \\
 
 Standardní požadavky na zařízení jsou detailně popsány v \cite{usb-spec} v kapitole 9.3. Implementoval jsem pouze požadavky nutné k funkci modulu rádia.
 
-Standardní požadavky odesílané z hostitele mají vždy stejnou hlavičku popsanou v tabulce \ref{tab:usb-stdreq-hdr}. Význam polí wValue a wIndex je vždy specifický danému požadavku. Význam bitů pole bmRequestType je náledující:
+Standardní požadavky odesílané z hostitele mají vždy stejnou hlavičku popsanou v tabulce~\ref{tab:usb-stdreq-hdr}. Význam polí wValue a wIndex je vždy specifický danému požadavku. Význam bitů pole bmRequestType je náledující:
 
 \begin{itemize}
 \item Bit 7: Směr případné datové části.
@@ -788,18 +788,6 @@ Na obrázku \ref{fig:usb-states} je stavový diagram USB zařízení. Diagram je
 \end{itemize}
 
 Dále je potřeba počítat s faktem, že zařízení může být kdykoliv resetováno a vrátí se tak do výchozího stavu, není stanoveno pořadí, v jakém budou žádosti přicházet a kterákoli transakce může být předčasně ukončena vysláním dalšího setup tokenu. 
-
-
-
-\subsubsection{Rozhraní implementace USB}
-Zkonzultovat a dodělat t...
-
-Implementace se nachází v projektu firmware ve složce drv.
-
-
-V souboru config.h se nastaví počet konfigurací, celkový počet deskriptorů řetězců, nejvyšší použitý koncový bod a specifikuje se jestli má zařízení vlastní napájení.
-
-V souboru usb.h je vlastní rozhraní.
 
 
 
