@@ -347,8 +347,8 @@ const uint8_t wcid_feature_desc[] = {
     0x00, 0x00, 0x00,       //7 BYTES 	Reserved
     TUNNEL_INTERFACE_ID,    //BYTE 	Interface Number 
     0x01,                   //BYTE 	Reserved
-    0x57, 0x49, 0x4E, 0x55, //8 BYTES (NUL-terminated?) ASCII String 	Compatible ID ("WINUSB\0\0")
-    0x53, 0x42, 0x00, 0x00, 
+    'L', 'I', 'B', 'U',     //8 BYTES (NUL-terminated?) ASCII String 	Compatible ID ("LIBUSBK\0")
+    'S', 'B', 'K', 0x00, 
     0x00, 0x00, 0x00, 0x00, //8 BYTES (NUL-terminated?) ASCII String 	Sub-Compatible ID (unused)
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, //6 BYTES 	Reserved

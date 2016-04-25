@@ -66,6 +66,8 @@ void _general_exception_handler (unsigned cause, unsigned status)
     str[23]=0;
     debug_uart_write(str);
 
+    debughalt();
+    
     switch((cause & 0x7c)>>2)
     {
         case 0 : debug_uart_write("interrupt"); break;

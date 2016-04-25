@@ -29,6 +29,17 @@ static struct{
     AudioFrame  frame_buf[AUDIO_PACKET_BUFS];
 }aud_data[2];
 
+static struct SampleRateCorrection{
+    enum {SR_COR_OFF, SR_COR_FIRST_RUN, SR_COR_ON} state;  ///< OFF = suspended
+    int direciton;   ///<  +1 one more or -1 one less
+    unsigned cor_rate;  ///<How often
+    unsigned cor_cntr;
+    int last_dif;  ///< tuner packet - usb sofs from last time
+    
+    int tuner_samples;
+    int usb_sofs;
+}sr_cor;
+
 static volatile unsigned int *DCHxDSA[] = {&DCH0DSA, &DCH1DSA, &DCH2DSA, &DCH3DSA};
 static volatile unsigned int *DCHxDSIZ[] = {&DCH0DSIZ, &DCH1DSIZ, &DCH2DSIZ, &DCH3DSIZ};    
 static volatile __DCH0CONbits_t *DCHxCONbits[] = {&DCH0CONbits, 
@@ -39,6 +50,9 @@ static volatile __DCH0INTbits_t *DCHxINTbits[] = {&DCH0INTbits,
                                     (__DCH0INTbits_t*)&DCH1INTbits, 
                                     (__DCH0INTbits_t*)&DCH2INTbits, 
                                     (__DCH0INTbits_t*)&DCH3INTbits};
+
+static size_t sr_cor_packet_size(int tuner);
+static void sr_cor_init();
 
 static void arm_dma(int dma)
 {
@@ -53,9 +67,16 @@ static void arm_dma(int dma)
     {
         buf = queue_pop(&aud_data[tuner].filled);
     }
-        
+    if(!buf)    
+        debughalt();
+    size_t size = sr_cor_packet_size(tuner);  
+    
+    ((AudioFrame*)buf)->size = (size>(AUDIO_SAMPLE_RATE * AUDIO_SAMPLE_CHAN_BYTES * 2)) ? (AUDIO_SAMPLE_RATE * AUDIO_SAMPLE_CHAN_BYTES * 2) : size;
+    
     *DCHxDSA[dma]  = virt2phy(buf);
-    *DCHxDSIZ[dma] = sizeof(AudioFrame);
+    *DCHxDSIZ[dma] = size;
+    
+
 }
 
 static void dma_init()
@@ -112,31 +133,6 @@ static void i2s_init()
     IFS1bits.SPI2RXIF = 0;
 }
 
-static void i2s_b_init() 
-{
-    SPI2CONbits.ON = 0;
-    _nop();
-    SPI2CONbits.DISSDO = 1;     //disable output bit
-    //SPI2CONbits.ENHBUF = 1;     //enchanced buffer enable
-    SPI2CONbits.MSTEN = 1;      //enable master - we will generate clock
-    SPI2CON2bits.AUDEN = 1;     //enable audio
-    SPI2CONbits.SRXISEL = 2;    //interrupt is generated whe buffer is half full
-    SPI2CONbits.CKP = 1;        //clock idle in low
-
-    while(!SPI2STATbits.SPIRBE)
-    {
-        int flush = SPI2BUF;
-    }
-    SPI2STATbits.SPIROV = 0;    //no overflow
-
-    SPI2BRG = 12;       //clock,  32bit frame X 48khz sampling = 1536kHz - now we have 1 538 461,538461538
-
-    IPC9bits.SPI2IP = 4; //prioriy 1-7 0=disabled
-    IPC9bits.SPI2IS = 0; //subprio 0-3
-
-    IEC1bits.SPI2RXIE = 1; //enable Rx interrupt
-}
-
 void* tuner_audio_get_buf(int tuner)
 {
     if (queue_count(&aud_data[tuner].filled) <= 1)
@@ -171,13 +167,13 @@ void tuner_audio_init()
         for (j=0; j<AUDIO_PACKET_BUFS; j++)
             queue_push(&aud_data[i].free, &aud_data[i].frame_buf[j]);
     }
-    
+       
     dma_init();
     i2s_init();
+    sr_cor_init();
     DMACONbits.ON = 1;
     SPI2CONbits.ON = 1;
     SPI1CONbits.ON = 1;
-    //TODO i2s_b_init(); nevolat !!
 }
 
 void tuner_audio_task()
@@ -188,9 +184,100 @@ void tuner_audio_task()
         if(DCHxINTbits[i]->CHDDIF)
         {
             DCHxINTbits[i]->CHDDIF = 0;
-            if(!queue_push(&aud_data[(i>1)?1:0].filled, phy2virt(*DCHxDSA[i])))
-                debughalt(); //TODO vyhodit
+            queue_push(&aud_data[(i>1)?1:0].filled, phy2virt(*DCHxDSA[i]));
             arm_dma(i);
         }
+    }
+}
+
+void tuner_audio_sof()
+{
+    sr_cor.usb_sofs++;
+    
+    if( sr_cor.state == SR_COR_FIRST_RUN && 
+        sr_cor.tuner_samples > 50 &&
+        sr_cor.usb_sofs > 50)
+    {
+        sr_cor.state = SR_COR_ON;
+        sr_cor.tuner_samples = sr_cor.usb_sofs = 0;
+    }
+    
+    if(sr_cor.usb_sofs == AUDIO_SR_SOFS_INTERVAL && sr_cor.state == SR_COR_ON)
+    {
+        int dif = (sr_cor.tuner_samples - sr_cor.usb_sofs) ;
+        dif += sr_cor.last_dif;
+        sr_cor.last_dif = dif;
+
+        if(dif == 0)
+        {
+            sr_cor.direciton = 0;
+        }
+        else
+        {            
+            int rate = (AUDIO_SR_SOFS_INTERVAL / AUDIO_SAMPLE_RATE) / dif;
+
+            if(rate < 0)
+            {
+                sr_cor.cor_rate = (0 - rate);
+                sr_cor.direciton = -1;
+            }
+            else if(rate == 0)
+            {
+                sr_cor.direciton = 0;
+                sr_cor.last_dif = 0;
+            }
+            else
+            {
+                sr_cor.cor_rate = rate;
+                sr_cor.direciton = 1;
+            }
+        }
+
+        sr_cor.tuner_samples = sr_cor.usb_sofs = 0;
+    }
+}
+
+static size_t sr_cor_packet_size(int tuner)
+{
+    if(tuner==0)
+    {
+        if(sr_cor.state!=SR_COR_OFF)
+            sr_cor.tuner_samples++;
+        
+        sr_cor.cor_cntr++;
+        if(sr_cor.cor_cntr >= sr_cor.cor_rate)
+            sr_cor.cor_cntr = 0;
+    }
+    
+    if(sr_cor.cor_cntr != 1)
+        return (AUDIO_SAMPLE_RATE * AUDIO_SAMPLE_CHAN_BYTES * 2 );
+    else
+        return (AUDIO_SAMPLE_RATE * AUDIO_SAMPLE_CHAN_BYTES * 2 )+ sr_cor.direciton;
+}
+
+static void sr_cor_init()
+{
+        sr_cor.cor_rate = 0;
+        sr_cor.direciton = 0;
+        sr_cor.tuner_samples = 0;
+        sr_cor.usb_sofs = 0;
+        sr_cor.last_dif = 0;
+        sr_cor.state = SR_COR_OFF;
+        sr_cor.cor_cntr = 0;
+}
+
+void tuner_audio_sr_cor_on(bool state)
+{
+    if(state)
+    {
+        //sr_cor.cor_rate = 0;
+        //sr_cor.direciton = 0;
+        sr_cor.tuner_samples = 0;
+        sr_cor.usb_sofs = 0;
+        sr_cor.state = SR_COR_FIRST_RUN;
+    }
+    else
+    {
+        sr_cor.state = SR_COR_OFF;
     }
 }
