@@ -39,7 +39,7 @@
 
 %\PrintPublicationAgreement{true}
 
-\Thanks{Rád bych na tomto místě poděkoval zejména mému vedoucímu cenné rady a trpělivost.}
+\Thanks{Rád bych na tomto místě poděkoval mému vedoucímu panu Ing. Davidu Seidlovi, Ph.D. za cenné rady a trpělivost.}
 
 \CzechAbstract{Tato práce popisuje návrh USB FM přijímače se dvěma tunery. Jeden tuner slouží pro přehrávání zvuku a~druhý pro vyhledávání dalších stanic. přijímač je v~systému reprezentován jako USB zvuková karta.\\ 
 Příjem je realizován dvojicí integrovaných obvodů Si4735-DU. Tyto jsou přes \iis a \iic  spojeny s~MCU PIC32MX250F128B, který přes USB zajišťuje komunikaci s počítačem. V rámci firmware MCU je, po neúspěchu s Microchip harmony frameworkem, napsán vlastní USB stack.\\
@@ -218,6 +218,7 @@ All works under Linux and Windows.}
 %\begin{landscape}
 
 \section{Schéma zapojení modulu}
+\label{sec:ap-schema}
 %Na štorc
 %\InsertFigure{figures/dfmt.eps}{50mm}{Schéma zapojení modulu.}{fig:schema}
 
@@ -227,12 +228,26 @@ All works under Linux and Windows.}
 \end{center}
  
 \section{Rozpiska součástek}
+\label{sec:ap-bom}
 
 %\end{landscape}
 
 \clearpage
 
 %\InsertFigure{figures/Graf}{0.7\textwidth}{Nějaký graf}{fig:SampleGraph}
+
+\section{Fotografie osazené desky plošných spojů}
+\label{sec:ap-pcb}
+
+\subsection*{Horní strana:}
+\begin{center}
+ \includegraphics[scale=1]{figures/pcb-top.jpg}
+\end{center}
+
+\subsection*{Spodní strana:}
+\begin{center} 
+ \includegraphics[scale=1]{figures/pcb-bot.jpg}
+\end{center}
 
 
 \end{document}

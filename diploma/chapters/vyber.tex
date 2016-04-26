@@ -8,7 +8,7 @@ Vzhledem k tomu, že není možné se cenou zařízení přiblížit zavedeným 
 \subsection{Způsob příjmu rozhlasového vyslání}
 Jednou možností je řešení přijímačem složeným z diskrétních součástek a nebo pomocí analogových IO. Ovšem toto je příliš komplikované.
 
-Na trhu je řada integrovaných obvodů, které zajišťují samotný příjem vysílání včetně vyhledávání static, měření kvality signálu a přijmu RDS a to s minimem potřebných externích součástek. Tyto IO se typicky ovládají pomocí \iic nebo SPI a zvuk poskytují digitálně přes rozhraní \iis popřípadě analogově. Bohužel drtivá většina těchto IO je dostupná pouze v pouzdru QFN, které se velmi obtížně pájí a je možné je sehnat pouze v minimálním množství 1000 kusů. Výjimkou je SI4735-D60 od výrobce SILICON LABS, který je dostupný v pouzdru SSOP24 a je možné jej u nás zakoupit i po jednotlivých kusech. IO neumožňuje přijímat DAB, ale umí následující:
+Na trhu je řada integrovaných obvodů, které zajišťují samotný příjem vysílání včetně vyhledávání static, měření kvality signálu a přijmu RDS a to s minimem potřebných externích součástek. Tyto IO se typicky ovládají pomocí \iic nebo SPI a zvuk poskytují digitálně přes rozhraní \iis popřípadě analogově. Bohužel drtivá většina těchto IO je dostupná pouze v pouzdru QFN, které se velmi obtížně pájí a je možné je sehnat pouze v minimálním množství 1000 kusů. Výjimkou je SI4735-D60 od výrobce SILICON LABS, který je dostupný v pouzdru SSOP24 a~je možné jej u nás zakoupit i po jednotlivých kusech. IO neumožňuje přijímat DAB, ale umí následující:
 \begin{itemize}
 \item{Pásma: FM, SW, MW, LW.}
 \item{Vzorkovací frekvence až do 48kHz.}
@@ -43,12 +43,15 @@ Požadavky:
 \subsubsection{TAS1020b}	
 \InsertFigure{figures/tas-block.png}{\textwidth}{Blokové schéma TAS1020b. (Převzato z \cite{tas})}{fig:tas-block}
 
-Jak je patrné z obrázku \ref{fig:tas-block}, jedná se o USB \iis zvukovou kartu a MCU v jednom. Na rozdíl od většiny MCU nemá interní paměť programu. Program se načítá při spuštění buď z E\textsuperscript{2}PROM  paměti připojené přes \iic a nebo přes USB ze zařízení, ke kterému je obvod připojen.\\
+Jak je patrné z obrázku \ref{fig:tas-block}, jedná se o USB \iis zvukovou kartu a MCU v jednom. Na~rozdíl od většiny MCU nemá interní paměť programu. Program se načítá při spuštění buď z E\textsuperscript{2}PROM  paměti připojené přes \iic a nebo přes USB ze zařízení, ke kterému je obvod připojen.
+
 Obvod podle specifikace \cite{tas} podporuje všechno potřebné. Full speed USB 1.1 včetně USB audio 1.0, 14 endpointů z toho až dva mohou být isochronní. Dále nabízí až dvě vstupní \iis rozhraní a~jednu \iic sběrnici. Nevýhodou je absence programové paměti, kusová dostupnost obvodu pouze ve formě vzorků a v~mém případě také fakt, že s tímto druhem obvodů nemám žádné zkušenosti.
 
 \subsubsection{PIC16F1454}
-PIC16F1454 je osmi bitový MCU od firmy Microchip s podporou full speed USB 2.0. Obvod obsahuje továrně kalibrovaný oscilátor a umí pracovat při napájecím napětí 2,3-5,5V. Díky tomu obvod nepotřebuje prakticky žádné externí součástky. V podstatě k~němu stačí připojit pouze USB kabel.\\
-Výrobce poskytuje k~tomuto MCU knihovnu Microchip Library for aplications, která mimo jiné obsahuje implementaci USB audio 1.0. Navíc jedním ze vzorových projektů u~této knihovny je i USB mikrofón, který řeší přenos zvuku do počítače.\\
+PIC16F1454 je osmi bitový MCU od firmy Microchip s podporou full speed USB 2.0. Obvod obsahuje továrně kalibrovaný oscilátor a umí pracovat při napájecím napětí 2,3-5,5V. Díky tomu obvod nepotřebuje prakticky žádné externí součástky. V podstatě k~němu stačí připojit pouze USB kabel.
+
+Výrobce poskytuje k~tomuto MCU knihovnu Microchip Library for aplications, která mimo jiné obsahuje implementaci USB audio 1.0. Navíc jedním ze vzorových projektů u~této knihovny je~i~USB mikrofón, který řeší přenos zvuku do počítače.
+
 Bohužel tento MCU nemá podporu \iis a na jeho softwarovou implementaci je příliš pomalý. 
 
 \subsubsection{PIC32MX250F128}
@@ -63,6 +66,6 @@ Propojení jednotlivých komponent je naznačeno na obrázku \ref{fig:tuner-bloc
 
 Celé zařízení je napájeno z USB přes jediný lineární stabilizátor LE33CD, který snižuje napájecí napětí na~3,3V. Dokáže poskytnout až 100mA a~je odolný proti nadproudu a přehřátí \cite{le}. MCU je zapojen podle doporučení v~katalogovém listu \cite{pic} kapitola 2.1. Stejně tak tunery jsou zapojeny podle doporučení v katalogovém listu \cite{tuner-datasheet} kapitola 2.2.
 
- Tady bych chtěl zmínit vstup RCLK. Tuner potřebuje v době ladění hodinový signál. V~katalogovém listu je několikrát zmíněno, že tento signál je nutné buď přivést přímo na vstup RCLK a nebo se získá zapojením 32,768 kHz krystalu. Až v programovací příručce \cite{tuner-programing} v popisu parametru REFCLK\_PRESCALE je možnost odvodit hodinový signál od vstupu hodinového signálu \iis DCLK. Této možnosti jsem samozřejmě využil.
+ Tady bych chtěl zmínit vstup RCLK. Tuner potřebuje v době ladění hodinový signál. V~katalogovém listu je několikrát zmíněno, že tento signál je nutné buď přivést přímo na vstup RCLK a~nebo se získá zapojením 32,768 kHz krystalu. Až v programovací příručce \cite{tuner-programing} v popisu parametru REFCLK\_PRESCALE je možnost odvodit hodinový signál od vstupu hodinového signálu \iis DCLK. Této možnosti jsem samozřejmě využil.
  
-Kompletní schéma zapojení je součástí příloh.
+Kompletní schéma zapojení je v příloze \ref{sec:ap-schema} a také na přiloženém CD.
