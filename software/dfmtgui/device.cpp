@@ -193,7 +193,7 @@ void Device::check_rds(Tuner tuner)
             if(cnt == 1)
                 return;
         }
-        qDebug() << "cnt =" << cnt;
+        //qDebug() << "cnt =" << cnt;
     }
 }
 
