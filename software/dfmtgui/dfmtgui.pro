@@ -29,8 +29,8 @@ FORMS    += mainwin.ui \
 RESOURCES += \
     icons.qrc
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/release/ -llibdfmt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/debug/ -llibdfmt
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/release/ -ldfmt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/debug/ -ldfmt
 else:unix:!macx: LIBS += -L$$OUT_PWD/../libdfmt/ -ldfmt
 
 
