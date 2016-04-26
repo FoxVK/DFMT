@@ -1,21 +1,21 @@
 \section{Knihovna a demonstrační aplikace}
 \label{sec:knihovna}
 
-Knihovnu pro ovládání tuneru jsem nazval libdfmt. Je napsána v jazyce C. Pro přístup k USB rozhraní jsem využil knihovnu libusb~1.0, jejíž použití je výhodné protože je multiplatformní, je široce využívaná jak pod OS Windows tak pod OS Linux a je velmi dobře zdokumentovaná.
+Knihovnu pro ovládání tuneru jsem nazval libdfmt. Je napsána v jazyce C. Pro přístup k~USB rozhraní jsem využil knihovnu libusb~1.0, jejíž použití je~výhodné protože je multiplatformní, je~široce využívaná jak pod OS Windows tak pod OS Linux a je velmi dobře zdokumentovaná.
 
-Knihovna je rozdělena do čtyř částí. První částí je rozhraní umožňující vyhledání a připojení k modulu. další tři části tvoří  tři úrovně přístupu k samotným tunerům na modulu. Funkce v nejnižší úrovni zprostředkovávají přístup přímo k USB - \iic tunelu (popsán v kapitole \ref{subsec:tunel}). Sada funkcí střední úrovně umožňuje odesílání příkazů, příjem odpovědí a čtení a zápis proměnných v jednotlivých tunerech. Vysokoúrovňové funkce umožňují ladění a zjišťování informací o naladěných frekvencích a příjem RDS.
+Knihovna je rozdělena do čtyř částí. První částí je rozhraní umožňující vyhledání a připojení k modulu. další tři části tvoří  tři úrovně přístupu k samotným tunerům na modulu. Funkce v~nejnižší úrovni zprostředkovávají přístup přímo k USB - \iic tunelu (popsán v kapitole \ref{subsec:tunel}). Sada funkcí střední úrovně umožňuje odesílání příkazů, příjem odpovědí a čtení a zápis proměnných v jednotlivých tunerech. Vysokoúrovňové funkce umožňují ladění a zjišťování informací o~naladěných frekvencích a~příjem RDS.
 
-Definice všech funkcí a datových struktur je v jediném hlavičkovém souboru libdfmt.h. ROzhraní všech funkcí je okomentováno komentáři kompatibilními se formátem javadoc. Na přiloženém CD je ke knihovně vygenerovaná dokumentace v HTML formátu.
+Definice všech funkcí a datových struktur je v jediném hlavičkovém souboru libdfmt.h. Rozhraní všech funkcí je okomentováno komentáři kompatibilními se formátem javadoc. Na přiloženém CD je ke knihovně vygenerovaná dokumentace v HTML formátu.
 
 \subsection{Vyhledávání a správa zařízení}
 
 Správa zařízení byla psána s ohledem na možnost současného ovládání více připojených zařízení a také na možnost jednoduchého začlenění do případného událostního systému.
 
-Knihovnu je potřeba nejprve inicializovat funkcí \verb|libdfmt_init()|. Vyhledávání zařízení se provede funkcí \verb|libdfmt_scan_devs()|. Seznam ukazatelů na struktury reprezentující všechna připojená zařízení se získá zavoláním funkce \verb|libdfmt_scan_devs()|. V případě, že nebyl nalezen žádný tuner funkce vrací NULL. Seznam lze procházet pomocí funkce \verb|libdfmt_next()|. 
+Knihovnu je potřeba nejprve inicializovat funkcí \verb|libdfmt_init()|. Vyhledávání zařízení se~provede funkcí \verb|libdfmt_scan_devs()|. Seznam ukazatelů na struktury reprezentující všechna připojená zařízení se~získá zavoláním funkce \verb|libdfmt_scan_devs()|. V případě, že nebyl nalezen žádný tuner funkce vrací NULL. Seznam lze procházet pomocí funkce \verb|libdfmt_next()|. 
 
 Pro ovládání jednotlivých tunerů je potřeba nejprve zařízení otevřít funkcí \verb|libdfmt_dev_open()|. Dále je třeba získat ukazatele reprezentující jednotlivé tunery na zařízení. To se provede pomocí funkce \verb|libdfmt_get_tuners()|.
 
-Pro napojení do událostního systému je možné zaregistrovat pomocí funkcí \verb|libdfmt_new_dev_cb()| a \verb|libdfmt_removed_dev_cb()| vlastní funkce, které budou zavolány při detekci připojení nebo odpojení zařízení. V parametru jsou do těchto funkcí vždy předány ukazatele na zařízení, na kterém tato událost nastala.
+Pro napojení do událostního systému je možné zaregistrovat pomocí funkcí \verb|libdfmt_new_dev_cb()| a \verb|libdfmt_removed_dev_cb()| vlastní funkce, které budou zavolány při detekci připojení nebo odpojení zařízení. V parametru jsou do těchto funkcí vždy předány ukazatele na~zařízení, na~kterém tato událost nastala.
 
 Po ukončení práce se zařízením je vhodné jej uzavřít zavoláním funkce \verb|libdfmt_dev_close()|. Při ukončení aplikace nebo ukončení práce se všemi tunery je vhodné knihovnu uzavřít a uvolnit jí alokované prostředky voláním \verb|libdfmt_exit()|.
 
@@ -39,7 +39,7 @@ while(devs){
 libdfmt_exit();
 \end{lstlisting}
 
-Příklad práce s knihovnou je ve výpisu \ref{src:lib-mgm}. Provede se zde inicializace knihovny a vyhledání všech připojených zařízení. Poté se nalezená zařízení postupně v cyklu otevřou, na tuneru A se naladí frekvence 93,7 MHz a uzavřou.
+Příklad práce s knihovnou je ve výpisu \ref{src:lib-mgm}. Provede se zde inicializace knihovny a vyhledání všech připojených zařízení. Poté se nalezená zařízení postupně v cyklu otevřou, na tuneru~A se~naladí frekvence 93,7~MHz a~uzavřou.
 
 \subsection{Nízkoúrovňové funkce}
 Nízko do nízko úrovňových funkcí spadají pouze tři funkce funkce. \verb|libdfmt_i2c_com()| umožňuje zápis pole dat přes \iic sběrnici do zvoleného tuneru a nebo čtení zadaného množství dat z tuneru. Je to základní funkce zapouzdřující rozhraní USB - \iic tunelu.
@@ -48,13 +48,13 @@ Zbylá dvojice funkcí \verb|libdfmt_i2c_send()| a \verb|libdfmt_i2c_recv()|  tv
 
 \subsection{Středoúrovňové funkce}
 
-Tyto funkce tvoří rozhraní pro odesílání příkazů, čtení odpovědí a poskytují rozhraní pro práci s proměnnými v tunerech. Dale jdou zde funkce k zjišťování stavu tunerů. Hlavním účelem těchto funkcí je umožnit jednoduché rozšiřování funkcionality knihovny.
+Tyto funkce tvoří rozhraní pro odesílání příkazů, čtení odpovědí a poskytují rozhraní pro~práci s~proměnnými v tunerech. Dale jdou zde funkce k zjišťování stavu tunerů. Hlavním účelem těchto funkcí je umožnit jednoduché rozšiřování funkcionality knihovny.
 
 Pro práci s příkazy slouží funkce \verb|libdfmt_cmd_send()| a \verb|libdfmt_cmd_recv_reply()|. První uvedená provede před odesláním kontrolu jestli tuner není zaneprázdněn. Pokud toto chování není žádoucí je možné použit funkci \verb|libdfmt_cmd_send_nocheck()|, která kontrolu neprovádí.
 
-Čtení a zápis hodnot do proměnných tuneru se provádí funkcemi \verb|libdfmt_prop_get()| a \verb|libdfmt_prop_set()|.
+Čtení a zápis hodnot do proměnných tuneru se provádí funkcemi \verb|libdfmt_prop_get()| a~\verb|libdfmt_prop_set()|.
 
-Dále se zde nachází funkce \verb|libdfmt_cmd_status()|, která získá status daného tuneru. Funkce \verb|libdfmt_check_bussy()| je vlastně variantou předchozí funkce, která pouze ověřuje jestli je možné odeslat další příkaz. Poslední funkcí je \verb|libdfmt_check_int()|. Tato funkce provede aktualizaci příznaků přerušení v tuneru a přečte jejich hodnoty.
+Dále se zde nachází funkce \verb|libdfmt_cmd_status()|, která získá status daného tuneru. Funkce \verb|libdfmt_check_bussy()| je vlastně variantou předchozí funkce, která pouze ověřuje jestli je~možné odeslat další příkaz. Poslední funkcí je \verb|libdfmt_check_int()|. Tato funkce provede aktualizaci příznaků přerušení v tuneru a přečte jejich hodnoty.
 
 \subsection{Vysokoúrovňové funkce}
 Tato sada funkcí umožňuje ladění a vyhledávání stanic, získání parametrů signálu naladěné stanice a čtení RDS.
@@ -85,22 +85,56 @@ udevadm control --reload-rules
 Pravidlo je předpřipraveno v souboru 98-dfmt.rules ve složce driver/linux/ na přiloženém CD. Nakopírování pravidla a příkaz znovu-načtení pravidel subsystémem udev ukazuje výpis \ref{src:lib-linux-drv}. Oba příkazy je nutné spouštět s právy superuživatele.
 
 \subsubsection{Pro OS Windows}
-Pod OS Windows je situace trochu komplikovanější. K libusb je doporučován ovladač WinUSB. Při použití tohoto ovladače docházelo při pokusu o otevření zařízení funkcí \verb|libusb_open()| k chybě LIBUSB\_ERROR\_NOT\_FOUND. Vyzkoušel jsem tedy ovladač libusbK, který je doporučován pro libusb pro jazyk .NET. S tímto ovladačem pracuje knihovna překvapivě správně.
+Pod OS Windows je situace trochu komplikovanější. K~libusb je doporučován ovladač WinUSB. Při použití tohoto ovladače docházelo při pokusu o otevření zařízení funkcí \verb|libusb_open()| k~chybě LIBUSB\_ERROR\_NOT\_FOUND. Vyzkoušel jsem tedy ovladač libusbK, který je doporučován pro libusb pro jazyk .NET. S tímto ovladačem pracuje knihovna překvapivě správně.
 
-Uživatelsky nejméně přívětivý způsob instalace je vyhledání nerozpoznaného zařízení ve správci zařízení a výběr ovladače v menu u tohoto zařízení. Naopak uživatelsky nejpřívětivější by bylo využití projektu libwdi \cite{libwdi}, který umožňuje instalaci ovladačů integrovat přímo do aplikace.
+Uživatelsky nejméně přívětivý způsob instalace je vyhledání nerozpoznaného zařízení ve~správci zařízení a výběr ovladače v menu u tohoto zařízení. Naopak uživatelsky nejpřívětivější by bylo využití projektu libwdi \cite{libwdi}, který umožňuje instalaci ovladačů integrovat přímo do~aplikace.
 
 \InsertFigure{figures/dfmt-win-drv-install.png}{120mm}{Instalace ovladače pro Windows}{fig:zadig}
 
 Pro instalaci ovladačů jsem se rozhodl využít aplikaci Zadig \cite{zadig}, která vznikla v rámci projektu libwdi. Aplikace obecně umožňuje instalaci některého z ovladačů pro použití libusb včetně vyhledání a zobrazení seznamu zařízení, která by tento ovladač mohla potřebovat. Chování aplikace je možné přizpůsobit přiložením konfiguračního souboru zadig.ini. Tento jsem upravil tak, že aplikace vyhledává přímo modul tuneru, a instaluje pro něj ovladač libusbK. Pro instalaci ovladače tedy stačí připojit modul k počítači, spustit aplikaci drv\_install.exe ve složce driver/win/ na přiloženém CD. Po zobrazení názvu modulu v rozbalovacím seznamu v horní části aplikace, kliknout na tlačítko "Install WCID driver" viz. obrázek \ref{fig:zadig}.
 
-Další možnost instalace je použití Windows compatible device ID. Doplněním modulu o jeden řetězcový deskriptor a odpověď na jeden požadavek bude mít windows možnost zjistit "compatible ID" (ID kompatibility). Na základě této informace vyhledá olvadač v systému a nebo na windows update a nainstaluje jej. V \cite{wcid} je   podrobný popis tohoto deskriptoru a požadavku tak, aby byl kompatibilní s instalovanými ovladači aplikací Zadig. Údajně by Windows Vista a novější měly ovladač instalovat zcela automaticky. 
+Další možnost instalace je použití Windows compatible device ID. Doplněním modulu o~jeden řetězcový deskriptor a odpověď na jeden požadavek bude mít windows možnost zjistit "compatible ID" (ID kompatibility). Na základě této informace vyhledá olvadač v systému a nebo na~Windows update a nainstaluje jej. V \cite{wcid} je podrobný popis tohoto deskriptoru a požadavku tak, aby byl kompatibilní s instalovanými ovladači aplikací Zadig. Údajně by Windows Vista a~novější měly ovladač instalovat zcela automaticky. 
 
 Doplnil jsem podporu pro Windows compatible device ID. Analyzátorem jsem ověřil, že OS tyto informace opravdu čte, ale zatím nikdy na základě těchto informací nedošlo k instalaci ovladače.
 
 \subsection{Demonstrační aplikace}
-Demonstrační aplikace je napsána v jazyce C++ s využitím grafického frameworku Qt5.
+
+\InsertFigure{figures/gui.png}{66mm}{Demonstrační aplikace.}{fig:gui}
+
+Demonstrační aplikace je napsána v jazyce C++ s využitím grafického frameworku Qt5. Jak je~vidět z obrázku \ref{fig:gui}, aplikace umožňuje ladění zadané frekvence a vyhledávání stanice směrem nahoru nebo dolů na prvním tuneru. Pod ovládacími prvky ladění se zobrazuje síla signálu (RSSI) a odstup signálu od šumu (SNR). V horní části okna je zobrazován RDS radio text. 
+
+Čtení radio textu je implementováno přesně podle normy \cite{rds}. Jednotlivé segmenty textu jsou přepisovány hned jak dojde k jejich přijetí. Případné dvojité zobrazení vysílaného titulku nebo vkládání velkého množství mezer do textu je chybu na straně vysílajících stanic.
+
+Druhý tuner po celou dobu běhu aplikace provádí vyhledávání stanic a měření parametrů jejich příjmu pomocí druhého tuneru. Tyto informace jsou zobrazovány v tabulce v dolní části okna.
 
 TODO: Problém přiřazení zvukové karty konkrétnímu zařízení
 
 \subsection{Překlad}
-TODO
+Jak knihovna tak demonstrační aplikace, byly vyvíjeny pomocí vývojového prostředí QT Creator. Na přiloženém CD je ve složce software obsažen mutiprojekt pro QT Creator, který se~skládá z projektů dfmtgui a libdfmt, které jsou umístěné ve stejnojmenných podsložkách.
+
+O provedení překladu se stará qMake, který je součástí snad každé linuxové distribuce a~pod~OS Windows se instaluje spolu s QT Creatorem.
+
+Překlad z příkazového řádku je pod OS Linux velmi jednoduchý. Skládá se ze dvou příkazů~\ref{src:linux-build}. Jenom bych upozornil, že překlad je vždy proveden do aktuálního adresáře.
+
+\begin{lstlisting}[language=bash, label=src:linux-build, caption=Překlad pod OS Linux z příkazové řádku.]
+qmake software/software.pro
+make
+\end{lstlisting}
+
+Přeložená demonstrační aplikaci se bude poté nacházet v dfmtgui/dfmtgui, knihovna v libdfmt/libdfmt.a. Obdobným způsobem je možné přeložit každý projekt zvlášť Je je potřeba qmake předat odpovídající .pro soubor.
+
+Překlad pod OS Windows jsem ověřoval s kompilátorem MinGW32. Na tomto OS doporučuji provádět kompilaci QT Creatorem. Verzi demonstračního programu a knihovny pro Windows jsem překládal kros-kompilací a statickým sestavením se všemi knihovnami včetně QT frameworku. Díky tomu není třeba s aplikací distribuovat žádné další sdílené knihovny.
+
+
+Vastní překlad se provede pomocí příkazů uvedených ve výpisu \ref{src:linux-mxe-build}. Cestu k mxe je potřeba nahradit cestou kde byl MXE nainstalován, stejně jako cestu k souboru s projektem software.pro.
+
+\begin{lstlisting}[language=bash, label=src:linux-mxe-build, caption=Překlad pod OS Linux pro OS Windows.]
+mxe/usr/i686-w64-mingw32.static/qt5/bin/qmake software/software.pro
+export PATH=mxe/usr/bin:$PATH
+make
+\end{lstlisting}
+
+Přeložená knihovna se po ukončení kompilace bude nacházet v libdfmt/release/libdfmt.a, demonstrační aplikace bude v dfmtgui/release/dfmtgui.exe.
+
+
+TODO dokumentace knihovny

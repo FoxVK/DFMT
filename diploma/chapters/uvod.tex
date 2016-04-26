@@ -2,14 +2,14 @@
 \label{sec:Uvod}
 %Tento text je ukázkou sazby diplomové práce v \LaTeX{}u pomocí třídy dokumentů \verb|diploma|.
 
-Cílem této diplomové práce je navrhnout USB FM přijímač rádiového vysílání. Přijímač bude v systému reprezentován jako zvuková karta a bude obsahovat dva tunery. Jeden bude sloužit k samotnému příjmu vysílání a druhý k vyhledávání dalších stanic. Dále napsat knihovnu, umožňující ovládání tuneru pod Operačními systémy Linux a Windows. Text této práce je členěn do třech kapitol.
+Cílem této diplomové práce je navrhnout USB FM přijímač rádiového vysílání. Přijímač bude v systému reprezentován jako zvuková karta a bude obsahovat dva tunery. Jeden bude sloužit k~samotnému příjmu vysílání a druhý k vyhledávání dalších stanic. Dále napsat knihovnu, umožňující ovládání tuneru pod operačními systémy Linux a Windows. Text této práce je členěn do~čtyř kapitol.
 
-První kapitola se zabývá konstrukcí modulu. Je zde shrnuto a~zhodnoceno několik možností jak realizovat jednak samotný příjem rozhlasového vysílání a~také několik možností řešení napojení tunerů na USB sběrnici.
+První kapitola se zabývá konstrukcí modulu. Je zde shrnuto několik možností jak realizovat jednak samotný příjem rozhlasového vysílání a~také několik možností řešení napojení tunerů na~USB sběrnici. Tyto možnosti jsou zhodnoceny a zvolené řešení je zde popsáno.
 
-Druhá kapitola je věnována popisu vybraného tuneru. Je zde uveden zvolený způsob získání zvukových dat, filozofie ovládání tuneru a popis všech použitých příkazů pro tuneru.
+Druhá kapitola je věnována popisu vybraného tuneru. Je zde uveden zvolený způsob získání zvukových dat a možnosti ovládání tuneru. Kapitola obsahuje také popis všech použitých příkazů pro ovládání tuneru.
 
-Ve třetí kapitole je rozebráno napojení tunerů na USB sběrnici. Je zde pois USB popis porblémů s harmony , chyby v křemíku použitého MCU, porblémy nesynchronizovaných hodin udesílání zvuku. Popsáno vzniklé USB rozhraní (TODO)
+Ve třetí kapitole je rozebráno napojení tunerů na USB sběrnici. Je zde popis USB popis neúspěšného řešení pomocí Harmony frameworku od firmy Michrocip. Je zde také upozorněno na chyby v samotném mikrokontroléru, které se řešení týkají. Součástí kapitoly je stručný popis USB protokolu v množství nezbytném pro zajištění přenosu zvuku a ovládání tunerů. V závěru kapitoly je popis Protokolu pro vlastní ovládání tunerů a algoritmus řešící problém výpadků zvukových paketů v důsledku nezávislého časování čtení zvuku a jeho odesílání. 
 
-Čtvrtá kapitola se věnuje vzniklé knihovně a demonstračnímu programu. V první části kapitoly je popis filozofie a rozvrstvení knihovny včetně popisu funkcí. Doplněno ukázkovým kódem práce. Závěru kapitoly je popsána demonstrační aplikace. (TODO)
+Čtvrtá kapitola se věnuje vzniklé knihovně a aplikaci demonstrující její funkčnost. V první části kapitoly je popis filozofie a rozvrstvení knihovny včetně popisu funkcí včetně ukázkového kódu základní práce s moduly. Na konci kapitoly je popis demonstrační aplikace a způsoby překladu jak jak aplikace tak knihovny na obou požadovaných platformách.
 
 %V závěru jsou shrnuty dosažené cíle, vyzdvihnut vlastní přínos

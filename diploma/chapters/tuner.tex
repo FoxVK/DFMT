@@ -23,9 +23,9 @@ SS & $\Leftarrow$ & DFS & Signál určení kanálu \\
 \end{table}
 
 
-Rozhraní \iis je v případě jednosměrného přenosu v podstatě rozhraní SPI doplněné o další datový signál. Význam signálů včetně odpovídajících názvů pinů na MCU a tuneru shrnuje tabulka \ref{tab:iis_signals}. V případě \iis se nejedná o sběrnici. Vždy komunikují právě dvě zařízení kde jedno je master a druhé slave. Master vždy vysílá datový signál a signál přepínání kanálů. Datový signál vysílá samozřejmě zřízení, které je zdrojem zvuku. Je možný i obousměrný přenos, potom je nutné použití dvou datových linek.
+Rozhraní \iis je v případě jednosměrného přenosu v podstatě rozhraní SPI doplněné o další datový signál. Význam signálů včetně odpovídajících názvů pinů na MCU a tuneru shrnuje tabulka \ref{tab:iis_signals}. V případě \iis se nejedná o sběrnici. Vždy komunikují právě dvě zařízení kde jedno je master a druhé slave. Master vždy vysílá datový signál a signál přepínání kanálů. Datový signál vysílá samozřejmě zřízení, které je zdrojem zvuku. Je možný i obousměrný přenos, potom je~nutné použití dvou datových linek.
 
-Tuner umí pracovat pouze v režimu slave, takže hodinový signál a signál přepínání kanálů je generován z MCU. Vzorkování zvuku v tuneru je řízeno jeho vlastním interním oscilátorem. Díky tomuto pravděpodobně občas dojde k zahození některého vzorku pokud MCU čte pomaleji než tuner provádí vzorkování, a nebo dojde k přečtení náhodných dat v opačném případě. Nicméně v praxi jsem s tímto nezaznamenal žádný problém.  
+Tuner umí pracovat pouze v režimu slave, takže hodinový signál a signál přepínání kanálů je~generován z MCU. Vzorkování zvuku v tuneru je řízeno jeho vlastním interním oscilátorem. Díky tomuto pravděpodobně občas dojde k zahození některého vzorku pokud MCU čte pomaleji než tuner provádí vzorkování, a nebo dojde k přečtení náhodných dat v opačném případě. Nicméně v praxi jsem s tímto nezaznamenal žádný problém.  
 
 \InsertFigure{figures/i2s_format.png}{120mm}{Časový diagram \iis přenosu. (Převzato z \cite{iis})}{fig:iis-diagram}
 
@@ -114,7 +114,7 @@ Zápis hodnoty se provádí příkazem SET\_PROPERTY (0x12), za kterým následu
 \label{subsubsec:tun-init}
 \InsertFigure{figures/tuner-init.eps}{111mm}{Diagram inicializace tuneru.}{fig:tuner-init}
 
-Po spuštění MCU vždy provádí inicializaci obou tunerů. Průběh inicializace shrnuje diagram~\ref{fig:tuner-init}. Z důvodu zkrácení doby spuštění modulu probíhá inicializace formou jednoduchého "multitaskingu". Pokud je jeden tuner zaneprázdněn testuje se stav druhého tuneru a v případě, že není zaneprázdněn dojde k vyslání příkazu, pokud je zaneprázdněn testuje se znova první  tuner a tak dále. Ze stejného důvodu je v příkazu FM\_TUNE\_STATUS nastaven příznak zrychleného nepřesného ladění.
+Po spuštění MCU vždy provádí inicializaci obou tunerů. Průběh inicializace shrnuje diagram~\ref{fig:tuner-init}. Z důvodu zkrácení doby spuštění modulu probíhá inicializace formou jednoduchého "multitaskingu". Pokud je jeden tuner zaneprázdněn testuje se stav druhého tuneru a v případě, že~není zaneprázdněn dojde k vyslání příkazu, pokud je zaneprázdněn testuje se znova první  tuner a~tak~dále. Ze stejného důvodu je v příkazu FM\_TUNE\_STATUS nastaven příznak zrychleného nepřesného ladění.
 
 
 \begin{table}[ht!]
@@ -290,7 +290,7 @@ Ukončení vyhledávání je signalizováno nastavením bitu STCINT ve statusu o
 %TODO možná obrázek
 RDS je rozšíření pozemního rozhlasového vysílání o souběžné vysílání různých digitálních informací. Z nejznámějších informací je to RT (Radio Text) - přenos až 64 znaků textu, typicky s názvem právě přehrávané skladby a nebo názvem rádiové stanice. Potom AF  (Alternative frequency) seznam dalších frekvencí, na kterých je možné stanici naladit, což lze s využitím informace PI (Programme Identification), který stanici jednoznačně identifikuje k automatickému přelaďování na frekvenci s lepším příjmem. Kompletní popis je v \cite{rds}.
 
-Proud přenášených dat se dělí do třiceti skupin označených 1A, 1B, 2A ... 15A, 15B. Každá skupina má pevně danou velikost 104 bitů a skládá se ze čtyř stejně dlouhých bloků. Chtěl bych upozornit, že v normě \cite{rds} jsou tyto bloky označeny čísly 1 až 4, kdežto v programovací příručce tuneru \cite{tuner-programing} jsou označeny písmeny A až D. Každý blok nese 16~bitů užitečných dat a 10-ti bitové kontrolní slovo. Vyhodnocování chyb v přijatých datech a jejich případnou korekci zajišťuje tuner. Pro příjem je v tuneru k dispozici fronta na 14 skupin.
+Proud přenášených dat se dělí do třiceti skupin označených 1A, 1B, 2A ... 15A, 15B. Každá skupina má pevně danou velikost 104 bitů a skládá se ze čtyř stejně dlouhých bloků. Chtěl bych upozornit, že v normě \cite{rds} jsou tyto bloky označeny čísly 1 až 4, kdežto v programovací příručce tuneru \cite{tuner-programing} jsou označeny písmeny A až D. Každý blok nese 16~bitů užitečných dat a~10-ti~bitové kontrolní slovo. Vyhodnocování chyb v přijatých datech a jejich případnou korekci zajišťuje tuner. Pro příjem je v tuneru k dispozici fronta na 14 skupin.
 
 \begin{table}[ht!]
 \begin{center}
@@ -387,7 +387,7 @@ Odpověď na tento příkaz v tabulce \ref{tab:tuner-rds-get-resp} je podle oče
 \item \textbf{RDSSYNC} - Příjem RDS je synchronizován. (Aktuální stav.)
 \end{itemize}
 
-V bytu RDSFIFOUSED je počet skupin ve frontě. Pokud je tato hodnota větší než nula, v následujících osmi bytech se nachází data nejstarší přijaté skupiny. V posledním byte odpovědi jsou informace o chybovosti přijmu jednotlivých bloků skupiny BLEA až BLED. Význam hodnot chybovosti je tento:
+V bytu RDSFIFOUSED je počet skupin ve frontě. Pokud je tato hodnota větší než nula, v~následujících osmi bytech se nachází data nejstarší přijaté skupiny. V posledním byte odpovědi jsou informace o chybovosti přijmu jednotlivých bloků skupiny BLEA až BLED. Význam hodnot chybovosti je tento:
 
 \begin{itemize}
 \item 0 - Blok přijat bez chyby.
@@ -396,4 +396,4 @@ V bytu RDSFIFOUSED je počet skupin ve frontě. Pokud je tato hodnota větší n
 \item 3 - Blok nebylo možné opravit. Neobsahuje platná data.
 \end{itemize} 
 
-Aby nedoházelo k přetečení fronty přijatých skupin, je potřeba frontu vyčítat v dostatečně krátkých intervalech. Zde je možné využít z pevné délky skupiny 104 b a rychlosti přenosu 1187,5 kHz. Přenos skupiny tedy trvá 87,5 ms. K naplnění 14-ti prvkové fronty tedy dojde nejdříve za 1,2 s. Pokud bude interval vyčítání vždy kratší, k přetečení fronty nedojde.
+Aby nedoházelo k přetečení fronty přijatých skupin, je potřeba frontu vyčítat v dostatečně krátkých intervalech. Zde je možné využít z pevné délky skupiny 104 b a rychlosti přenosu 1187,5 kHz. Přenos skupiny tedy trvá 87,5 ms. K naplnění 14-ti prvkové fronty tedy dojde nejdříve za~1,2~s. Pokud bude interval vyčítání vždy kratší, k přetečení fronty nedojde.

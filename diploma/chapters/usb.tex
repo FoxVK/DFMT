@@ -3,14 +3,14 @@
 \InsertFigure{figures/usb-topo.eps}{160mm}{Příklad topologie USB sběrnice.}{fig:usb-topo}
 
 Na rozdíl od například populárního rozhraní UART je USB podstatně komplikovanější. Je to určitou daní za jeho univerzálnost. Vzhledem k velkému rozsahu specifikace USB \cite{usb-spec} se omezím pouze na popis částí nezbytných pro implementaci modulu.\\
-S vydáním specifikace USB 2.0 byly předchozí specifikace označeny jako zastaralé a neměly by se používat pro nové konstrukce. Následující text se tedy týká USB 2.0 a~rychlosti full-speed.
+S vydáním specifikace USB 2.0 byly předchozí specifikace označeny jako zastaralé a neměly by~se~používat pro nové konstrukce. Následující text se tedy týká USB 2.0 a~rychlosti full-speed.
 
 %minimální zařízení\\
 
 \subsection{Stručný úvod do full-speed USB 2.0}
 \subsubsection{Topologie}
 
-Ačkoliv název rozhraní (Univerzální Sériová Sběrnice) napovídá, že jde o sběrnici, jedná se o zapojení typu hvězda. Přesněji, jak je vidět z obrázku \ref{fig:usb-topo}, připojená zařízení a rozbočovače tvoří strom jehož kořenem je hostitel. Tento implementuje tzv. kořenový rozbočovač (root hub), ke kterému je možné buď přímo připojit jedno zařízení a nebo rozbočovač a do něj dalších až osm zařízení/rozbočovačů. Je možné takto za sebe zřetězit až pět rozbočovačů. Celkově je možné na jeden kořenový rozbočovač připojit až 127 zařízení (včetně rozbočovačů).
+Ačkoliv název rozhraní (Univerzální Sériová Sběrnice) napovídá, že jde o sběrnici, jedná se~o~zapojení typu hvězda. Přesněji, jak je vidět z obrázku \ref{fig:usb-topo}, připojená zařízení a rozbočovače tvoří strom jehož kořenem je hostitel. Tento implementuje tzv. kořenový rozbočovač (root hub), ke~kterému je možné buď přímo připojit jedno zařízení a nebo rozbočovač a do něj dalších až osm zařízení/rozbočovačů. Je možné takto za~sebe zřetězit až~pět rozbočovačů. Celkově je možné na~jeden kořenový rozbočovač připojit až 127 zařízení (včetně rozbočovačů).
 
 Velkou výhodou je, že zařízení je od topologie odstíněno. Vždy se z jeho pohledu komunikuje přímo s hostem.
 Ve specifikaci je také zohledněn fakt, že zařízení zpravidla nezastává pouze jedinou funkci. To je konec konců případ i tohoto modulu. Obsahuje dvě funkce - zvukovou kartu a \iic tunel pro komunikaci s tunery.
@@ -37,7 +37,7 @@ Přenos přerušení & Minimální & až 90\% & Ano & Proud \\
 \label{tab:usb-transfer-types} 
 \end{table}
 
-Aby bylo možné uspokojit nároky na přenos (transfer) dat rozdílné povahy různými funkcemi, zavádí specifikace koncové body (endpoint). Osm výstupních (OUT) pro směr z hostitele do zařízení a osm pro směr opačný (IN). Směr je vždy určován právě z pohledu hostitele. Každému bodu je možné přiřadit jeden ze čtyř druhů přenosu podle tabulky \ref{tab:usb-transfer-types}. Výjimkou je  vstupní a výstupní koncový bod nula. Tyto vždy slouží pro řídící přenosy a na rozdíl od ostatních bodů je musí podporovat všechna zařízení.
+Aby bylo možné uspokojit nároky na přenos (transfer) dat rozdílné povahy různými funkcemi, zavádí specifikace koncové body (endpoint). Osm výstupních (OUT) pro směr z hostitele do~zařízení a osm pro směr opačný (IN). Směr je vždy určován právě z pohledu hostitele. Každému bodu je možné přiřadit jeden ze čtyř druhů přenosu podle tabulky \ref{tab:usb-transfer-types}. Výjimkou je~vstupní a~výstupní koncový bod nula. Tyto vždy slouží pro řídící přenosy a na rozdíl od ostatních bodů je musí podporovat všechna zařízení.
 
 Full-speed USB podporuje čtyři druhy komunikace uvedené v tabulce \ref{tab:usb-transfer-types}.
 
@@ -53,7 +53,7 @@ Přenos vždy sestává z alespoň jedné transakce (transaction), která se dá
 \item \textbf{SETUP} - Následuje řídící přenos. 
 \end{itemize}
 
-Za tímto paketem následuje nula nebo více paketů s daty. Aby bylo možné detekovat výpadek nebo duplikaci některého z~paketů jsou specifikovány hned dva typy paketů. A~to DATA0 a~DATA1. U izochronních transakcí se vždy posílají pakety DATA0. U ostatních transakcí se vyšle nejprve DATA0 a~poté se~tyto druhy paketů střídají nezávisle na transakcích. Znovu se~od~DATA0 začne pouze v~následujících případech:
+Za tímto paketem následuje nula nebo více paketů s daty. Aby bylo možné detekovat výpadek nebo duplikaci některého z~paketů jsou specifikovány hned dva typy paketů. A~to DATA0 a~DATA1. U izochronních transakcí se vždy posílají pakety DATA0. U ostatních transakcí se~vyšle nejprve DATA0 a~poté se~tyto druhy paketů střídají nezávisle na transakcích. Znovu se~od~DATA0 začne pouze v~následujících případech:
 \begin{itemize}
 \item Na začátku každé řídící transakce.
 \item Po následujících žádostech hostitele (bude popsáno dále):
@@ -63,7 +63,7 @@ Za tímto paketem následuje nula nebo více paketů s daty. Aby bylo možné de
 \item Nastavení rozhraní.
 \end{itemize}
 \end{itemize}
-Za datovými pakety následuje potvrzování transakce protistranou. Izochronní přenosy potvrzování nepodporují, tudíž datovými pakety jejich transakce končí. Transkace hromadných přenosů a přenosu přerušení jsou vždy zakončeny jedním potvrzovacím (handshake) paketem.  Transkace řídících přenosů mají před potvrzovací paket vložen jeden datový paket nulové délky (zero length packet často zkracovaný ZLP), ale opačného směru než všechny předchozí datové pakety. Potvrzovací paket vždy vysílá zařízení. Má vždy jeden z následujících typů:
+Za datovými pakety následuje potvrzování transakce protistranou. Izochronní přenosy potvrzování nepodporují, tudíž datovými pakety jejich transakce končí. Transkace hromadných přenosů a přenosu přerušení jsou vždy zakončeny jedním potvrzovacím (handshake) paketem.  Transkace řídících přenosů mají před potvrzovací paket vložen jeden datový paket nulové délky (zero length packet často zkracovaný jako ZLP), ale opačného směru než všechny předchozí datové pakety. Potvrzovací paket vždy vysílá zařízení. Má vždy jeden z následujících typů:
 \begin{itemize}
 \item \textbf{ACK} (Úspěch) - Úspěšné ukončení transakce.
 \item \textbf{NAK} (Neúspěch) - Typicky poškozená přijímaná data a nebo častěji zařízení nemá připravena data k odeslání.
@@ -126,9 +126,9 @@ bNumConfigurations & 1B & 1 & Počet konfigurací zařízení.\\
 \label{tab:usb-device-descriptor} 
 \end{table}
 %\FloatBarrier
-V tabulce \ref{tab:usb-device-descriptor} je uveden deskriptor zařízení tak, jak je použit v modulu. Myslím, že popis významu  polí v tabulce je dostatečný.  Za zmínku stojí ID výrobce a zařízení. Jejich účel je stejný jak například MAC adresa síťových zařízení a to jednoznačně identifikovat druh zařízení. Oficiální cesta je požádat o přiřazení ID výrobce USB implementers fórum, což v době psaní toho textu stojí 5000 amerických dolarů \cite{usb-vid}. Výrobci programovatelných součástek s podporou USB, ale naštěstí zpravidla nabízejí možnost zdarma získat ID zařízení z jejich rozsahů. Jednou z podmínek bývá nutnost použít přidělení ID  právě na jejich součástce. Pro modul jsem získal ID produktu od firmy Microchip \PID. ID výrobce je \VID.
+V tabulce \ref{tab:usb-device-descriptor} je uveden deskriptor zařízení tak, jak je použit v modulu. Myslím, že popis významu  polí v tabulce je dostatečný.  Za zmínku stojí ID výrobce a zařízení. Jejich účel je~stejný jak například MAC adresa síťových zařízení a to jednoznačně identifikovat druh zařízení. Oficiální cesta je požádat o přiřazení ID výrobce USB implementers fórum, což v době psaní toho textu stojí 5000 amerických dolarů \cite{usb-vid}. Výrobci programovatelných součástek s podporou USB, ale naštěstí zpravidla nabízejí možnost zdarma získat ID zařízení z jejich rozsahů. Jednou z podmínek bývá nutnost použít přidělení ID  právě na jejich součástce. Pro modul jsem získal ID produktu od firmy Microchip \PID. ID výrobce je \VID.
 
-Pole iManufacturer, iProduct a iSerialNumber nesou indexy na deskriptory textových řetězců. Všechna pole jsou nepovinná. V případě jejich vynechání se použije index s~hodnotou 0. Jak napovídají názvy jednotlivých polí, je možné takto přidat popisek výrobce a zařízení ve formě lidsky čitelného textu a~sériové číslo daného kusu zařízení, které může využít ovladač v hostiteli například pro načtení posledního nastavení po opětovném připojení zařízení.
+Pole iManufacturer, iProduct a iSerialNumber nesou indexy na deskriptory textových řetězců. Všechna pole jsou nepovinná. V případě jejich vynechání se použije index s~hodnotou 0. Jak napovídají názvy jednotlivých polí, je možné takto přidat popisek výrobce a zařízení ve~formě lidsky čitelného textu a~sériové číslo daného kusu zařízení, které může využít ovladač v~hostiteli například pro načtení posledního nastavení po opětovném připojení zařízení.
 
 \subsubsection{Deskriptory řetězců}
 \begin{table}[ht]
@@ -146,11 +146,13 @@ Index 1 & 2N+2 & 0x03 & \multicolumn{2}{c|}{Znak 0} & \multicolumn{2}{c|}{Znak 1
 \caption{Obecný formát deskriptorů řetězců.}
 \label{tab:usb-str-desc} 
 \end{table}
-Deskriptory řetězců jsou organizovány jako pole indexované od nuly. Každý jeden řetězec začíná hlavičkou deskriptoru, ve které je určen typ deskriptoru a jeho celková délka v bytech. Poté následuje samotný text zakódovaný podle normy unicode, konkrétně UTF-16. Je tedy možné použití i národních znaků.\\
+Deskriptory řetězců jsou organizovány jako pole indexované od nuly. Každý jeden řetězec začíná hlavičkou deskriptoru, ve které je určen typ deskriptoru a jeho celková délka v bytech. Poté následuje samotný text zakódovaný podle normy unicode, konkrétně UTF-16. Je tedy možné použití i národních znaků.
+
 Jedinou výjimkou je deskriptor s indexem 0. V zařízení je možné mít více sad textů v různých jazycích. Seznam dostupných jazyků (jazykových kódů) je právě v tomto deskriptoru. Seznam těchto kódů popisuje \cite{usb-lang}. V modulu jsem se omezil pouze na angličtinu (kód 0x0409). Obecný formát těchto deskriptorů je naznačen v tabulce \ref{tab:usb-str-desc}.
 
 \subsubsection{Konfigurace zařízení}
-Konfigurace zařízení je soubor deskriptorů, který popisuje schopnosti zařízení a také jeho nároky na přenos, popřípadě definují sady parametrů z nichž si může hostitel vybrat tu, která mu v daný okamžik nejvíce vyhovuje. Zařízení musí specifikovat minimálně jednu konfiguraci, ale také více. Hostitel potom zařízení jednu přidělí, případně ji může kdykoliv změnit za jinou.\\
+Konfigurace zařízení je soubor deskriptorů, který popisuje schopnosti zařízení a také jeho nároky na přenos, popřípadě definují sady parametrů z nichž si může hostitel vybrat tu, která mu~v~daný okamžik nejvíce vyhovuje. Zařízení musí specifikovat minimálně jednu konfiguraci, ale také více. Hostitel potom zařízení jednu přidělí, případně ji může kdykoliv změnit za jinou.
+
 Každá jedna konfigurace začíná deskriptorem konfigurace, za kterým následují deskriptory rozhraní a koncových bodů, do kterých mohou být zanořeny deskriptory další. Tvoří takto stromovou strukturu. V případě mého modulu je možná pouze jediná konfigurace. Její struktura vypadá následovně:
 %\FloatBarrier
 \begin{enumerate}
@@ -211,7 +213,7 @@ Za zmínku také stojí pole bmAttributes. Nejvyšší bit musí být z důvodu 
 %TODO ref na remote wakeup
 
 \subsubsection{Deskriptory konfigurace vztažené k USB audio 1.0}
-Největší část konfigurace zabírají deskriptory popisující část přenosu zvuku. Je to dáno také tím, že specifikace USB audio \cite{usb-audio} nepopisuje pouze přenos audia po USB. Nabízí také prostředky pro popis topologie vstupů, výstupů, různých efektových jednotek přepínačů, směšovačů a podobně včetně jejich ovládání. Bylo by například možné takto realizovat kompletní ovládání mixážního, kde by přes USB mohlo být realizováno pouze několik vstupů a výstupů a nebo i žádný.
+Největší část konfigurace zabírají deskriptory popisující část přenosu zvuku. Je to dáno také tím, že~specifikace USB audio \cite{usb-audio} nepopisuje pouze přenos audia po USB. Nabízí také prostředky pro~popis topologie vstupů, výstupů, různých efektových jednotek přepínačů, směšovačů a podobně včetně jejich ovládání. Bylo by například možné takto realizovat kompletní ovládání mixážního, kde by přes USB mohlo být realizováno pouze několik vstupů a~výstupů a~nebo i~žádný.
 pultu
 Topologie modulu rádia z pohledu této specifikace je nejjednodušší možná. Je zde pouze jeden výstupní terminál přenosu zvuku přes USB, který má jako vstup nastaven vstupní terminál přijímač rádia.
 
@@ -336,13 +338,13 @@ iTerminal & 1B & 0 & Index na textový řetězec s popisem terminálu.\\
 \end{table}
 \FloatBarrier
 
-Řízení probíhá přes řídící rozhraní zvuku (Audio control interface), které je vždy napojeno na koncový bod 0.  V popisu tohoto rozhraní se skrývá i~topologie. Skládá se z~deskriptorů v tabulkách \ref{tab:usb-aud-ctrl}, \ref{tab:usb-aud-ctrl-head}, \ref{tab:usb-aud-ctrl-in} a \ref{tab:usb-aud-ctrl-out}.
+Řízení probíhá přes řídící rozhraní zvuku (Audio control interface), které je vždy napojeno na koncový bod 0.  V~popisu tohoto rozhraní se skrývá i~topologie. Skládá se z~deskriptorů v~tabulkách \ref{tab:usb-aud-ctrl}, \ref{tab:usb-aud-ctrl-head}, \ref{tab:usb-aud-ctrl-in} a \ref{tab:usb-aud-ctrl-out}.
 
 První deskriptor pouze určuje, že bude následovat popis rozhraní řízení zvuku třídy audio.
 
 Následující deskriptor  (tabulka \ref{tab:usb-aud-ctrl-head}) tvoří hlavičku třídně specifického popisu rozhraní. Specifikuje jednak použitou verzi USB Audio specifikace a také seznam rozhraní pro odesílání zvuku přes USB. Počet položek v tomto seznamu určuje hodnota pole bInCollection. Poté se na konec deskriptoru pro každé rozhraní přidá jedna položka. V tomto případě je použito pouze jediné rozhraní.
 
-Zbylá dvojice deskriptorů (tabulka \ref{tab:usb-aud-ctrl-in} a \ref{tab:usb-aud-ctrl-out}) popisuje vlastní topologii. Výstupní terminály mají vždy pole bSourceID, které se nastaví na hodnotu bTerminalType vstupního terminálu, se kterým je propojen.
+Zbylá dvojice deskriptorů (tabulka \ref{tab:usb-aud-ctrl-in} a~\ref{tab:usb-aud-ctrl-out}) popisuje vlastní topologii. Výstupní terminály mají vždy pole bSourceID, které se nastaví na hodnotu bTerminalType vstupního terminálu, se~kterým je~propojen.
 
 %TODO přidat dokument s terminal typama
 
@@ -467,15 +469,15 @@ tSamFreq(1) & 3B & 48000 & Vzorkovací frekvence v Hz. \\
 
 \FloatBarrier
 
-V tabulce \ref{tab:usb-aud-snd-fmt-head} a \ref{tab:usb-aud-snd-fmt} jsou deskriptory popisující formátování a způsob přenosu zvukových dat. Formátování dat je specifikováno v \cite{usb-audio-formats}. Podle tohoto dokumentu se proud zvukových dat dělí do paketů, které se odesílají každou 1 ms. Paket je složen z rámců (frames), které reprezentují úrovně všech kanálů zachycených v jeden okamžik. Samotné úrovně jednotlivých kanálů se nazývají podrámce (subframes).
+V tabulce \ref{tab:usb-aud-snd-fmt-head} a \ref{tab:usb-aud-snd-fmt} jsou deskriptory popisující formátování a způsob přenosu zvukových dat. Formátování dat je specifikováno v \cite{usb-audio-formats}. Podle tohoto dokumentu se~proud zvukových dat dělí do~paketů, které se odesílají každou 1 ms. Paket je složen z rámců (frames), které reprezentují úrovně všech kanálů zachycených v jeden okamžik. Samotné úrovně jednotlivých kanálů se~nazývají podrámce (subframes).
 
 Deskriptor třídně specifické hlavičky v tabulce \ref{tab:usb-aud-snd-fmt-head} nese kromě polí pro identifikaci sebe sama pouze tři zajímavá pole. 
 
 První je bTerminalLink. Identifikuje, ke kterému výstupnímu terminálu se popis formátu vztahuje. 
 
-Pole bDelay je hodnota prodlevy mezi zachycením vzorku a~jeho odesláním. Veličinou je počet paketů. Hodnota tohoto pole má význam pouze v~případe simultánního záznamu zvuku z~více zvukových karet a~podobně. V případě přijímače rádia na ní nezáleží. 
+Pole bDelay je~hodnota prodlevy mezi zachycením vzorku a~jeho odesláním. Veličinou je~počet paketů. Hodnota tohoto pole má význam pouze v~případe simultánního záznamu zvuku z~více zvukových karet a~podobně. V případě přijímače rádia na ní nezáleží. 
 
-Posledním polem je wFormatTag, které určuje, že hodnoty jednotlivých vzorků budou ve formátu PCM jako  čísla se znaménkem. I zde nabízí USB Audio specifikace značnou volnost a kromě formátu PCM je možné přenášet zvuk komprimovaný různými kodeky. Detailnější specifikace je v \cite{usb-audio-formats}. 
+Posledním polem je wFormatTag, které určuje, že hodnoty jednotlivých vzorků budou ve~formátu PCM jako  čísla se znaménkem. I zde nabízí USB Audio specifikace značnou volnost a kromě formátu PCM je možné přenášet zvuk komprimovaný různými kodeky. Detailnější specifikace je~v~\cite{usb-audio-formats}. 
 
 Následující deskriptor, vyobrazený v tabulce \ref{tab:usb-aud-snd-fmt}, blíže specifikuje parametry PCM formátu. Toto specifikuje hodnota pole bFormatType.
 
@@ -514,7 +516,7 @@ bSynchAddress & 1B & 0 & \makecell[l]{Adresa synchronizačního koncového\\ bod
 
 V tabulce \ref{tab:usb-aud-snd-ep} je deskriptor koncového bodu popisující koncový bod odesílání zvuku (audio streaming endpoint). Prvním zajímavým polem je adresa koncového bodu v poli bEndpointAddress. Jako adresa je použito číslo koncového bodu s tím, že v případě vstupního koncového bodu (směr do hostitele) se sedmý (nejvyšší) bit nastaví na 1. U~opačného směru tento bit zůstává nulový.
 
-Pole bmAttributes obsahuje bitovou mapu atributů koncového bodu. Význam bitů 0 a 1 je následující:
+Pole bmAttributes obsahuje bitovou mapu atributů koncového bodu. Význam bitů 0 a~1 je~následující:
 \begin{itemize}
 \item 00 - Řídící koncový bod.
 \item 01 - Izochronní koncový bod.
@@ -524,9 +526,13 @@ Pole bmAttributes obsahuje bitovou mapu atributů koncového bodu. Význam bitů
 Zbylé bity popisují způsob synchronizace izochronních koncových bodů, která ale není použita. Jejich popis je v kapitole  5.12.4 USB specifikace \cite{usb-spec}.
 
 
-Pole wMaxPacketsize určuje největší možnou velikost paketu. V tomto případě se spočítá z deskriptoru v tabulce \ref{tab:usb-aud-snd-fmt} jako $ bNrChannels \cdot bSubFrameSize \cdot \frac{tSamFreq(1)}{1000} $ Vypočtenou hodnotu je nutné vždy zaokrouhlit nahoru. Například v případě vzorkovací frekvence 44,1 kHz bude ve většině paketů 44 rámců, ale každý desátý jich bude mít 45.
+Pole wMaxPacketsize určuje největší možnou velikost paketu. V tomto případě se spočítá z~deskriptoru v tabulce \ref{tab:usb-aud-snd-fmt} takto: 
 
-Pole bInterval určuje periodu čtení dat z koncového bodu. Hodnota 1 znamená, že se bude hostitel pokoušet číst data z koncového bodu každou 1 ms. Zbývající dvě pole se vztahují k synchronizaci, která nebyla použita a tudíž jsou nastavena na hodnotu 0.
+$$ wMaxPacketsize = bNrChannels \cdot bSubFrameSize \cdot \frac{tSamFreq(1)}{1000} $$ 
+
+Vypočtenou hodnotu je nutné vždy zaokrouhlit nahoru. Například v případě vzorkovací frekvence 44,1 kHz bude ve většině paketů 44 rámců, ale každý desátý jich bude mít 45.
+
+Pole bInterval určuje periodu čtení dat z koncového bodu. Hodnota 1 znamená, že se bude hostitel pokoušet číst data z koncového bodu každou 1 ms. Zbývající dvě pole se vztahují k~synchronizaci, která nebyla použita a tudíž jsou nastavena na hodnotu 0.
 
 \begin{table}[ht!]
 \begin{center}
@@ -596,7 +602,7 @@ iInterface & 1B & 0 & Index řetězce s popisem rozhraní (Nepoužit). \\
 \label{tab:usb-tun-iface} 
 \end{table}
 
-Deskriptor ozhraní USB - \iic tunelu v tabulce \ref{tab:usb-tun-iface} je podobný jako zvuková rozhraní. Liší se samozřejmě třídou zařízení, kde třída 255 určuje, že se nejedná o žádné ze standardizovaných rozhraní, ale je definováno výrobcem. Stejný význam má protokol číslo 255.
+Deskriptor ozhraní USB - \iic tunelu v tabulce \ref{tab:usb-tun-iface} je podobný jako zvuková rozhraní. Liší se~samozřejmě třídou zařízení, kde třída 255 určuje, že se nejedná o žádné ze standardizovaných rozhraní, ale je definováno výrobcem. Stejný význam má protokol číslo 255.
 
 \begin{table}[ht!]
 \begin{center}
@@ -637,9 +643,9 @@ Poté co jsem projekt upravil tak, aby zvuková data nepřijímal, ale odesílal
 
 Opravením této chyby jsem se dostal k odesílání zvuku. I když modul správně prošel enumerací a konfigurací, do hostitele se přenášelo pouze ticho. Pomocí USB analyzátoru jsem zjistil, že modul od hostitele dostává IN tokeny, ale posílá pouze pakety nulové délky, jako by neměl žádná data k odeslání. 
 
-Rozhodl jsem se implementovat ovladač USB Audia jako vendor endpoint (koncový bod specifikovaný výrobcem). Pro potřeby modulu stačí pouze zajistit odesílání zvuku přes izochronní koncový bod a reagovat na požadavek změny alternativního nastavení funkce povolením nebo zakázáním izochronního koncového bodu. Došel jsem ke zcela totožnému chování modulu jako s původním ovladačem.
+Rozhodl jsem se implementovat ovladač USB Audia jako vendor endpoint (koncový bod specifikovaný výrobcem). Pro potřeby modulu stačí pouze zajistit odesílání zvuku přes izochronní koncový bod a reagovat na požadavek změny alternativního nastavení funkce povolením nebo zakázáním izochronního koncového bodu. Došel jsem ke zcela totožnému chování modulu jako s~původním ovladačem.
 
-Upravil jsem tedy vlastní ovladač tak, aby izochronní koncový bod byl povolen neustále. Po této úpravě se začal přenášet zvuk, ale implementace vendor endpointu je pravděpodobně příliš pomalá, takže přibližně každý druhý paket byl následován paketem nulové délky.
+Upravil jsem tedy vlastní ovladač tak, aby izochronní koncový bod byl povolen neustále. Po~této úpravě se začal přenášet zvuk, ale implementace vendor endpointu je pravděpodobně příliš pomalá, takže přibližně každý druhý paket byl následován paketem nulové délky.
 
 %TODO: Možná doplnit screenshotem
 
@@ -655,7 +661,7 @@ Prvním překvapením pro mne bylo, že podle USB specifikace nesmí být na sb�
 
 Vlastní konfigurace USB modulu je v případě USB zařízení v celku jednoduchá. Bitem USBPWR v registru U1PWRC se provede spuštění USB modulu. 
 
-Dále je potřeba do registrů U1BDTP1-3 nastavit dolní tři byty ukazatele na tabulku deskriptorů bufferů. Každému koncovému bodu, pro každý směr, jsou přiřazeny dva záznamy v této tabulce, lichý a sudý. Tvoří takto dvouprvkovou FIFO frontu.  Každý záznam v této tabulce nese ukazatel na buffer pro příjem nebo odesílání dat a další nezbytné informace. Tabulka může být umístěna kdekoliv v zapisovatelné paměti MCU, ale její adresa musí být zarovnaná na 512 B. Jádro MCU používá rozdílné adresy pro přístup k datům z programu (virtuální adresy) a přístup k datům z hardwarových modulů (fyzické adresy). Adresu ukládanou do registrů U1BDTP Je tudíž potřeba přeložit. To se provede logickým součinem s hodnotou 0x1FFFFFFF.
+Dále je~potřeba do registrů U1BDTP1-3 nastavit dolní tři byty ukazatele na tabulku deskriptorů bufferů. Každému koncovému bodu, pro každý směr, jsou přiřazeny dva záznamy v této tabulce, lichý a sudý. Tvoří takto dvouprvkovou FIFO frontu.  Každý záznam v této tabulce nese ukazatel na buffer pro příjem nebo odesílání dat a další nezbytné informace. Tabulka může být umístěna kdekoliv v zapisovatelné paměti MCU, ale její adresa musí být zarovnaná na 512 B. Jádro MCU používá rozdílné adresy pro přístup k datům z programu (virtuální adresy) a přístup k datům z hardwarových modulů (fyzické adresy). Adresu ukládanou do registrů U1BDTP je~tudíž potřeba přeložit. To se provede logickým součinem s hodnotou 0x1FFFFFFF.
 
 \InsertFigure{figures/usb-bdt-swhw.png}{130mm}{Formát deskriptoru USB bufferu předaného do USB modulu. (Převzato z \cite{pic-usb}.)}{fig:usb-bdt-swhw}
 
@@ -674,13 +680,13 @@ Dále je potřeba zinicializovat samotnou tabulku deskriptorů bufferů. Jak je 
 \item \textbf{BUFFER\_ADDRESS} - Fyzická adresa na buffer s data k odeslání nebo přijmu.
 \end{itemize}
 
-Jak je patrné z předchozího výčtu je nezbytné inicializovat přinejmenším bit UOWN na hodnotu 0. 
+Jak je patrné z předchozího výčtu je nezbytné inicializovat přinejmenším bit UOWN na~hodnotu 0. 
 
 Po tomto kroku je možné spustit USB modul nastavením bitu USBEN v registru U1CON na 1.
 
 Aplikace si musí udržovat informace o tom jestli má používat lichý nebo sudý buffer. USB modul umožňuje resetovat všechny koncové body v obou směrech tak, aby znova začaly sudým bufferem, nastavením bitu PBRST v registru U1CON na 1.
 
-Ještě je nutné nakonfigurovat používané koncové body v registrech U1EP0 - U1EP15. Nastavením bitů EPTXEN a nebo EPRXEN odesílání a nebo příjem, pokud se nejedná o koncový bod pro řídící přenosy, je dobré zakázat příjem SETUP tokenů nastavením bitu EPCONDIS. A pokud se nejedná o koncový bod pro isochronní přenos dat povolit handshake nastavením bitu EPHSK. %TODO přeformuluj handshake
+Ještě je nutné nakonfigurovat používané koncové body v registrech U1EP0 - U1EP15. Nastavením bitů EPTXEN a nebo EPRXEN odesílání a nebo příjem, pokud se nejedná o koncový bod pro řídící přenosy, je dobré zakázat příjem SETUP tokenů nastavením bitu EPCONDIS. A~pokud se nejedná o koncový bod pro isochronní přenos dat povolit handshake nastavením bitu EPHSK. %TODO přeformuluj handshake
 
 Pro příjem a odesílání stačí nastavit příslušný záznam v tabulce deskriptorů bufferů s nastavením bitu UOWN jej předat do USB modulu. Po vyřízení přijmu nebo odesílání USB modul nastaví bit TRNIF v registru U1IR a současně nastaví v registru U1STAT tato pole:
 \begin{itemize}
@@ -784,10 +790,10 @@ Na obrázku \ref{fig:usb-states} je stavový diagram USB zařízení. Diagram je
 \item \textbf{Výchozí:} Stav po zapnutí a inicilizaci zařízení. Při vstupu do tohoto stavu se nastaví adresa zařízení na výchozí hodnotu 0.
 \item \textbf{Adresován:} Do tohoto stavu se přejde po zpracování požadavku nastavení adresy. Veškerá další komunikace bude probíhat na této adrese. Ovšem adresu do registru MCU U1ADDR je nutné nastavit až po dokončení transakce - odeslání paketu nulové délky.
 \item \textbf{Konfigurován:} Do tohoto stavu se přejde na základě požadavku nastavení konfigurace. 
-\item \textbf{Suspendován:} K suspendování zařízení může dojít obecně kdykoliv. Do tohoto stavu se přejde pokud na sběrnici není zaznamenána aktivita po dobu 3 ms. Toto detekuje hardware MCU. V tomto stavu musí zařízení snížit svoji spotřebu na nejvýše 0,5 mA.
+\item \textbf{Suspendován:} K suspendování zařízení může dojít obecně kdykoliv. Do tohoto stavu se~přejde pokud na sběrnici není zaznamenána aktivita po dobu 3 ms. Toto detekuje hardware MCU. V tomto stavu musí zařízení snížit svoji spotřebu na nejvýše 0,5 mA.
 \end{itemize}
 
-Dále je potřeba počítat s faktem, že zařízení může být kdykoliv resetováno a vrátí se tak do výchozího stavu, není stanoveno pořadí, v jakém budou žádosti přicházet a kterákoli transakce může být předčasně ukončena vysláním dalšího setup tokenu. 
+Dále je potřeba počítat s~faktem, že~zařízení může být kdykoliv resetováno a~vrátí se~tak~do~výchozího stavu, není stanoveno pořadí, v jakém budou žádosti přicházet a kterákoli transakce může být předčasně ukončena vysláním dalšího setup tokenu. 
 
 
 
@@ -867,20 +873,20 @@ Vlastní modul \iic v MCU je dobře zdokumentován, jednak obecně pro celou rod
 Je zbytečné popisovat zde konfiguraci \iic modulu. Chtěl bych ale upozornit na dvě hardwarové chyby, které se modulu týkají. Obě jsou popsané v \cite{pic-errata}.
 
 Při spuštěném modulu I2C1 nelze používat vývody RA0 a RA1, stejně tak při spuštěném modulu I2C2 nelze používat vývody RB5 a RB6. 
-Druhou chybou je možnost dvojitého zápisu v případě, že během zápisu došlo k přerušení. Toto chování ve většině případů není problém. V případě \iic modulu se se zápisem spouští jednotlivé akce, takže může dojít například k dvojímu zápisu bytu na sběrnici. Řešením je před zápisem do registrů náchylných na tuto chybu zakázat přerušení.
+Druhou chybou je možnost dvojitého zápisu v případě, že během zápisu došlo k přerušení. Toto chování ve většině případů není problém. V~případě \iic modulu se se zápisem spouští jednotlivé akce, takže může dojít například k~dvojímu zápisu bytu na sběrnici. Řešením je před zápisem do registrů náchylných na tuto chybu zakázat přerušení.
 
 
 \subsection{Přenos zvuku z \iis do USB}
 
-Jak už bylo zmíněno, přenos zvuku přes USB probíhá po paketech dlouhých 1 ms, které jsou složeny z rámců. V případě použité vzorkovací frekvence 48 kHz bude v každém paketu 48 rámců.  \iis modul generuje přerušení bohužel nikoliv jednotlivé rámce, ale pro každý podrámec (vzorek jednoho kanálu). Na tato přerušení je napojen vždy DMA kanál, který je postupně ukládá do paketů. MCU  navíc umožňuje řetězení DMA kanálů. To znamená, že zatím co první kanál je spuštěn je možné druhý nakonfigurovat tak, že bude hardwarově spuštěn hned po ukončení předchozího kanálu. Díky tomu má firmware dost času na zpracování jednotlivých paketů.
+Jak už bylo zmíněno, přenos zvuku přes USB probíhá po paketech dlouhých 1 ms, které jsou složeny z rámců. V případě použité vzorkovací frekvence 48 kHz bude v každém paketu 48 rámců.  \iis modul generuje přerušení bohužel nikoliv jednotlivé rámce, ale pro každý podrámec (vzorek jednoho kanálu). Na tato přerušení je napojen vždy DMA kanál, který je postupně ukládá do~paketů. MCU  navíc umožňuje řetězení DMA kanálů. To znamená, že zatím co první kanál je spuštěn je možné druhý nakonfigurovat tak, že bude hardwarově spuštěn hned po ukončení předchozího kanálu. Díky tomu má firmware dost času na zpracování jednotlivých paketů.
 
-Nevýhodou tohoto řešení je, že pokud časování odesílání paketů (řízené hostitelem) a časování čtení paketů (řízeno \iis modulem MCU) není naprosto shodné, bude docházet k občasným výpadkům celých paketů. V praxi je nemožné, aby tyto dva nezávisle zdroje času byly zcela synchronizovány. Frekvence krystalu MCU má výrobní tolerance a určitou teplotní závislost. Navíc odchylka frekvence vzniká už při generování hodinového signálu \iis rozhraní. Frekvence tohoto signálu by měla být při 2 kanálech, 16-ti bitech na kanál a vzorkovací frekvenci 48000 Hz $ 2 \cdot 16 \cdot 48000 = 1536000 $. Nejbližší frekvence, kterou je možné do MCU nastavit je 1538462 kHz, což odpovídá vzorkovací frekvenci 48076 Hz. I když je tento rozdíl jenom +0,160\%, k výpadkům rámců bude docházet poměrně často. Konkrétně bude perioda výpadků:
+Nevýhodou tohoto řešení je, že pokud časování odesílání paketů (řízené hostitelem) a časování čtení paketů (řízeno \iis modulem MCU) není naprosto shodné, bude docházet k občasným výpadkům celých paketů. V praxi je nemožné, aby tyto dva nezávisle zdroje času byly zcela synchronizovány. Frekvence krystalu MCU má výrobní tolerance a určitou teplotní závislost. Navíc odchylka frekvence vzniká už při generování hodinového signálu \iis rozhraní. Frekvence tohoto signálu by měla být při 2 kanálech, 16-ti bitech na kanál a vzorkovací frekvenci 48000~Hz $ 2 \cdot 16 \cdot 48000 = 1536000 $. Nejbližší frekvence, kterou je možné do MCU nastavit je 1538462~kHz, což odpovídá vzorkovací frekvenci 48076 Hz. I když je tento rozdíl jenom +0,160\%, k výpadkům rámců bude docházet poměrně často. Konkrétně bude perioda výpadků:
 
 $$ \frac{\mbox{reálná frekvence} - \mbox{požadovaná frekvence}}{\mbox{počet vzorků}} = \frac{48076 - 48000}{48} =  1,58 s^{-1} $$
 
-Řešením je rozmělnit výpadky paketů, které jsou zřetelné hlavně u mluveného slova, na výpadky jednotlivých rámců, které jsou vhledem ke vzorkovací frekvenci na hranici slyšitelnosti. 
+Řešením je rozmělnit výpadky paketů, které jsou zřetelné hlavně u mluveného slova, na~výpadky jednotlivých rámců, které jsou vhledem ke vzorkovací frekvenci na hranici slyšitelnosti. 
 
-Implementoval jsem korekční algoritmus, který srovnává rychlost USB s počtem přečtených paketů z \iis a počítá periodu s jakou bude do paketu přečteno o jeden vzorek více popřípadě méně. Rychlost USB je možné zjistit z události SOF (start of frame), kterou dostávají hromadně všechna zařízení připojená na sběrnici s periodou 1ms. Algoritmus pracuje s periodou 9600 těchto událostí. V každé iteraci spočítá rozdíl $d = \mbox {počet paketů} - \mbox {počet SOF} + d'$, kde $d'$ je rozdíl z předešlé iterace. V případě kladného výsledku bude do každého N-tého paketu přečteno o jeden vzorek více a ten bude zahozen, v přídě záporného výsledku bude do každého N-tého paketu přečteno o jeden vzorek méně a případě, že d = 0 se korekce neprovádí. Hodnota N se spočítá takto:
+Implementoval jsem korekční algoritmus, který srovnává rychlost USB s počtem přečtených paketů z \iis a počítá periodu s~jakou bude do paketu přečteno o jeden vzorek více popřípadě méně. Rychlost USB je možné zjistit z události SOF (start of frame), kterou dostávají hromadně všechna zařízení připojená na sběrnici s periodou 1ms. Algoritmus pracuje s periodou 9600 těchto událostí. V každé iteraci spočítá rozdíl $d = \mbox {počet paketů} - \mbox {počet SOF} + d'$, kde $d'$ je~rozdíl z~předešlé iterace. V případě kladného výsledku bude do každého N-tého paketu přečteno o jeden vzorek více a ten bude zahozen, v přídě záporného výsledku bude do každého N-tého paketu přečteno o jeden vzorek méně a případě, že d = 0 se korekce neprovádí. Hodnota N se spočítá takto:
 
 $$ N = \frac{\frac{\mbox{počet SOF}}{\mbox{vzorkovací frekvence}}}{d} $$
 
