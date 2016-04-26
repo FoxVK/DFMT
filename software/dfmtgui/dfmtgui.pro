@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += svg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -30,7 +31,7 @@ RESOURCES += \
     icons.qrc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/release/ -ldfmt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/debug/ -ldfmt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libdfmt/debug/ -llibdfmt
 else:unix:!macx: LIBS += -L$$OUT_PWD/../libdfmt/ -ldfmt
 
 
