@@ -41,7 +41,7 @@
 
 \Thanks{Rád bych na tomto místě poděkoval mému vedoucímu panu Ing. Davidu Seidlovi, Ph.D. za cenné rady a trpělivost.}
 
-\CzechAbstract{Tato práce popisuje návrh USB FM přijímače se dvěma tunery. Jeden tuner slouží pro přehrávání zvuku a~druhý pro vyhledávání dalších stanic. přijímač je v~systému reprezentován jako USB zvuková karta.\\ 
+\CzechAbstract{Tato práce popisuje návrh USB FM přijímače se dvěma tunery. Jeden tuner slouží pro přehrávání zvuku a~druhý pro vyhledávání dalších stanic. Přijímač je v~systému reprezentován jako USB zvuková karta.\\ 
 Příjem je realizován dvojicí integrovaných obvodů Si4735-DU. Tyto jsou přes \iis a \iic  spojeny s~MCU PIC32MX250F128B, který přes USB zajišťuje komunikaci s počítačem. V rámci firmware MCU je, po neúspěchu s Microchip harmony frameworkem, napsán vlastní USB stack.\\
 Knihovna je napsána v jazyku~C s~využitím knihovny libusb. Poskytuje funkce pro tři úrovně přístupu k~tunerům.\\
 Demonstrační aplikace je ve formě grafického uživatelského rozhraní, napsaná  v~C++ s využitím QT frameworku.\\
@@ -148,9 +148,9 @@ All works under Linux and Windows.}
 \url{http://ww1.microchip.com/downloads/en/DeviceDoc/60001168H.pdf}
 
 %microchip i2s
-\bibitem{pic-iis} Microchip Technology Inc.
-\textit{PIC32 Family Reference Manual, Sect. 23 Serial Peripheral Interface} [online] 2011-10-11 [2015-12-26]
-\url{http://ww1.microchip.com/downloads/en/DeviceDoc/61106G.pdf}
+%\bibitem{pic-iis} Microchip Technology Inc.
+%\textit{PIC32 Family Reference Manual, Sect. 23 Serial Peripheral Interface} [online] 2011-10-11 [2015-12-26]
+%\url{http://ww1.microchip.com/downloads/en/DeviceDoc/61106G.pdf}
 
 %microchip i2c
 \bibitem{pic-iic} Microchihttp://ww1.microchip.com/downloads/en/DeviceDoc/61116F.pdp Technology Inc.
@@ -158,9 +158,9 @@ All works under Linux and Windows.}
 \url{http://ww1.microchip.com/downloads/en/DeviceDoc/61116F.pdf}
 
 %microchip dma
-\bibitem{pic-dma} Microchip Technology Inc.
-\textit{PIC32 Family Reference Manual, Sect. 31 DMA Controller} [online] 2013-11-15 [2015-12-26]
-\url{http://ww1.microchip.com/downloads/en/DeviceDoc/60001117H.pdf}
+%\bibitem{pic-dma} Microchip Technology Inc.
+%\textit{PIC32 Family Reference Manual, Sect. 31 DMA Controller} [online] 2013-11-15 [2015-12-26]
+%\url{http://ww1.microchip.com/downloads/en/DeviceDoc/60001117H.pdf}
 
 %microchip usb
 \bibitem{pic-usb} Microchip Technology Inc.
@@ -215,6 +215,39 @@ All works under Linux and Windows.}
 
 \appendix
 
+\section{Adresářová struktura  přiloženého CD}
+\label{sec:ap-cd}
+
+\begin{itemize}
+\item \textbf{diploma.pdf}: Tento text.
+
+\item \textbf{firmware}: Projekt pro vývojové prostředí MplabX s firmwarem pro MCU.
+	\begin{itemize}
+	\item \textbf{dist/default/production/}: Přeložený souboru s firmwarem pro MCU.
+	\end{itemize}
+
+\item \textbf{software}: Mutiprojekt s knihovnou a demonstrační aplikací pro vývojové prostředí QT Creator.
+	\begin{itemize}
+	\item \textbf{bin}:
+		\begin{itemize}
+		\item \textbf{win32}: 32-bitová verze knihovny a demonstrační aplikace pro OS Windows.
+		\item \textbf{linuxX86\_64}: 64-bitová verze knihovny a demonstrační aplikace pro OS Linux.
+		\end{itemize}
+	\item \textbf{driver}: Instalátor ovladače pro OS Windows.
+	\item \textbf{dfmtgui}: Projekt s demonstrační aplikací.
+	\item \textbf{libdfmt}: Projekt s knihovnou.
+	\end{itemize}
+	
+\item \textbf{hardware}:
+	\begin{itemize}
+	\item \textbf{exports}: Schéma ve formátu pdf a soubory pro výrobu desky plošných spojů.
+	\item \textbf{kicad}: Projekt se schématem a deskou plošných spojů pro aplikaci Kicad.
+	\end{itemize}
+
+
+
+\end{itemize}
+
 %\begin{landscape}
 
 \section{Schéma zapojení modulu}
@@ -229,10 +262,56 @@ All works under Linux and Windows.}
  
 \section{Rozpiska součástek}
 \label{sec:ap-bom}
+\begin{center}
+\begin{tabular}{|l|r|r|r|l|}
 
+\hline
+Označení	& Název &	Počet	&	Pouzdro	&	Parametry\\
+\hline
+\makecell[l]{C1, C7, C9, C12,\\C15, C16}	&	Kondenzátor	&	6	&	1206	&	100 nF 5 \% X7R  50 V\\
+\hline
+C2, C4	&	Kondenzátor	&	2	&	1206	& 1 nF 5 \% X7R  50 V\\
+\hline
+C3, C5	&	Kondenzátor	&	2	&	1207	&	470 nF 5 \% X7R  50 V\\
+\hline
+C6, C8	&	Kondenzátor	&	2	&	1206	&	22 nF 5 \% X7R  50 V\\
+\hline
+C10, C11	&	Kondenzátor	&	2	&	1206	&	18 pF 5 \% X7R  50 V\\
+\hline
+C13, C14	&	Kondenzátor	&	2	&	B	&	2,2 $\mu$F 10 \% Tantal 16V \\
+\hline
+C17	&	Kondenzátor	&	1	&	B	&	10 $\mu$F 10 \% Tantal 16V \\
+\hline
+IC1, IC2	&	IO	&	2	&	SSOP24	&	SI4735-D60\\
+\hline
+IC3	&	IO	&	1	&	SO 8	&	LE33-SMT\\
+\hline
+L1	&	Tlumivka	&	1	&	1210	&	10 $\mu$H 10 \% 180 mA 1,6 $\Omega$\\
+\hline
+MCU1	&	IO	&	1	&	DIP28	&	PIC32MX220F032B\\
+\hline
+MCU1	&	Patice	&	1	&	DIP28	&	\\
+\hline
+P4	&	Konektor	&	1	&		&	USB B zásuvka  MOLEX 670688000 \\
+\hline
+R1, R4	&	Rezistor	&	2	&	1206	&	560 $\Omega$ 5 \%\\
+\hline
+R2, R3, R5, R6	&	Rezistor	&	4	&	1206	&	2,2 k$\Omega$ 5 \%\\
+\hline
+R7, R8, R9	&	Rezistor	&	3	&	1206	&	4,7 k$\Omega$ 5 \%\\
+\hline
+SW1, SW2	&	Tlačítko	&	2	&		&	TACT 613 N (neosazeno)\\
+\hline
+Y1	&	Krystal	&	1	&		&	8 MHz 30 ppm HC49SM 18 pF\\
+\hline
+-	&	Anténa &	1	&	& Vodič	38 cm AWG24\\
+\hline
+
+\end{tabular} 
+\end{center}
 %\end{landscape}
 
-\clearpage
+%\clearpage
 
 %\InsertFigure{figures/Graf}{0.7\textwidth}{Nějaký graf}{fig:SampleGraph}
 
