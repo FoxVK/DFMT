@@ -18,7 +18,6 @@ DeviceForm::DeviceForm(Device *dev, QWidget *parent) :
 
     ui->setupUi(this);
     this->dev = dev;
-    dev->open();
 
     connect(dev, SIGNAL(radioText(QString)), this->ui->rtLabel, SLOT(setText(QString)));
 

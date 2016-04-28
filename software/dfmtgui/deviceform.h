@@ -18,6 +18,7 @@ public:
     explicit DeviceForm(Device *dev ,QWidget *parent = 0);
     ~DeviceForm();
     Device* get_dev();
+    int no;
 
 private:
     Ui::DeviceForm *ui;

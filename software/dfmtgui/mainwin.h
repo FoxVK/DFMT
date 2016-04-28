@@ -5,6 +5,7 @@
 #include "device.h"
 #include "devices.h"
 #include "deviceform.h"
+#include "nodeviceform.h"
 
 namespace Ui {
 class MainWin;
@@ -24,9 +25,18 @@ private:
     Ui::MainWin *ui;
     Devices devices;
 
+    QTabWidget * tabs;
+    NoDeviceForm * noDev;
+
+
+    int tuner_no;
+    QList<DeviceForm*> device_forms;
+
+
 private slots:
     void dev_connected(Device *dev);
     void dev_removed(Device *dev);
+    void update_central_widget();
 };
 
 #endif // MAINWIN_H

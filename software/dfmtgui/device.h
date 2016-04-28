@@ -26,6 +26,9 @@ public:
 
     bool tunning_done(Tuner tuner);
 
+    int get_last_lib_error();
+    static QString lib_error_to_text(int lib_error);
+
 signals:
     void freq_tunA_changed(double freq);
     void freq_tunB_changed(double freq, unsigned rssi, unsigned snr, bool valid);
@@ -58,6 +61,8 @@ private:
 
     QString radio_text;
     bool radio_text_ABflag;
+
+    int last_lib_error;
 };
 
 #endif // DEVICE_H

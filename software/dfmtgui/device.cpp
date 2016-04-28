@@ -13,6 +13,7 @@ Device::Device(Libdfmt_device * dev, Devices *parrent) :
     this->freq[0] = this->freq[1] = -1;
     this->tun_done[0] = this->tun_done[1] = true;
     this->radio_text_ABflag = true;
+    this->last_lib_error = LIBDFMT_OK;
 }
 
 Device::~Device()
@@ -32,7 +33,8 @@ bool Device::open()
     if(err != LIBDFMT_OK)
     {
         this->opened = false;
-        qFatal("libdfmt_dev_open returned %d.", err);
+        this->last_lib_error = err;
+        //qFatal("libdfmt_dev_open returned %d.", err);
     }
     else
     {
@@ -55,6 +57,26 @@ void Device::close()
 Libdfmt_tuner * Device::get_tuner(Tuner tuner)
 {
     return (tuner == Device::TUNER_B) ? this->tuner[1] : this->tuner[0];
+}
+
+QString Device::lib_error_to_text(int lib_error)
+{
+    switch(lib_error)
+    {
+    case LIBDFMT_OK : return QString("LIBDFMT_OK");
+    case LIBDFMT_ERROR_TIMEOUT : return QString("LIBDFMT_ERROR_TIMEOUT");
+    case LIBDFMT_ERROR_TUNER_BUSY : return QString("LIBDFMT_ERROR_TUNER_BUSY");
+    case LIBDFMT_ERROR_TUNER_ERROR : return QString("LIBDFMT_ERROR_TUNER_ERROR");
+    case LIBDFMT_ERROR_DEVICE_ERROR : return QString("LIBDFMT_ERROR_DEVICE_ERROR");
+    case LIBDFMT_ERROR_DEVICE_DISCONNECTED : return QString("LIBDFMT_ERROR_DEVICE_DISCONNECTED");
+    case LIBDFMT_ERROR_DEVICE_INTERNAL : return QString("LIBDFMT_ERROR_DEVICE_INTERNAL");
+    case LIBDFMT_ERROR_USB_ERROR : return QString("LIBDFMT_ERROR_USB_ERROR");
+    case LIBDFMT_ERROR_BAD_ARGUMENT : return QString("LIBDFMT_ERROR_BAD_ARGUMENT");
+    case LIBDFMT_ERROR_NO_PERMISSION : return QString("LIBDFMT_ERROR_NO_PERMISSION");
+    case LIBDFMT_DEVICE_CLOSED : return QString("LIBDFMT_DEVICE_CLOSED");
+    case LIBDFMT_ERROR : return QString("LIBDFMT_ERROR");
+    default: return QString("UNKNOWN");
+    }
 }
 
 
@@ -230,4 +252,7 @@ void Device::freq_changed(Tuner tuner, double freq)
         emit(freq_tunA_changed(freq));
 }
 
-
+int Device::get_last_lib_error()
+{
+    return last_lib_error;
+}

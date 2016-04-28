@@ -20,7 +20,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTabWidget" name="Tabs"/>
+     <layout class="QVBoxLayout" name="layout"/>
     </item>
    </layout>
   </widget>
