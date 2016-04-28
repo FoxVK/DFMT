@@ -82,7 +82,7 @@ cp 98-dfmt.rules /etc/udev/rules.d/
 udevadm control --reload-rules
 \end{lstlisting}
 
-Pravidlo je předpřipraveno v souboru 98-dfmt.rules ve složce driver/linux/ na přiloženém CD. Nakopírování pravidla a příkaz znovu-načtení pravidel subsystémem udev ukazuje výpis \ref{src:lib-linux-drv}. Oba příkazy je nutné spouštět s právy superuživatele.
+Pravidlo je předpřipraveno v souboru 98-dfmt.rules ve složce software/driver/linux/ na přiloženém CD. Nakopírování pravidla a příkaz znovu-načtení pravidel subsystémem udev ukazuje výpis \ref{src:lib-linux-drv}. Oba příkazy je nutné spouštět s právy superuživatele.
 
 \subsubsection{Pro OS Windows}
 Pod OS Windows je situace trochu komplikovanější. K~libusb je doporučován ovladač WinUSB. Při použití tohoto ovladače docházelo při pokusu o otevření zařízení funkcí \verb|libusb_open()| k~chybě LIBUSB\_ERROR\_NOT\_FOUND. Vyzkoušel jsem tedy ovladač libusbK, který je doporučován pro libusb pro jazyk .NET. S tímto ovladačem pracuje knihovna překvapivě správně.
@@ -91,15 +91,17 @@ Uživatelsky nejméně přívětivý způsob instalace je vyhledání nerozpozna
 
 \InsertFigure{figures/dfmt-win-drv-install.png}{120mm}{Instalace ovladače pro Windows}{fig:zadig}
 
-Pro instalaci ovladačů jsem se rozhodl využít aplikaci Zadig \cite{zadig}, která vznikla v rámci projektu libwdi. Aplikace obecně umožňuje instalaci některého z ovladačů pro použití libusb včetně vyhledání a zobrazení seznamu zařízení, která by tento ovladač mohla potřebovat. Chování aplikace je možné přizpůsobit přiložením konfiguračního souboru zadig.ini. Tento jsem upravil tak, že aplikace vyhledává přímo modul tuneru, a instaluje pro něj ovladač libusbK. Pro instalaci ovladače tedy stačí připojit modul k počítači a~spustit aplikaci drv\_install.exe ve složce driver/win/ na přiloženém CD. Po zobrazení názvu modulu v rozbalovacím seznamu v horní části aplikace, kliknout na tlačítko "Install WCID driver"~viz. obrázek \ref{fig:zadig}.
+Pro instalaci ovladačů jsem se rozhodl využít aplikaci Zadig \cite{zadig}, která vznikla v rámci projektu libwdi. Aplikace obecně umožňuje instalaci některého z ovladačů pro použití libusb včetně vyhledání a zobrazení seznamu zařízení, která by tento ovladač mohla potřebovat. Chování aplikace je možné přizpůsobit přiložením konfiguračního souboru zadig.ini. Tento jsem upravil tak, že aplikace vyhledává přímo modul tuneru, a instaluje pro něj ovladač libusbK. Pro instalaci ovladače tedy stačí připojit modul k počítači a~spustit aplikaci drv\_install.exe ve složce software/driver/win/ na přiloženém CD. Po zobrazení názvu modulu v rozbalovacím seznamu v horní části aplikace, kliknout na tlačítko "Install WCID driver"~viz. obrázek \ref{fig:zadig}.
 
-Další možnost instalace je použití Windows compatible device ID. Doplněním modulu o~jeden řetězcový deskriptor a odpověď na jeden požadavek bude mít windows možnost zjistit "compatible ID" (ID kompatibility). Na základě této informace vyhledá olvadač v systému a nebo na~Windows update a nainstaluje jej. V \cite{wcid} je podrobný popis tohoto deskriptoru a požadavku tak, aby byl kompatibilní s instalovanými ovladači aplikací Zadig. Údajně by Windows Vista a~novější měly ovladač instalovat zcela automaticky. 
+Pokud by ani po instalaci ovladače libusbK demonstrační aplikace nedokázala zařízení otevřít, je nutné ho zaměnit za ovladač WinUSB. To se porovede opět instalátorem Zadig. Je potřeba připojit zařízení a v menu Options vybrat volbu "List All Devices". Dále v rozbalovacím seznamu vybrat zařízení "Dual FM Tuner (Interface 2)" a pomocí šipek v poli uprostřed okna vybrat ovladač WinUSB. K přeinstalování ovladače dojde po kliknutí na tlačítko "Replace Driver".
+
+Další možností instalace ovladače je použití Windows compatible device ID. Doplněním modulu o~jeden řetězcový deskriptor a odpověď na jeden požadavek bude mít windows možnost zjistit "compatible ID" (ID kompatibility). Na základě této informace vyhledá olvadač v systému a nebo na~Windows update a nainstaluje jej. V \cite{wcid} je podrobný popis tohoto deskriptoru a požadavku tak, aby byl kompatibilní s instalovanými ovladači aplikací Zadig. Údajně by Windows Vista a~novější měly ovladač instalovat zcela automaticky. 
 
 Doplnil jsem podporu pro Windows compatible device ID. Analyzátorem jsem ověřil, že OS tyto informace opravdu čte, ale zatím nikdy na základě těchto informací nedošlo k instalaci ovladače.
 
 \subsection{Demonstrační aplikace}
 
-\InsertFigure{figures/gui.png}{60mm}{Demonstrační aplikace.}{fig:gui}
+\InsertFigure{figures/gui.png}{66mm}{Demonstrační aplikace.}{fig:gui}
 
 Demonstrační aplikace je napsána v jazyce C++ s využitím grafického frameworku Qt5. Jak je~vidět z obrázku \ref{fig:gui}, aplikace umožňuje ladění zadané frekvence a vyhledávání stanice směrem nahoru nebo dolů na prvním tuneru. Pod ovládacími prvky ladění se zobrazuje síla signálu (RSSI) a odstup signálu od šumu (SNR). V horní části okna je zobrazován RDS radio text. 
 

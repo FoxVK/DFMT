@@ -17,8 +17,7 @@ SOURCES += main.c \
     src/ll_ping.c \
     src/lusb_error_tr.c \
     src/ml_command.c \
-    src/ml_property.c \
-    src/test.c
+    src/ml_property.c
 
 
 QMAKE_LINK = $$QMAKE_LINK_C
