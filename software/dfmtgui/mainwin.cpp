@@ -7,7 +7,6 @@ MainWin::MainWin(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWin)
 {
-
     connect(&devices, SIGNAL(dev_connected(Device*)), this, SLOT(dev_connected(Device*)));
     connect(&devices, SIGNAL(dev_diconnected(Device*)), this, SLOT(dev_removed(Device*)));
     ui->setupUi(this);
@@ -30,27 +29,13 @@ MainWin::~MainWin()
     disconnect(&devices, SIGNAL(dev_connected(Device*)), this, SLOT(dev_connected(Device*)));
     disconnect(&devices, SIGNAL(dev_diconnected(Device*)), this, SLOT(dev_removed(Device*)));
 
-    qDebug() << Q_FUNC_INFO << "bg";
-
-    /* for (int i = 0; i < ui->Tabs->count(); i++)
-    {
-        DeviceForm *form = (DeviceForm*)ui->Tabs->widget(i);
-        if(form)
-        {
-            ui->Tabs->removeTab(i);
-        }
-    }*/
-
     delete ui;
-
-    qDebug() << Q_FUNC_INFO << "end";
 }
 
 
 
 void MainWin::dev_connected(Device *dev)
 {
-    qDebug() << Q_FUNC_INFO;
 
     DeviceForm *form;
 
@@ -83,7 +68,6 @@ void MainWin::dev_connected(Device *dev)
 
 void MainWin::dev_removed(Device *dev)
 {
-    qDebug() << Q_FUNC_INFO;
     for (int i = 0; i < device_forms.count(); i++)
     {
         DeviceForm *form = device_forms.at(i);
@@ -99,7 +83,6 @@ void MainWin::dev_removed(Device *dev)
 
 void MainWin::update_central_widget()
 {
-    qDebug("Tab cnt = %d", tabs->count());
     QWidget * current = NULL;
     for(int i=0; i<ui->layout->count(); i++)
     {
@@ -117,7 +100,6 @@ void MainWin::update_central_widget()
             }
         }
     }
-    qDebug("Tab cnt' = %d", tabs->count());
 
     switch(device_forms.count())
     {

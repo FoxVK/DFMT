@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+  <namespace>org.doxygen.libdfmt</namespace>
+  <virtualFolder>doc</virtualFolder>
+  <filterSection>
+    <filterAttribute>doxygen</filterAttribute>
+    <toc>
+      <section title="libdfmt" ref="index.html">
+        <section title="Modules" ref="modules.html">
+          <section title="Operations with devices" ref="group__dev.html">
+            <section title="Libdfmt_dev_callback" ref="group__dev.html#gaa54814ad0da0cbe9336136bf774a5bd7" />
+            <section title="libdfmt_dev_close" ref="group__dev.html#ga86b2e2ed5a7542cf092bcfd5e1339af5" />
+            <section title="libdfmt_dev_open" ref="group__dev.html#ga976e017d36717cdfeaeb980f8505f561" />
+            <section title="libdfmt_exit" ref="group__dev.html#gaa17dd7277bd1fe891070e1b791f6c38b" />
+            <section title="libdfmt_get_all_devs" ref="group__dev.html#ga8c697895c982c5664502c2f68b96bb6f" />
+            <section title="libdfmt_get_dev_address" ref="group__dev.html#ga776d3fe722f0911cb0e19a2c23c41033" />
+            <section title="libdfmt_get_tuners" ref="group__dev.html#gabea75210bb97f93f3eb324162f374cf9" />
+            <section title="libdfmt_init" ref="group__dev.html#ga54ab089d98e02bf1580e42ca75bed785" />
+            <section title="libdfmt_new_dev_cb" ref="group__dev.html#ga76eeb29f1d7b98d36cd9865851fa7f43" />
+            <section title="libdfmt_next" ref="group__dev.html#gac57fdd718542998e202b743d70159d3d" />
+            <section title="libdfmt_removed_dev_cb" ref="group__dev.html#gac738afe7a94c7b3ae65e896d573a690e" />
+            <section title="libdfmt_scan_devs" ref="group__dev.html#gaaa2704570b43ee305c3d136c1857c968" />
+          </section>
+          <section title="Low level tuner access" ref="group__ll.html">
+            <section title="libdfmt_i2c_com" ref="group__ll.html#ga07f712c9d6c013d194a660d781b64838" />
+            <section title="libdfmt_i2c_recv" ref="group__ll.html#ga94c82587f19a021db08dda4825642ad1" />
+            <section title="libdfmt_i2c_send" ref="group__ll.html#ga563b7cc4f0642cf45f9a120010d08c67" />
+          </section>
+          <section title="Middle level tuner access" ref="group__ml.html">
+            <section title="libdfmt_check_bussy" ref="group__ml.html#ga7649f078ca16a714ae2f9636f7aa9a51" />
+            <section title="libdfmt_check_int" ref="group__ml.html#gabd44ef6c0341dd3147703c13da0eeca6" />
+            <section title="libdfmt_cmd_recv_reply" ref="group__ml.html#ga78b6c77d2ffd7727b984126b1917a63a" />
+            <section title="libdfmt_cmd_send" ref="group__ml.html#gac8aaeadc7826890bdc6b4e2977ebf015" />
+            <section title="libdfmt_cmd_send_nocheck" ref="group__ml.html#ga8153b25d50a02f2de343ba587567375d" />
+            <section title="libdfmt_cmd_status" ref="group__ml.html#ga4e4576876f8ba709b2106c88b576abfc" />
+            <section title="libdfmt_prop_get" ref="group__ml.html#ga854d43b6dac1dc15a83ee662b1ae853b" />
+            <section title="libdfmt_prop_set" ref="group__ml.html#ga2d5b5a8d5aa1940a86d0aef73dc1db70" />
+          </section>
+          <section title="High level tuner access" ref="group__hl.html">
+            <section title="Libdfmt_rds_group" ref="structLibdfmt__rds__group.html">
+              <section title="blockA" ref="structLibdfmt__rds__group.html#a91e036a0beae67e64cbb6b80d64ba8b5" />
+              <section title="blockAvalid" ref="structLibdfmt__rds__group.html#a20d2d60b2de277698a6de911a5e16890" />
+              <section title="blockB" ref="structLibdfmt__rds__group.html#a63d261ba2a6e49c21bc8cce46815a6bf" />
+              <section title="blockBvalid" ref="structLibdfmt__rds__group.html#a204753158261a74009e895eb05a2baaf" />
+              <section title="blockC" ref="structLibdfmt__rds__group.html#ad6e5985d70aa39575a8b4ab2ee73018b" />
+              <section title="blockCvalid" ref="structLibdfmt__rds__group.html#a100cb4fc73a58899a58dd996e2060279" />
+              <section title="blockD" ref="structLibdfmt__rds__group.html#a5eadfe857c351f8a0308e415aadbbf72" />
+              <section title="blockDvalid" ref="structLibdfmt__rds__group.html#a878ee40410c9906e2e642fd3a46193f8" />
+            </section>
+            <section title="libdfmt_get_freq" ref="group__hl.html#gaffe67d7649f32f73be13dd2490349495" />
+            <section title="libdfmt_get_metrics" ref="group__hl.html#gaddbd21adb04c60d2608b23dfe0373f04" />
+            <section title="libdfmt_rds_read" ref="group__hl.html#ga462335b8701b1e8545d3624cca576e80" />
+            <section title="libdfmt_rds_receiving" ref="group__hl.html#gad41147b01bae27e8a9dee1935c2552c8" />
+            <section title="libdfmt_seek" ref="group__hl.html#gac13d7b1b0aa84e40f0858ca3231cf4a3" />
+            <section title="libdfmt_tune" ref="group__hl.html#ga8f1cc8ac5e3faab03398dd05f107a8ca" />
+            <section title="libdfmt_tunning_done" ref="group__hl.html#ga164af07f163280226390ebe9b0bb06bb" />
+          </section>
+        </section>
+        <section title="Data Structures">
+          <section title="Data Structures" ref="annotated.html">
+            <section title="Libdfmt_rds_group" ref="structLibdfmt__rds__group.html">
+              <section title="blockA" ref="structLibdfmt__rds__group.html#a91e036a0beae67e64cbb6b80d64ba8b5" />
+              <section title="blockAvalid" ref="structLibdfmt__rds__group.html#a20d2d60b2de277698a6de911a5e16890" />
+              <section title="blockB" ref="structLibdfmt__rds__group.html#a63d261ba2a6e49c21bc8cce46815a6bf" />
+              <section title="blockBvalid" ref="structLibdfmt__rds__group.html#a204753158261a74009e895eb05a2baaf" />
+              <section title="blockC" ref="structLibdfmt__rds__group.html#ad6e5985d70aa39575a8b4ab2ee73018b" />
+              <section title="blockCvalid" ref="structLibdfmt__rds__group.html#a100cb4fc73a58899a58dd996e2060279" />
+              <section title="blockD" ref="structLibdfmt__rds__group.html#a5eadfe857c351f8a0308e415aadbbf72" />
+              <section title="blockDvalid" ref="structLibdfmt__rds__group.html#a878ee40410c9906e2e642fd3a46193f8" />
+            </section>
+          </section>
+          <section title="Data Structure Index" ref="classes.html" />
+          <section title="Data Fields" ref="functions.html">
+            <section title="All" ref="functions.html" />
+            <section title="Variables" ref="functions_vars.html" />
+          </section>
+        </section>
+        <section title="Files">
+          <section title="File List" ref="files.html">
+            <section title="libdfmt.h" ref="libdfmt_8h.html">
+              <section title="Libdfmt_dev_callback" ref="group__dev.html#gaa54814ad0da0cbe9336136bf774a5bd7" />
+              <section title="Libdfmt_device" ref="libdfmt_8h.html#a383da3132af9862f34eafef3afaf0355" />
+              <section title="Libdfmt_tuner" ref="libdfmt_8h.html#aec78def31f3be67b9616ae850459ac2a" />
+              <section title="Libdfmt_error" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432">
+                <section title="LIBDFMT_OK" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a7c2ac5340c86e835e451a5060fa39301" />
+                <section title="LIBDFMT_ERROR_TIMEOUT" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432aa7ff3a39653f2ca2177d07ff3655ed42" />
+                <section title="LIBDFMT_ERROR_TUNER_BUSY" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a710ba0900da42f00e098f72296cef495" />
+                <section title="LIBDFMT_ERROR_TUNER_ERROR" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a75686e9990a93d3175333bb775769d2b" />
+                <section title="LIBDFMT_ERROR_DEVICE_ERROR" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432aebb656c9a1e6e663ea55daf1ee43f1e5" />
+                <section title="LIBDFMT_ERROR_DEVICE_DISCONNECTED" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a5e1d523aa29ded2e40ae3981a89048e3" />
+                <section title="LIBDFMT_ERROR_DEVICE_INTERNAL" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432af957d61bb7db66fa82904928d19be75d" />
+                <section title="LIBDFMT_ERROR_USB_ERROR" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432adb01a6cd72c5eb1f7a8057e2943edd19" />
+                <section title="LIBDFMT_ERROR_BAD_ARGUMENT" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a988da681375cb0028bf2bd0c271cd461" />
+                <section title="LIBDFMT_ERROR_NO_PERMISSION" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432ab78a5f6337630adfb0a7843acaf8d796" />
+                <section title="LIBDFMT_DEVICE_CLOSED" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432aa007562764e9e94fe7666bda0b4f60b5" />
+                <section title="LIBDFMT_ERROR" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a39e2c4bdf437fa59272e007a32bef86a" />
+              </section>
+              <section title="Libdfmt_tuner_stat_flags" ref="libdfmt_8h.html#ade00b56a51ee67ae67a0da4d0a69a05c">
+                <section title="LIBDFMT_TUNER_STAT_STCINT" ref="libdfmt_8h.html#ade00b56a51ee67ae67a0da4d0a69a05ca4804f65e6a3f5735893255f598588801" />
+                <section title="LIBDFMT_TUNER_STAT_RSQINT" ref="libdfmt_8h.html#ade00b56a51ee67ae67a0da4d0a69a05ca582857cfaced9c66375521c4110326c2" />
+                <section title="LIBDFMT_TUNER_STAT_ERR" ref="libdfmt_8h.html#ade00b56a51ee67ae67a0da4d0a69a05ca3ca9962febb01e0713c496418abd99c5" />
+                <section title="LIBDFMT_TUNER_STAT_CTS" ref="libdfmt_8h.html#ade00b56a51ee67ae67a0da4d0a69a05ca7de65962195604aea30d16a5325be1d7" />
+              </section>
+              <section title="libdfmt_check_bussy" ref="group__ml.html#ga7649f078ca16a714ae2f9636f7aa9a51" />
+              <section title="libdfmt_check_int" ref="group__ml.html#gabd44ef6c0341dd3147703c13da0eeca6" />
+              <section title="libdfmt_cmd_recv_reply" ref="group__ml.html#ga78b6c77d2ffd7727b984126b1917a63a" />
+              <section title="libdfmt_cmd_send" ref="group__ml.html#gac8aaeadc7826890bdc6b4e2977ebf015" />
+              <section title="libdfmt_cmd_send_nocheck" ref="group__ml.html#ga8153b25d50a02f2de343ba587567375d" />
+              <section title="libdfmt_cmd_status" ref="group__ml.html#ga4e4576876f8ba709b2106c88b576abfc" />
+              <section title="libdfmt_dev_close" ref="group__dev.html#ga86b2e2ed5a7542cf092bcfd5e1339af5" />
+              <section title="libdfmt_dev_open" ref="group__dev.html#ga976e017d36717cdfeaeb980f8505f561" />
+              <section title="libdfmt_exit" ref="group__dev.html#gaa17dd7277bd1fe891070e1b791f6c38b" />
+              <section title="libdfmt_get_all_devs" ref="group__dev.html#ga8c697895c982c5664502c2f68b96bb6f" />
+              <section title="libdfmt_get_dev_address" ref="group__dev.html#ga776d3fe722f0911cb0e19a2c23c41033" />
+              <section title="libdfmt_get_freq" ref="group__hl.html#gaffe67d7649f32f73be13dd2490349495" />
+              <section title="libdfmt_get_metrics" ref="group__hl.html#gaddbd21adb04c60d2608b23dfe0373f04" />
+              <section title="libdfmt_get_tuners" ref="group__dev.html#gabea75210bb97f93f3eb324162f374cf9" />
+              <section title="libdfmt_i2c_com" ref="group__ll.html#ga07f712c9d6c013d194a660d781b64838" />
+              <section title="libdfmt_i2c_recv" ref="group__ll.html#ga94c82587f19a021db08dda4825642ad1" />
+              <section title="libdfmt_i2c_send" ref="group__ll.html#ga563b7cc4f0642cf45f9a120010d08c67" />
+              <section title="libdfmt_init" ref="group__dev.html#ga54ab089d98e02bf1580e42ca75bed785" />
+              <section title="libdfmt_new_dev_cb" ref="group__dev.html#ga76eeb29f1d7b98d36cd9865851fa7f43" />
+              <section title="libdfmt_next" ref="group__dev.html#gac57fdd718542998e202b743d70159d3d" />
+              <section title="libdfmt_prop_get" ref="group__ml.html#ga854d43b6dac1dc15a83ee662b1ae853b" />
+              <section title="libdfmt_prop_set" ref="group__ml.html#ga2d5b5a8d5aa1940a86d0aef73dc1db70" />
+              <section title="libdfmt_rds_read" ref="group__hl.html#ga462335b8701b1e8545d3624cca576e80" />
+              <section title="libdfmt_rds_receiving" ref="group__hl.html#gad41147b01bae27e8a9dee1935c2552c8" />
+              <section title="libdfmt_removed_dev_cb" ref="group__dev.html#gac738afe7a94c7b3ae65e896d573a690e" />
+              <section title="libdfmt_scan_devs" ref="group__dev.html#gaaa2704570b43ee305c3d136c1857c968" />
+              <section title="libdfmt_seek" ref="group__hl.html#gac13d7b1b0aa84e40f0858ca3231cf4a3" />
+              <section title="libdfmt_tune" ref="group__hl.html#ga8f1cc8ac5e3faab03398dd05f107a8ca" />
+              <section title="libdfmt_tunning_done" ref="group__hl.html#ga164af07f163280226390ebe9b0bb06bb" />
+            </section>
+            <section title="libdfmt_cmds_props.h" ref="libdfmt__cmds__props_8h_source.html" />
+          </section>
+          <section title="Globals" ref="globals.html">
+            <section title="All" ref="globals.html" />
+            <section title="Functions" ref="globals_func.html" />
+            <section title="Typedefs" ref="globals_type.html" />
+            <section title="Enumerations" ref="globals_enum.html" />
+            <section title="Enumerator" ref="globals_eval.html" />
+          </section>
+        </section>
+      </section>
+    </toc>
+    <keywords>
+      <keyword name="Libdfmt_device" id="libdfmt.h::Libdfmt_device" ref="libdfmt_8h.html#a383da3132af9862f34eafef3afaf0355" />
+      <keyword name="Libdfmt_tuner" id="libdfmt.h::Libdfmt_tuner" ref="libdfmt_8h.html#aec78def31f3be67b9616ae850459ac2a" />
+      <keyword name="Libdfmt_dev_callback" id="libdfmt.h::Libdfmt_dev_callback" ref="libdfmt_8h.html#gaa54814ad0da0cbe9336136bf774a5bd7" />
+      <keyword name="libdfmt_init" id="libdfmt.h::libdfmt_init" ref="libdfmt_8h.html#ga54ab089d98e02bf1580e42ca75bed785" />
+      <keyword name="libdfmt_exit" id="libdfmt.h::libdfmt_exit" ref="libdfmt_8h.html#gaa17dd7277bd1fe891070e1b791f6c38b" />
+      <keyword name="libdfmt_scan_devs" id="libdfmt.h::libdfmt_scan_devs" ref="libdfmt_8h.html#gaaa2704570b43ee305c3d136c1857c968" />
+      <keyword name="libdfmt_get_all_devs" id="libdfmt.h::libdfmt_get_all_devs" ref="libdfmt_8h.html#ga8c697895c982c5664502c2f68b96bb6f" />
+      <keyword name="libdfmt_next" id="libdfmt.h::libdfmt_next" ref="libdfmt_8h.html#gac57fdd718542998e202b743d70159d3d" />
+      <keyword name="libdfmt_dev_open" id="libdfmt.h::libdfmt_dev_open" ref="libdfmt_8h.html#ga976e017d36717cdfeaeb980f8505f561" />
+      <keyword name="libdfmt_dev_close" id="libdfmt.h::libdfmt_dev_close" ref="libdfmt_8h.html#ga86b2e2ed5a7542cf092bcfd5e1339af5" />
+      <keyword name="libdfmt_new_dev_cb" id="libdfmt.h::libdfmt_new_dev_cb" ref="libdfmt_8h.html#ga76eeb29f1d7b98d36cd9865851fa7f43" />
+      <keyword name="libdfmt_removed_dev_cb" id="libdfmt.h::libdfmt_removed_dev_cb" ref="libdfmt_8h.html#gac738afe7a94c7b3ae65e896d573a690e" />
+      <keyword name="libdfmt_get_dev_address" id="libdfmt.h::libdfmt_get_dev_address" ref="libdfmt_8h.html#ga776d3fe722f0911cb0e19a2c23c41033" />
+      <keyword name="libdfmt_get_tuners" id="libdfmt.h::libdfmt_get_tuners" ref="libdfmt_8h.html#gabea75210bb97f93f3eb324162f374cf9" />
+      <keyword name="libdfmt_i2c_com" id="libdfmt.h::libdfmt_i2c_com" ref="libdfmt_8h.html#ga07f712c9d6c013d194a660d781b64838" />
+      <keyword name="libdfmt_i2c_send" id="libdfmt.h::libdfmt_i2c_send" ref="libdfmt_8h.html#ga563b7cc4f0642cf45f9a120010d08c67" />
+      <keyword name="libdfmt_i2c_recv" id="libdfmt.h::libdfmt_i2c_recv" ref="libdfmt_8h.html#ga94c82587f19a021db08dda4825642ad1" />
+      <keyword name="libdfmt_cmd_status" id="libdfmt.h::libdfmt_cmd_status" ref="libdfmt_8h.html#ga4e4576876f8ba709b2106c88b576abfc" />
+      <keyword name="libdfmt_check_bussy" id="libdfmt.h::libdfmt_check_bussy" ref="libdfmt_8h.html#ga7649f078ca16a714ae2f9636f7aa9a51" />
+      <keyword name="libdfmt_cmd_send_nocheck" id="libdfmt.h::libdfmt_cmd_send_nocheck" ref="libdfmt_8h.html#ga8153b25d50a02f2de343ba587567375d" />
+      <keyword name="libdfmt_cmd_send" id="libdfmt.h::libdfmt_cmd_send" ref="libdfmt_8h.html#gac8aaeadc7826890bdc6b4e2977ebf015" />
+      <keyword name="libdfmt_cmd_recv_reply" id="libdfmt.h::libdfmt_cmd_recv_reply" ref="libdfmt_8h.html#ga78b6c77d2ffd7727b984126b1917a63a" />
+      <keyword name="libdfmt_check_int" id="libdfmt.h::libdfmt_check_int" ref="libdfmt_8h.html#gabd44ef6c0341dd3147703c13da0eeca6" />
+      <keyword name="libdfmt_prop_set" id="libdfmt.h::libdfmt_prop_set" ref="libdfmt_8h.html#ga2d5b5a8d5aa1940a86d0aef73dc1db70" />
+      <keyword name="libdfmt_prop_get" id="libdfmt.h::libdfmt_prop_get" ref="libdfmt_8h.html#ga854d43b6dac1dc15a83ee662b1ae853b" />
+      <keyword name="libdfmt_seek" id="libdfmt.h::libdfmt_seek" ref="libdfmt_8h.html#gac13d7b1b0aa84e40f0858ca3231cf4a3" />
+      <keyword name="libdfmt_tune" id="libdfmt.h::libdfmt_tune" ref="libdfmt_8h.html#ga8f1cc8ac5e3faab03398dd05f107a8ca" />
+      <keyword name="libdfmt_tunning_done" id="libdfmt.h::libdfmt_tunning_done" ref="libdfmt_8h.html#ga164af07f163280226390ebe9b0bb06bb" />
+      <keyword name="libdfmt_get_freq" id="libdfmt.h::libdfmt_get_freq" ref="libdfmt_8h.html#gaffe67d7649f32f73be13dd2490349495" />
+      <keyword name="libdfmt_get_metrics" id="libdfmt.h::libdfmt_get_metrics" ref="libdfmt_8h.html#gaddbd21adb04c60d2608b23dfe0373f04" />
+      <keyword name="libdfmt_rds_receiving" id="libdfmt.h::libdfmt_rds_receiving" ref="libdfmt_8h.html#gad41147b01bae27e8a9dee1935c2552c8" />
+      <keyword name="libdfmt_rds_read" id="libdfmt.h::libdfmt_rds_read" ref="libdfmt_8h.html#ga462335b8701b1e8545d3624cca576e80" />
+      <keyword name="LIBDFMT_OK" id="libdfmt.h::LIBDFMT_OK" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a7c2ac5340c86e835e451a5060fa39301" />
+      <keyword name="LIBDFMT_ERROR_TIMEOUT" id="libdfmt.h::LIBDFMT_ERROR_TIMEOUT" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432aa7ff3a39653f2ca2177d07ff3655ed42" />
+      <keyword name="LIBDFMT_ERROR_TUNER_BUSY" id="libdfmt.h::LIBDFMT_ERROR_TUNER_BUSY" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a710ba0900da42f00e098f72296cef495" />
+      <keyword name="LIBDFMT_ERROR_TUNER_ERROR" id="libdfmt.h::LIBDFMT_ERROR_TUNER_ERROR" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a75686e9990a93d3175333bb775769d2b" />
+      <keyword name="LIBDFMT_ERROR_DEVICE_ERROR" id="libdfmt.h::LIBDFMT_ERROR_DEVICE_ERROR" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432aebb656c9a1e6e663ea55daf1ee43f1e5" />
+      <keyword name="LIBDFMT_ERROR_DEVICE_DISCONNECTED" id="libdfmt.h::LIBDFMT_ERROR_DEVICE_DISCONNECTED" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a5e1d523aa29ded2e40ae3981a89048e3" />
+      <keyword name="LIBDFMT_ERROR_DEVICE_INTERNAL" id="libdfmt.h::LIBDFMT_ERROR_DEVICE_INTERNAL" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432af957d61bb7db66fa82904928d19be75d" />
+      <keyword name="LIBDFMT_ERROR_USB_ERROR" id="libdfmt.h::LIBDFMT_ERROR_USB_ERROR" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432adb01a6cd72c5eb1f7a8057e2943edd19" />
+      <keyword name="LIBDFMT_ERROR_BAD_ARGUMENT" id="libdfmt.h::LIBDFMT_ERROR_BAD_ARGUMENT" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a988da681375cb0028bf2bd0c271cd461" />
+      <keyword name="LIBDFMT_ERROR_NO_PERMISSION" id="libdfmt.h::LIBDFMT_ERROR_NO_PERMISSION" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432ab78a5f6337630adfb0a7843acaf8d796" />
+      <keyword name="LIBDFMT_DEVICE_CLOSED" id="libdfmt.h::LIBDFMT_DEVICE_CLOSED" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432aa007562764e9e94fe7666bda0b4f60b5" />
+      <keyword name="LIBDFMT_ERROR" id="libdfmt.h::LIBDFMT_ERROR" ref="libdfmt_8h.html#a7f46b17c127a1a42e07f008b92cb8432a39e2c4bdf437fa59272e007a32bef86a" />
+      <keyword name="Operations with devices" id="Operations with devices" ref="group__dev.html" />
+      <keyword name="Libdfmt_dev_callback" id="dev::Libdfmt_dev_callback" ref="group__dev.html#gaa54814ad0da0cbe9336136bf774a5bd7" />
+      <keyword name="libdfmt_init" id="dev::libdfmt_init" ref="group__dev.html#ga54ab089d98e02bf1580e42ca75bed785" />
+      <keyword name="libdfmt_exit" id="dev::libdfmt_exit" ref="group__dev.html#gaa17dd7277bd1fe891070e1b791f6c38b" />
+      <keyword name="libdfmt_scan_devs" id="dev::libdfmt_scan_devs" ref="group__dev.html#gaaa2704570b43ee305c3d136c1857c968" />
+      <keyword name="libdfmt_get_all_devs" id="dev::libdfmt_get_all_devs" ref="group__dev.html#ga8c697895c982c5664502c2f68b96bb6f" />
+      <keyword name="libdfmt_next" id="dev::libdfmt_next" ref="group__dev.html#gac57fdd718542998e202b743d70159d3d" />
+      <keyword name="libdfmt_dev_open" id="dev::libdfmt_dev_open" ref="group__dev.html#ga976e017d36717cdfeaeb980f8505f561" />
+      <keyword name="libdfmt_dev_close" id="dev::libdfmt_dev_close" ref="group__dev.html#ga86b2e2ed5a7542cf092bcfd5e1339af5" />
+      <keyword name="libdfmt_new_dev_cb" id="dev::libdfmt_new_dev_cb" ref="group__dev.html#ga76eeb29f1d7b98d36cd9865851fa7f43" />
+      <keyword name="libdfmt_removed_dev_cb" id="dev::libdfmt_removed_dev_cb" ref="group__dev.html#gac738afe7a94c7b3ae65e896d573a690e" />
+      <keyword name="libdfmt_get_dev_address" id="dev::libdfmt_get_dev_address" ref="group__dev.html#ga776d3fe722f0911cb0e19a2c23c41033" />
+      <keyword name="libdfmt_get_tuners" id="dev::libdfmt_get_tuners" ref="group__dev.html#gabea75210bb97f93f3eb324162f374cf9" />
+      <keyword name="Low level tuner access" id="Low level tuner access" ref="group__ll.html" />
+      <keyword name="libdfmt_i2c_com" id="ll::libdfmt_i2c_com" ref="group__ll.html#ga07f712c9d6c013d194a660d781b64838" />
+      <keyword name="libdfmt_i2c_send" id="ll::libdfmt_i2c_send" ref="group__ll.html#ga563b7cc4f0642cf45f9a120010d08c67" />
+      <keyword name="libdfmt_i2c_recv" id="ll::libdfmt_i2c_recv" ref="group__ll.html#ga94c82587f19a021db08dda4825642ad1" />
+      <keyword name="Middle level tuner access" id="Middle level tuner access" ref="group__ml.html" />
+      <keyword name="libdfmt_cmd_status" id="ml::libdfmt_cmd_status" ref="group__ml.html#ga4e4576876f8ba709b2106c88b576abfc" />
+      <keyword name="libdfmt_check_bussy" id="ml::libdfmt_check_bussy" ref="group__ml.html#ga7649f078ca16a714ae2f9636f7aa9a51" />
+      <keyword name="libdfmt_cmd_send_nocheck" id="ml::libdfmt_cmd_send_nocheck" ref="group__ml.html#ga8153b25d50a02f2de343ba587567375d" />
+      <keyword name="libdfmt_cmd_send" id="ml::libdfmt_cmd_send" ref="group__ml.html#gac8aaeadc7826890bdc6b4e2977ebf015" />
+      <keyword name="libdfmt_cmd_recv_reply" id="ml::libdfmt_cmd_recv_reply" ref="group__ml.html#ga78b6c77d2ffd7727b984126b1917a63a" />
+      <keyword name="libdfmt_check_int" id="ml::libdfmt_check_int" ref="group__ml.html#gabd44ef6c0341dd3147703c13da0eeca6" />
+      <keyword name="libdfmt_prop_set" id="ml::libdfmt_prop_set" ref="group__ml.html#ga2d5b5a8d5aa1940a86d0aef73dc1db70" />
+      <keyword name="libdfmt_prop_get" id="ml::libdfmt_prop_get" ref="group__ml.html#ga854d43b6dac1dc15a83ee662b1ae853b" />
+      <keyword name="High level tuner access" id="High level tuner access" ref="group__hl.html" />
+      <keyword name="libdfmt_seek" id="hl::libdfmt_seek" ref="group__hl.html#gac13d7b1b0aa84e40f0858ca3231cf4a3" />
+      <keyword name="libdfmt_tune" id="hl::libdfmt_tune" ref="group__hl.html#ga8f1cc8ac5e3faab03398dd05f107a8ca" />
+      <keyword name="libdfmt_tunning_done" id="hl::libdfmt_tunning_done" ref="group__hl.html#ga164af07f163280226390ebe9b0bb06bb" />
+      <keyword name="libdfmt_get_freq" id="hl::libdfmt_get_freq" ref="group__hl.html#gaffe67d7649f32f73be13dd2490349495" />
+      <keyword name="libdfmt_get_metrics" id="hl::libdfmt_get_metrics" ref="group__hl.html#gaddbd21adb04c60d2608b23dfe0373f04" />
+      <keyword name="libdfmt_rds_receiving" id="hl::libdfmt_rds_receiving" ref="group__hl.html#gad41147b01bae27e8a9dee1935c2552c8" />
+      <keyword name="libdfmt_rds_read" id="hl::libdfmt_rds_read" ref="group__hl.html#ga462335b8701b1e8545d3624cca576e80" />
+      <keyword name="Libdfmt_rds_group" id="Libdfmt_rds_group" ref="structLibdfmt__rds__group.html" />
+      <keyword name="blockA" id="Libdfmt_rds_group::blockA" ref="structLibdfmt__rds__group.html#a91e036a0beae67e64cbb6b80d64ba8b5" />
+      <keyword name="blockB" id="Libdfmt_rds_group::blockB" ref="structLibdfmt__rds__group.html#a63d261ba2a6e49c21bc8cce46815a6bf" />
+      <keyword name="blockC" id="Libdfmt_rds_group::blockC" ref="structLibdfmt__rds__group.html#ad6e5985d70aa39575a8b4ab2ee73018b" />
+      <keyword name="blockD" id="Libdfmt_rds_group::blockD" ref="structLibdfmt__rds__group.html#a5eadfe857c351f8a0308e415aadbbf72" />
+      <keyword name="blockAvalid" id="Libdfmt_rds_group::blockAvalid" ref="structLibdfmt__rds__group.html#a20d2d60b2de277698a6de911a5e16890" />
+      <keyword name="blockBvalid" id="Libdfmt_rds_group::blockBvalid" ref="structLibdfmt__rds__group.html#a204753158261a74009e895eb05a2baaf" />
+      <keyword name="blockCvalid" id="Libdfmt_rds_group::blockCvalid" ref="structLibdfmt__rds__group.html#a100cb4fc73a58899a58dd996e2060279" />
+      <keyword name="blockDvalid" id="Libdfmt_rds_group::blockDvalid" ref="structLibdfmt__rds__group.html#a878ee40410c9906e2e642fd3a46193f8" />
+    </keywords>
+    <files>
+      <file>tabs.css</file>
+      <file>tab_a.png</file>
+      <file>tab_b.png</file>
+      <file>tab_h.png</file>
+      <file>tab_s.png</file>
+      <file>nav_h.png</file>
+      <file>nav_f.png</file>
+      <file>bc_s.png</file>
+      <file>doxygen.png</file>
+      <file>closed.png</file>
+      <file>open.png</file>
+      <file>bdwn.png</file>
+      <file>sync_on.png</file>
+      <file>sync_off.png</file>
+      <file>ftv2blank.png</file>
+      <file>ftv2doc.png</file>
+      <file>ftv2folderclosed.png</file>
+      <file>ftv2folderopen.png</file>
+      <file>ftv2lastnode.png</file>
+      <file>ftv2link.png</file>
+      <file>ftv2mlastnode.png</file>
+      <file>ftv2mnode.png</file>
+      <file>ftv2node.png</file>
+      <file>ftv2plastnode.png</file>
+      <file>ftv2pnode.png</file>
+      <file>ftv2vertline.png</file>
+      <file>ftv2splitbar.png</file>
+      <file>doxygen.css</file>
+      <file>/search/mag_sel.png</file>
+      <file>/search/search_l.png</file>
+      <file>/search/search_m.png</file>
+      <file>/search/search_r.png</file>
+      <file>/search/close.png</file>
+      <file>search/search.css</file>
+      <file>search/search.js</file>
+      <file>libdfmt_8h_source.html</file>
+      <file>libdfmt__cmds__props_8h_source.html</file>
+      <file>libdfmt_8h.html</file>
+      <file>libdfmt_8h__incl.png</file>
+      <file>libdfmt_8h__incl.png</file>
+      <file>group__dev.html</file>
+      <file>group__ll.html</file>
+      <file>group__ml.html</file>
+      <file>group__hl.html</file>
+      <file>structLibdfmt__rds__group.html</file>
+      <file>graph_legend.png</file>
+      <file>graph_legend.html</file>
+      <file>index.html</file>
+      <file>modules.html</file>
+      <file>annotated.html</file>
+      <file>classes.html</file>
+      <file>functions.html</file>
+      <file>functions_vars.html</file>
+      <file>files.html</file>
+      <file>globals.html</file>
+      <file>globals_func.html</file>
+      <file>globals_type.html</file>
+      <file>globals_enum.html</file>
+      <file>globals_eval.html</file>
+    </files>
+  </filterSection>
+</QtHelpProject>

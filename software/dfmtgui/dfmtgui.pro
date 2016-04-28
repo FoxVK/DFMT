@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+QTPLUGIN += svg
+
 QT       += core gui
 QT       += svg
 
@@ -17,15 +19,18 @@ SOURCES += main.cpp\
         mainwin.cpp \
     device.cpp \
     devices.cpp \
-    deviceform.cpp
+    deviceform.cpp \
+    nodeviceform.cpp
 
 HEADERS  += mainwin.h \
     device.h \
     devices.h \
-    deviceform.h
+    deviceform.h \
+    nodeviceform.h
 
 FORMS    += mainwin.ui \
-    deviceform.ui
+    deviceform.ui \
+    nodeviceform.ui
 
 RESOURCES += \
     icons.qrc

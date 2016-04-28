@@ -20,12 +20,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * @copyright
- * Copyright: Pavel Kovar 2015 <pavel.kovar@vsetin.org>.
+ * Copyright: Pavel Kovar 2015-2016 <pavel.kovar@vsetin.org>.
  */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/** @mainpage notitle
+ * This a reference manual of library for controling o Dual FM tuner.
+ *
+ * For manual continute to  <a href="modules.html">Modules</a> page.
+ * For more information see project page on
+ * <a href="https://github.com/FoxVK/DFMT#dfmt">Github</a>.
+ */
+
 
 /** @brief Physical device with two tuners on it.*/
 typedef struct Libdfmt_device Libdfmt_device;
@@ -34,7 +43,7 @@ typedef struct Libdfmt_device Libdfmt_device;
 typedef struct Libdfmt_tuner Libdfmt_tuner;
 
 /** @brief Error codes returned by most of functions.
- * @todo check it
+ *
 */
 typedef enum {
     LIBDFMT_OK                        =0, ///< No error
@@ -98,7 +107,7 @@ typedef void(*Libdfmt_dev_callback)(Libdfmt_device*);
 void libdfmt_scan_devs();
 
 /**
- * @brief Returns connected devices
+ * @brief Returns connected devices.
  *
  * To update list use libdfmt_scan_devs().
  * You can go through list usign libdfmt_next().
@@ -125,7 +134,7 @@ Libdfmt_error libdfmt_dev_open (Libdfmt_device *dev);
 
 /**
  * @brief Closes device.
- * @param dev Device to close
+ * @param dev Device to close.
  * @see libdfmt_dev_open()
  */
 void          libdfmt_dev_close(Libdfmt_device *dev);
@@ -158,7 +167,7 @@ unsigned int libdfmt_get_dev_address(Libdfmt_device *dev);
 /**
  * @brief set pointers to particular tunners of dev.
  * @param dev Device with tunners.
- * @param tunA Tuner A (The one used for capturing sound)
+ * @param tunA Tuner A. (The one used for capturing sound)
  * @param tunB Tuner B.
  */
 void libdfmt_get_tuners(Libdfmt_device *dev,
@@ -199,7 +208,7 @@ Libdfmt_error libdfmt_i2c_send(Libdfmt_tuner *tuner, char *buf, size_t size);
  * @param tuner Tuner to communicate with.
  * @param buf Bufer where data will be read to.
  * @param size Size of buf. Will be updated to ammount of received data.
- * @param timeout Timeot in ms
+ * @param timeout Timeout in ms.
  * @return @ref LIBDFMT_OK on success or @ref Libdfmt_error.
  */
 Libdfmt_error libdfmt_i2c_recv(Libdfmt_tuner *tuner, char *buf, size_t *size,
@@ -231,7 +240,7 @@ Libdfmt_error libdfmt_cmd_status(Libdfmt_tuner *tuner, char *status_byte);
 
 /**
  * @brief Checks if is safe to send comand to tuner.
- * @param tuner Selected tuner
+ * @param tuner Selected tuner.
  * @return LIBDFMT_ERROR_TUNER_BUSY if dev is busy, @ref LIBDFMT_OK if dev is not busy. Or other @ref Libdfmt_error.
  **/
 Libdfmt_error libdfmt_check_bussy(Libdfmt_tuner *tuner);
@@ -265,7 +274,7 @@ Libdfmt_error libdfmt_cmd_send(Libdfmt_tuner *tuner, char cmd,
  * @warning If CTS flag is not set or ERR flag is set only first byte is valid.
  * @param tuner Selected tuner.
  * @param buf Buffer to store reply.
- * @param size size of buffer
+ * @param size size of buffer.
  * @return @ref LIBDFMT_OK on success or other @ref Libdfmt_error.
  */
 Libdfmt_error libdfmt_cmd_recv_reply(Libdfmt_tuner *tuner,
@@ -275,7 +284,7 @@ Libdfmt_error libdfmt_cmd_recv_reply(Libdfmt_tuner *tuner,
 /**
  * @brief Checks interrupt bits of selected tuner.
  * Unlike libdfmt_cmd_status() this function send command which updates interrupt flags in status byte.
- * @param tuner Selected tuner
+ * @param tuner Selected tuner.
  * @param status_byte pointer where status byte will be set.
  * @return LIBDFMT_ERROR_TUNER_BUSY if dev is busy, @ref LIBDFMT_OK if dev is not busy. Or other @ref Libdfmt_error.
  **/
@@ -286,7 +295,7 @@ Libdfmt_error libdfmt_check_int(Libdfmt_tuner *, char *status_byte);
 /**
  * @brief libdfmt_prop_set Sets property.
  * @param tuner Tuner on which porperty wil be set.
- * @param prop Property
+ * @param prop Property.
  * @param value Desired value of property.
  * @return @ref LIBDFMT_OK on success or other @ref Libdfmt_error.
  */
@@ -296,7 +305,7 @@ Libdfmt_error libdfmt_prop_set(Libdfmt_tuner *tuner,
 /**
  * @brief libdfmt_prop_set Gets property.
  * @param tuner Selected tuner.
- * @param prop Property
+ * @param prop Property.
  * @param value Pointer to memory where value of property will be stored.
  * @return @ref LIBDFMT_OK on success or other @ref Libdfmt_error.
  */
@@ -354,7 +363,7 @@ Libdfmt_error libdfmt_tunning_done(Libdfmt_tuner *tuner, int *done);
  * @param rssi Reseived signal strength indicator in dBμV.
  * @param snr Signal to noise ration 0-127dB.
  * @param multipath Current multipath metric (0 = no multipath; 100 = full multipath).
- * See Silicon lab's <a href=http://www.silabs.com/Marcom%20Documents/WhitePapers/Automotive-Radio-Key-Requirements.pdf>
+ * See Silicon lab's <a href=http://www.silabs.com/Marcom%20Documents/WhitePapers/Automotive-Radio-Key-Requirements.pdf>.
  * Key Requirements for Multi-Tuner Automotive Radio Designs</a>.
  * @param is_valid True if tuned frequency is valid channel - you are not receiving noise.
  * @return @ref LIBDFMT_OK on success or @ref Libdfmt_error.
@@ -366,11 +375,11 @@ Libdfmt_error libdfmt_get_freq(Libdfmt_tuner *tuner, double *freq,
 /**
  * @brief Libdfmt_get_freq reads metrics from tuner.
  * Each parameter of this function (exept tuner) can be NULL if not needed. Function can be called multiple times.
- * @param tuner Selected tuner..
+ * @param tuner Selected tuner.
  * @param rssi Reseived signal strength indicator in dBμV.
  * @param snr Signal to noise ration 0-127dB.
  * @param multipath Current multipath metric (0 = no multipath; 100 = full multipath).
- * See Silicon lab's <a href=http://www.silabs.com/Marcom%20Documents/WhitePapers/Automotive-Radio-Key-Requirements.pdf>
+ * See Silicon lab's <a href=http://www.silabs.com/Marcom%20Documents/WhitePapers/Automotive-Radio-Key-Requirements.pdf>.
  * Key Requirements for Multi-Tuner Automotive Radio Designs</a>.
  * @param is_valid True if tuned frequency is valid channel - you are not receiving noise.
  * @param freq_offset Frequency offset in kHz.
@@ -383,7 +392,9 @@ Libdfmt_error libdfmt_get_metrics(Libdfmt_tuner *tuner,
                                int *freq_offset, unsigned *stereo_blend);
 
 /**
- * @brief libdfmt_rds_receiving
+ * @brief libdfmt_rds_receiving turns on or of receiving of RDS.
+ *
+ * Gruops with any invalid block will be discarded.
  * @param tuner Selected tuner to turn receiving on or off.
  * @param receive 0 stop receiving of rds, any other value turs receiving on.
  * @return @ref LIBDFMT_OK on success or @ref Libdfmt_error.
@@ -394,14 +405,14 @@ Libdfmt_error libdfmt_rds_receiving(Libdfmt_tuner *tuner, int receive);
  *  @see libdfmt_rds_read()
   */
 typedef struct{
-    uint16_t blockA;
-    uint16_t blockB;
-    uint16_t blockC;
-    uint16_t blockD;
-    int blockAvalid;
-    int blockBvalid;
-    int blockCvalid;
-    int blockDvalid;
+    uint16_t blockA;  ///< Data of block A.
+    uint16_t blockB;  ///< Data of block B.
+    uint16_t blockC;  ///< Data of block C.
+    uint16_t blockD;  ///< Data of block D.
+    int blockAvalid;  ///< 1 if blockA contains valid data. 0 otherwise.
+    int blockBvalid;  ///< 1 if blockB contains valid data. 0 otherwise.
+    int blockCvalid;  ///< 1 if blockC contains valid data. 0 otherwise.
+    int blockDvalid;  ///< 1 if blockD contains valid data. 0 otherwise.
 }Libdfmt_rds_group;
 
 
@@ -410,11 +421,11 @@ typedef struct{
  *
  * Tuner's FIFO is discarded on every call of libdfmt_seek() or libdfmt_tune().
  *
- * Filling bufer in tuner takes at least 1.2 second.
+ *  Each tuner have at lest 14 grups deep FIFO buffer so fulfilling bufer takes at least 1.2 second.
  * @param tuner Tuner to read from.
  * @param group Pointer to @ref Libdfmt_rds_group were received group will be stored.
  * or NULL to get only information (without touching FIFO) how many groups are received in tuner's FIFO.
- * Data is only valid when grps_received is greater than zero.
+ * Data is only valid when groups_cnt is greater than zero.
  * @param groups_cnt Count of grous stored in tuner, before read was called. If this value is zero data in groups are not vaild.
  */
 
